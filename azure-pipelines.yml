@@ -78,11 +78,12 @@ stages:
       displayName: 'Set Pipeline Summary'
       name: CarbonResults
 
-    - task: PublishHtmlReport@1
+    - task: PublishBuildArtifacts@1
       displayName: 'Publish Carbon Footprint HTML Report'
       inputs:
-        reportDir: '$(System.DefaultWorkingDirectory)/carbon-reports'
-        tabName: 'Carbon Footprint Report'
+        pathToPublish: '$(System.DefaultWorkingDirectory)/carbon-reports'
+        artifactName: 'carbon-footprint-html-reports'
+        publishLocation: 'Container'
       condition: always()
       
     - task: PublishTestResults@2
@@ -107,12 +108,13 @@ stages:
         echo "======================"
         echo "📊 HTML Reports available in Pipeline Artifacts"
         echo "📋 JSON Data available for downstream processing"
-        echo "🔍 Detailed analysis available in published HTML report"
+        echo "🔍 Detailed analysis available in published artifacts"
         echo ""
         echo "🔗 Access Reports:"
-        echo "   1. Click 'Carbon Footprint Report' tab above"
-        echo "   2. Download 'carbon-footprint-reports' artifact"
-        echo "   3. View complete_analysis.html for interactive dashboard"
+        echo "   1. Go to Pipeline Summary → Artifacts section"
+        echo "   2. Download 'carbon-footprint-html-reports' artifact"
+        echo "   3. Download 'carbon-footprint-reports' artifact"  
+        echo "   4. Open complete_analysis.html for interactive dashboard"
         echo ""
         
       displayName: 'Report Access Information'
@@ -162,7 +164,8 @@ stages:
         fi
         
         echo ""
-        echo "📋 For detailed analysis, check the 'Carbon Footprint Report' tab"
+        echo "📋 For detailed analysis, download the artifacts from the Pipeline Summary"
+        echo "   → Artifacts: 'carbon-footprint-html-reports' and 'carbon-footprint-reports'"
         echo "===================================="
         echo ""
         
