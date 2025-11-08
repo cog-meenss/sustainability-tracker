@@ -1,0 +1,364 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Technical Details</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; line-height: 1.6; }
+        h1, h2, h3 { color: #2c5aa0; }
+        .summary { background: #f4f4f4; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .metric { display: inline-block; margin: 10px; padding: 10px; background: #e7f3ff; border-radius: 3px; }
+        .recommendation { background: #fff3cd; padding: 10px; margin: 5px 0; border-left: 4px solid #ffc107; }
+        table { border-collapse: collapse; width: 100%; margin: 10px 0; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .json-view { background: #f8f9fa; padding: 15px; border-radius: 5px; font-family: monospace; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <h1>Technical Details</h1>
+    <p><strong>Generated:</strong> 2025-11-08T18:10:40.208667</p>
+    
+    <div class="summary">
+        <h2>Report Summary</h2>
+        <div class="json-view">{
+  "report_type": "Technical Details",
+  "generated_at": "2025-11-08T18:10:40.208667",
+  "metadata": {
+    "analyzer_version": "1.0.0",
+    "analysis_duration": 19.16,
+    "files_analyzed": 0
+  },
+  "project_overview": {
+    "name": "",
+    "path": ".",
+    "analysis_date": "2025-11-08T18:10:40.207472",
+    "analyzer_version": "1.0.0"
+  },
+  "language_analysis": {
+    "primary_language": "python",
+    "languages": {
+      "javascript": {
+        "files": 24,
+        "size_bytes": 271529,
+        "extensions": [
+          ".js"
+        ],
+        "paths": [
+          "server.js",
+          "frontend/src/IdeasTab.js",
+          "frontend/src/store.js",
+          "frontend/src/LeaveSummaryTab.js",
+          "frontend/src/TrainingTab.js",
+          "frontend/src/index.js",
+          "frontend/src/RevenueFteTab.js",
+          "frontend/src/ContractMonthFilter.js",
+          "frontend/src/App.js",
+          "frontend/src/ChatInput.js",
+          "frontend/src/ChatSection.js",
+          "frontend/src/utils/ukWorkingDays2025.js",
+          "frontend/src/utils/exportCsv.js",
+          "frontend/src/services/openaiService.js",
+          "frontend/src/services/ideaEvaluationService.js",
+          "backend/server.js",
+          "backend/calculationTest.js",
+          "carbon-footprint-analyzer/dashboard/charts.js",
+          "carbon-footprint-analyzer/dashboard/data.js",
+          "carbon-footprint-analyzer/dashboard/dashboard.js",
+          "carbon-footprint-analyzer/dashboard/assets/charts.js",
+          "carbon-footprint-analyzer/dashboard/assets/data.js",
+          "carbon-footprint-analyzer/dashboard/assets/dashboard.js",
+          "carbon-footprint-analyzer/comprehensive_test_projects/javascript_project/server.js"
+        ]
+      },
+      "markdown": {
+        "files": 11,
+        "size_bytes": 73345,
+        "extensions": [
+          ".md"
+        ],
+        "paths": [
+          "SETUP_COMPLETE.md",
+          "PARALLELISM_GRANT_GUIDE.md",
+          "PIPELINE_SETUP_GUIDE.md",
+          "frontend/README.md",
+          "backend/README.md",
+          "docs/README.md",
+          "docs/AI-Idea-Ranking-Guide.md",
+          "carbon-footprint-analyzer/REORGANIZATION_SUMMARY.md",
+          "carbon-footprint-analyzer/README.md",
+          "carbon-footprint-analyzer/dashboard/README.md",
+          "carbon-footprint-analyzer/examples/integrations/JENKINS_INTEGRATION.md"
+        ]
+      },
+      "yaml": {
+        "files": 3,
+        "size_bytes": 23438,
+        "extensions": [
+          ".yml"
+        ],
+        "paths": [
+          "azure-pipelines-selfhosted.yml",
+          "azure-pipelines.yml",
+          "azure-pipelines-backup.yml"
+        ]
+      },
+      "json": {
+        "files": 23,
+        "size_bytes": 916412,
+        "extensions": [
+          ".json"
+        ],
+        "paths": [
+          "package-lock.json",
+          "package.json",
+          "frontend/package-lock.json",
+          "frontend/package.json",
+          "carbon-reports/complete_analysis.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/comprehensive_results.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/python/complete_analysis.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/python/optimization_guide.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/python/executive_summary.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/java/complete_analysis.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/java/optimization_guide.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/java/executive_summary.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/javascript/complete_analysis.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/javascript/optimization_guide.json",
+          "carbon-footprint-analyzer/comprehensive_test_results/javascript/executive_summary.json",
+          "carbon-footprint-analyzer/comprehensive_test_projects/javascript_project/package.json",
+          "carbon-footprint-analyzer/examples/configs/basic_config.json",
+          "carbon-footprint-analyzer/examples/configs/api_service_config.json",
+          "carbon-footprint-analyzer/examples/configs/web_app_config.json",
+          "carbon-footprint-analyzer/examples/configs/data_science_config.json",
+          "carbon-footprint-analyzer/examples/configs/mobile_app_config.json",
+          "carbon-footprint-analyzer/simple_test_results/carbon_analysis.json",
+          "pipeline-reports/complete_analysis.json"
+        ]
+      },
+      "shell": {
+        "files": 1,
+        "size_bytes": 243,
+        "extensions": [
+          ".sh"
+        ],
+        "paths": [
+          "frontend/start-server.sh"
+        ]
+      },
+      "html": {
+        "files": 5,
+        "size_bytes": 19354,
+        "extensions": [
+          ".html"
+        ],
+        "paths": [
+          "frontend/public/index.html",
+          "carbon-reports/pipeline_report.html",
+          "carbon-footprint-analyzer/dashboard/index.html",
+          "carbon-footprint-analyzer/simple_test_results/carbon_analysis.html",
+          "pipeline-reports/pipeline_report.html"
+        ]
+      },
+      "python": {
+        "files": 26,
+        "size_bytes": 314467,
+        "extensions": [
+          ".py"
+        ],
+        "paths": [
+          "carbon-footprint-analyzer/test_analyzer.py",
+          "carbon-footprint-analyzer/pipeline_helper.py",
+          "carbon-footprint-analyzer/pipeline_reporter.py",
+          "carbon-footprint-analyzer/comprehensive_test.py",
+          "carbon-footprint-analyzer/comprehensive_test_fixed.py",
+          "carbon-footprint-analyzer/cli.py",
+          "carbon-footprint-analyzer/simple_test.py",
+          "carbon-footprint-analyzer/dashboard/serve_dashboard.py",
+          "carbon-footprint-analyzer/comprehensive_test_projects/python_project/main.py",
+          "carbon-footprint-analyzer/examples/integrations/pre_commit_hook.py",
+          "carbon-footprint-analyzer/examples/integrations/jenkins_integration.py",
+          "carbon-footprint-analyzer/examples/integrations/github_actions_integration.py",
+          "carbon-footprint-analyzer/examples/integrations/vscode_extension.py",
+          "carbon-footprint-analyzer/src/analyzer.py",
+          "carbon-footprint-analyzer/src/__init__.py",
+          "carbon-footprint-analyzer/src/carbon_analyzer.py",
+          "carbon-footprint-analyzer/src/analyzers/java.py",
+          "carbon-footprint-analyzer/src/analyzers/generic.py",
+          "carbon-footprint-analyzer/src/analyzers/__init__.py",
+          "carbon-footprint-analyzer/src/analyzers/base_analyzer.py",
+          "carbon-footprint-analyzer/src/analyzers/python.py",
+          "carbon-footprint-analyzer/src/analyzers/javascript.py",
+          "carbon-footprint-analyzer/src/core/detector.py",
+          "carbon-footprint-analyzer/src/core/metrics.py",
+          "carbon-footprint-analyzer/src/core/reporter.py",
+          "carbon-footprint-analyzer/src/core/__init__.py"
+        ]
+      },
+      "css": {
+        "files": 2,
+        "size_bytes": 16106,
+        "extensions": [
+          ".css"
+        ],
+        "paths": [
+          "carbon-footprint-analyzer/dashboard/styles.css",
+          "carbon-footprint-analyzer/dashboard/assets/styles.css"
+        ]
+      },
+      "java": {
+        "files": 1,
+        "size_bytes": 553,
+        "extensions": [
+          ".java"
+        ],
+        "paths": [
+          "carbon-footprint-analyzer/comprehensive_test_projects/java_project/src/main/java/Application.java"
+        ]
+      }
+    },
+    "total_files": 101,
+    "project_type": "script",
+    "frameworks": {
+      "javascript": [
+        "react",
+        "vue",
+        "angular",
+        "node",
+        "express"
+      ]
+    },
+    "language_distribution": {
+      "javascript": 25.0,
+      "markdown": 11.46,
+      "yaml": 3.12,
+      "json": 23.96,
+      "shell": 1.04,
+      "html": 5.21,
+      "python": 27.08,
+      "css": 2.08,
+      "java": 1.04
+    },
+    "complexity_indicator": "medium"
+  },
+  "code_structure": {},
+  "dependencies": {
+    "package_managers": {},
+    "total_dependencies": 0,
+    "heavy_dependencies": [],
+    "dependency_files": []
+  },
+  "frameworks": {},
+  "carbon_footprint": {
+    "total_carbon_kg": 0.0,
+    "total_energy_kwh": 0.0,
+    "carbon_intensity_kg_per_kwh": 0.475,
+    "grid_type": "global_average",
+    "timestamp": "2025-11-08T18:10:40.207436",
+    "components": {
+      "code_execution": {
+        "energy_kwh": 0,
+        "carbon_kg": 0.0,
+        "percentage": 0
+      },
+      "frameworks": {
+        "energy_kwh": 0,
+        "carbon_kg": 0.0,
+        "percentage": 0
+      },
+      "dependencies": {
+        "energy_kwh": 0.0,
+        "carbon_kg": 0.0,
+        "percentage": 0
+      },
+      "build_system": {
+        "energy_kwh": 0,
+        "carbon_kg": 0.0,
+        "percentage": 0
+      },
+      "development": {
+        "energy_kwh": 0,
+        "carbon_kg": 0.0,
+        "percentage": 0,
+        "hours_estimated": 0
+      }
+    },
+    "language_breakdown": {},
+    "optimization_potential": {
+      "total_potential_reduction_kg": 0,
+      "potential_reduction_percentage": 0,
+      "optimization_opportunities": [],
+      "quick_wins": [
+        "Enable compiler/interpreter optimizations",
+        "Use efficient algorithms and data structures",
+        "Implement caching for frequently accessed data",
+        "Profile your application to identify bottlenecks"
+      ]
+    },
+    "comparison_metrics": {
+      "impact_level": "minimal",
+      "comparisons": {
+        "smartphone_charging": {
+          "value": 0.0,
+          "unit": "smartphone charges",
+          "description": "Equivalent to charging a smartphone"
+        },
+        "car_distance": {
+          "value": 0.0,
+          "unit": "kilometers by car",
+          "description": "Equivalent to driving by car"
+        },
+        "light_bulb": {
+          "value": 0.0,
+          "unit": "hours of 60W light bulb",
+          "description": "Equivalent to running a 60W light bulb"
+        },
+        "tree_absorption": {
+          "value": 0.0,
+          "unit": "years of tree CO2 absorption",
+          "description": "Would require a tree to absorb for"
+        }
+      },
+      "annual_projection": {
+        "carbon_kg_per_year": 0.0,
+        "description": "If this software runs daily for a year"
+      }
+    },
+    "methodology": {
+      "calculation_approach": "Static analysis with energy modeling",
+      "factors_used": [
+        "lines_of_code",
+        "complexity",
+        "frameworks",
+        "dependencies"
+      ],
+      "limitations": [
+        "Does not measure actual runtime energy",
+        "Based on estimated factors and industry averages",
+        "Does not include infrastructure or deployment energy"
+      ]
+    }
+  },
+  "recommendations": [],
+  "raw_data": {
+    "file_complexities": {},
+    "calculation_details": {
+      "calculation_approach": "Static analysis with energy modeling",
+      "factors_used": [
+        "lines_of_code",
+        "complexity",
+        "frameworks",
+        "dependencies"
+      ],
+      "limitations": [
+        "Does not measure actual runtime energy",
+        "Based on estimated factors and industry averages",
+        "Does not include infrastructure or deployment energy"
+      ]
+    }
+  }
+}</div>
+    </div>
+</body>
+</html>

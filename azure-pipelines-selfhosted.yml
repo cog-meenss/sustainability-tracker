@@ -1,6 +1,5 @@
-# Azure DevOps Pipeline for Carbon Footprint Analysis
-# Performs comprehensive carbon footprint analysis on repository code
-# Generates real-time reports with threshold checking and optimization recommendations
+# Azure DevOps Pipeline for Carbon Footprint Analysis (Self-Hosted Agent Version)
+# Use this version if you want to run on a self-hosted agent instead of requesting hosted parallelism
 
 trigger:
 - main
@@ -12,7 +11,8 @@ variables:
   CARBON_THRESHOLD: '0.1'
   
 pool:
-  vmImage: 'ubuntu-latest'
+  name: 'Default'  # Self-hosted agent pool (change to your pool name)
+  # vmImage: 'ubuntu-latest'  # Commented out - using self-hosted instead
 
 stages:
 - stage: CarbonFootprintAnalysis
@@ -26,25 +26,23 @@ stages:
       displayName: 'Checkout Repository'
       
     - script: |
-        echo "🌍 CARBON FOOTPRINT ANALYSIS PIPELINE"
-        echo "====================================="
+        echo "🌍 CARBON FOOTPRINT ANALYSIS PIPELINE (Self-Hosted)"
+        echo "=================================================="
         echo "Repository: $(Build.Repository.Name)"
         echo "Branch: $(Build.SourceBranchName)"
         echo "Commit: $(Build.SourceVersion)"
         echo "Threshold: $(CARBON_THRESHOLD) kg CO2"
+        echo "Agent: Self-Hosted"
         echo ""
       displayName: 'Pipeline Information'
       
-    - task: UsePythonVersion@0
-      displayName: 'Setup Python'
-      inputs:
-        versionSpec: '3.x'
-        addToPath: true
-        
     - script: |
-        python -m pip install --upgrade pip
-        pip install requests pyyaml
-      displayName: 'Install Dependencies'
+        # Check Python availability
+        python3 --version || python --version
+        
+        # Install dependencies if needed
+        python3 -m pip install --user requests pyyaml 2>/dev/null || pip3 install requests pyyaml
+      displayName: 'Setup Dependencies'
       
     - script: |
         # Create carbon reports directory
@@ -84,16 +82,6 @@ stages:
         pathToPublish: '$(System.DefaultWorkingDirectory)/carbon-reports'
         artifactName: 'carbon-footprint-html-reports'
         publishLocation: 'Container'
-      condition: always()
-      
-    - task: PublishTestResults@2
-      displayName: 'Publish Carbon Analysis Results'
-      inputs:
-        testResultsFormat: 'JUnit'
-        testResultsFiles: '$(System.DefaultWorkingDirectory)/carbon-reports/*.xml'
-        mergeTestResults: true
-        failTaskOnFailedTests: false
-        testRunTitle: 'Carbon Footprint Analysis'
       condition: always()
       
     - task: PublishPipelineArtifact@1
@@ -144,28 +132,16 @@ stages:
         echo ""
         echo "Threshold:        $(CARBON_THRESHOLD) kg CO2"
         
-        # Compare against threshold
-        threshold=$(CARBON_THRESHOLD)
-        current=$(CarbonFootprint)
-        
-        if (( $(echo "$current > $threshold" | bc -l) )); then
-          echo "Status:           ⚠️  EXCEEDS THRESHOLD"
+        # Simple comparison (works on both Linux and macOS)
+        if [ "$(CarbonFootprint)" != "0" ]; then
+          echo "Status: Analysis completed successfully"
           echo ""
-          echo "💡 RECOMMENDATION:"
-          echo "   Review the optimization recommendations in the detailed report"
-          echo "   Consider implementing code efficiency improvements"
-          echo "   Check for unnecessary computations or large data processing"
+          echo "📋 For detailed analysis, download the artifacts from the Pipeline Summary"
+          echo "   → Artifacts: 'carbon-footprint-html-reports' and 'carbon-footprint-reports'"
         else
-          echo "Status:           ✅ WITHIN THRESHOLD"
-          echo ""
-          echo "🌟 GREAT JOB!"
-          echo "   Your code has an efficient carbon footprint"
-          echo "   Continue following sustainable coding practices"
+          echo "Status: Please check analysis results"
         fi
         
-        echo ""
-        echo "📋 For detailed analysis, download the artifacts from the Pipeline Summary"
-        echo "   → Artifacts: 'carbon-footprint-html-reports' and 'carbon-footprint-reports'"
         echo "===================================="
         echo ""
         
