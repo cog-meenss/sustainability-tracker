@@ -1,0 +1,141 @@
+{
+  "python": {
+    "analysis": {
+      "primary_language": "python",
+      "total_files": 2
+    },
+    "carbon_footprint": {
+      "total_carbon_kg": 0.001187,
+      "total_energy_kwh": 0.0025
+    }
+  },
+  "javascript": {
+    "analysis": {
+      "primary_language": "javascript",
+      "total_files": 2
+    },
+    "carbon_footprint": {
+      "total_carbon_kg": 0.001187,
+      "total_energy_kwh": 0.0025
+    }
+  },
+  "java": {
+    "analysis": {
+      "primary_language": "java",
+      "total_files": 1
+    },
+    "carbon_footprint": {
+      "total_carbon_kg": 0.0,
+      "total_energy_kwh": 0.0
+    }
+  },
+  "code_snippet": {
+    "code_analysis": {
+      "complexity_score": 0.7000000000000001,
+      "features": {},
+      "lines": 7,
+      "cyclomatic_complexity": 1,
+      "language": "javascript"
+    },
+    "carbon_footprint": {
+      "total_carbon_kg": 0.000499,
+      "total_energy_kwh": 0.00105,
+      "carbon_intensity_kg_per_kwh": 0.475,
+      "grid_type": "global_average",
+      "timestamp": "2025-11-08T17:33:26.120488",
+      "components": {
+        "code_execution": {
+          "energy_kwh": 0.00105,
+          "carbon_kg": 0.000499,
+          "percentage": 100.0
+        },
+        "frameworks": {
+          "energy_kwh": 0,
+          "carbon_kg": 0.0,
+          "percentage": 0.0
+        },
+        "dependencies": {
+          "energy_kwh": 0.0,
+          "carbon_kg": 0.0,
+          "percentage": 0.0
+        },
+        "build_system": {
+          "energy_kwh": 0,
+          "carbon_kg": 0.0,
+          "percentage": 0.0
+        },
+        "development": {
+          "energy_kwh": 0,
+          "carbon_kg": 0.0,
+          "percentage": 0.0,
+          "hours_estimated": 0
+        }
+      },
+      "language_breakdown": {
+        "javascript": {
+          "files": 1,
+          "estimated_energy_kwh": 0.00105,
+          "estimated_carbon_kg": 0.000499,
+          "percentage_of_total": 100.0
+        }
+      },
+      "optimization_potential": {
+        "total_potential_reduction_kg": 0,
+        "potential_reduction_percentage": 0.0,
+        "optimization_opportunities": [],
+        "quick_wins": [
+          "Enable tree-shaking and dead code elimination in your build process",
+          "Use code splitting to reduce initial bundle size",
+          "Enable compiler/interpreter optimizations",
+          "Use efficient algorithms and data structures",
+          "Implement caching for frequently accessed data",
+          "Profile your application to identify bottlenecks"
+        ]
+      },
+      "comparison_metrics": {
+        "impact_level": "minimal",
+        "comparisons": {
+          "smartphone_charging": {
+            "value": 49.87,
+            "unit": "smartphone charges",
+            "description": "Equivalent to charging a smartphone"
+          },
+          "car_distance": {
+            "value": 0.0,
+            "unit": "kilometers by car",
+            "description": "Equivalent to driving by car"
+          },
+          "light_bulb": {
+            "value": 0.14,
+            "unit": "hours of 60W light bulb",
+            "description": "Equivalent to running a 60W light bulb"
+          },
+          "tree_absorption": {
+            "value": 2.3e-05,
+            "unit": "years of tree CO2 absorption",
+            "description": "Would require a tree to absorb for"
+          }
+        },
+        "annual_projection": {
+          "carbon_kg_per_year": 0.182,
+          "description": "If this software runs daily for a year"
+        }
+      },
+      "methodology": {
+        "calculation_approach": "Static analysis with energy modeling",
+        "factors_used": [
+          "lines_of_code",
+          "complexity",
+          "frameworks",
+          "dependencies"
+        ],
+        "limitations": [
+          "Does not measure actual runtime energy",
+          "Based on estimated factors and industry averages",
+          "Does not include infrastructure or deployment energy"
+        ]
+      }
+    },
+    "recommendations": []
+  }
+}

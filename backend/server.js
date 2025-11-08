@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
-const XLSX = require('xlsx');
+const ExcelJS = require('exceljs');
 const path = require('path');
 
 const app = express();
@@ -16,6 +16,68 @@ app.use(express.static(path.join(__dirname, '../frontend/build')));
 const fetch = (...args) => import('node-fetch').then(({default: fetch}) => fetch(...args));
 
 // --- Data & Helper Functions ---
+
+// Helper function to process Excel files with ExcelJS
+async function processExcelBuffer(buffer) {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(buffer);
+    
+    const worksheet = workbook.getWorksheet(1);
+    if (!worksheet) {
+        throw new Error('No worksheet found');
+    }
+    
+    const json = [];
+    worksheet.eachRow((row, rowNumber) => {
+        const values = [];
+        row.eachCell((cell, colNumber) => {
+            // Handle different cell types
+            let value = cell.value;
+            if (value && typeof value === 'object' && value.text) {
+                value = value.text; // Rich text
+            } else if (value instanceof Date) {
+                value = value.toISOString().split('T')[0]; // Format dates
+            }
+            values[colNumber - 1] = value;
+        });
+        json.push(values);
+    });
+    
+    return json;
+}
+
+// Helper function to process multi-sheet Excel files
+async function processMultiSheetExcel(buffer) {
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.load(buffer);
+    
+    const result = {};
+    workbook.eachSheet((worksheet, sheetId) => {
+        const sheetData = [];
+        worksheet.eachRow((row, rowNumber) => {
+            const rowData = {};
+            row.eachCell((cell, colNumber) => {
+                let value = cell.value;
+                if (value && typeof value === 'object' && value.text) {
+                    value = value.text;
+                } else if (value instanceof Date) {
+                    value = value.toISOString().split('T')[0];
+                }
+                
+                // Use the header from first row as key, or column letter if no header
+                const header = worksheet.getRow(1).getCell(colNumber).value || `Column${colNumber}`;
+                rowData[header] = value !== undefined ? value : '';
+            });
+            if (rowNumber > 1) { // Skip header row
+                sheetData.push(rowData);
+            }
+        });
+        result[worksheet.name] = sheetData;
+    });
+    
+    return result;
+}
+
 const holidaysCache = {};
 /**
  * Fetches UK public holidays for a given year and caches the result.
@@ -123,36 +185,46 @@ function parseRateCard(val) {
 // Single-file upload for Ideas tab
 app.post('/api/ideas-upload', upload.single('excel'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
-    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    if (!json.length) return res.json({ columns: [], data: [] });
-    const columns = json[0];
-    const data = json.slice(1);
-    res.json({ columns, data });
-  } catch (err) {
-    console.error('API ideas-upload error:', err);
-    res.status(500).json({ error: err.message });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const json = await processExcelBuffer(req.file.buffer);
+
+    if (json.length === 0) {
+      return res.status(400).json({ error: 'The Excel file is empty or has no data.' });
+    }
+
+    res.json({ 
+      data: json,
+      message: 'Ideas data uploaded successfully' 
+    });
+  } catch (error) {
+    console.error('Ideas upload error:', error);
+    res.status(500).json({ error: 'Error processing ideas file: ' + error.message });
   }
 });
 
 // Single-file upload for Training tab
 app.post('/api/training-upload', upload.single('excel'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
-    const workbook = XLSX.read(req.file.buffer, { type: 'buffer' });
-    const sheetName = workbook.SheetNames[0];
-    const sheet = workbook.Sheets[sheetName];
-    const json = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-    if (!json.length) return res.json({ columns: [], data: [] });
-    const columns = json[0];
-    const data = json.slice(1);
-    res.json({ columns, data });
-  } catch (err) {
-    console.error('API training-upload error:', err);
-    res.status(500).json({ error: err.message });
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const json = await processExcelBuffer(req.file.buffer);
+
+    if (json.length === 0) {
+      return res.status(400).json({ error: 'The Excel file is empty or has no data.' });
+    }
+
+    res.json({ 
+      data: json,
+      message: 'Training data uploaded successfully' 
+    });
+  } catch (error) {
+    console.error('Training upload error:', error);
+    res.status(500).json({ error: 'Error processing training file: ' + error.message });
   }
 });
 
@@ -186,17 +258,38 @@ app.post('/api/upload', upload.fields([{ name: 'leave' }, { name: 'people' }]), 
       return res.status(400).json({ error: 'Both Leave and People Tracker files are required.' });
     }
 
-    // Parse Excel files
-    function parseSheets(file) {
-      const workbook = XLSX.read(file.buffer, { type: 'buffer' });
+    // Parse Excel files with ExcelJS
+    async function parseSheets(file) {
+      const workbook = new ExcelJS.Workbook();
+      await workbook.xlsx.load(file.buffer);
+      
       const result = {};
-      workbook.SheetNames.forEach(sheetName => {
-        result[sheetName] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { defval: '' });
+      workbook.eachSheet((worksheet, sheetId) => {
+        const sheetData = [];
+        worksheet.eachRow((row, rowNumber) => {
+          if (rowNumber === 1) return; // Skip header row
+          
+          const rowData = {};
+          row.eachCell((cell, colNumber) => {
+            let value = cell.value;
+            if (value && typeof value === 'object' && value.text) {
+              value = value.text;
+            } else if (value instanceof Date) {
+              value = value.toISOString().split('T')[0];
+            }
+            
+            // Get header from first row
+            const header = worksheet.getRow(1).getCell(colNumber).value || `Column${colNumber}`;
+            rowData[header] = value !== undefined ? value : '';
+          });
+          sheetData.push(rowData);
+        });
+        result[worksheet.name] = sheetData;
       });
       return result;
     }
-    const leaveSheets = parseSheets(files.leave[0]);
-    const peopleSheets = parseSheets(files.people[0]);
+    const leaveSheets = await parseSheets(files.leave[0]);
+    const peopleSheets = await parseSheets(files.people[0]);
 
     // Define constants
     const currentYear = 2025;

@@ -1,0 +1,63 @@
+{
+  "description": "Default configuration for web application analysis",
+  "project_type": "web_app",
+  "ignore_patterns": [
+    "node_modules",
+    "dist",
+    "build",
+    ".next",
+    ".nuxt",
+    "coverage",
+    ".git",
+    ".vscode",
+    ".idea",
+    "*.min.js",
+    "*.min.css",
+    "*.bundle.js",
+    "*.chunk.js"
+  ],
+  "analysis_depth": "detailed",
+  "carbon_calculation": {
+    "default_grid_type": "global_average",
+    "include_development_energy": true,
+    "include_deployment_energy": false,
+    "estimated_development_hours": 160,
+    "custom_energy_factors": {
+      "webpack_builds_per_day": 50,
+      "hot_reload_sessions_per_day": 8,
+      "production_builds_per_week": 5
+    }
+  },
+  "reporting": {
+    "default_formats": ["html", "json"],
+    "include_optimization_guide": true,
+    "include_comparison_metrics": true,
+    "generate_dashboard": true
+  },
+  "web_specific": {
+    "analyze_bundle_size": true,
+    "check_tree_shaking": true,
+    "analyze_critical_path": true,
+    "lighthouse_integration": false
+  },
+  "optimization_targets": {
+    "bundle_size_mb": 1.0,
+    "dependencies_count": 50,
+    "complexity_score": "medium"
+  },
+  "frameworks": {
+    "react": {
+      "check_hooks_usage": true,
+      "analyze_component_complexity": true,
+      "detect_unnecessary_rerenders": true
+    },
+    "vue": {
+      "check_composition_api": true,
+      "analyze_component_size": true
+    },
+    "angular": {
+      "check_lazy_loading": true,
+      "analyze_module_structure": true
+    }
+  }
+}

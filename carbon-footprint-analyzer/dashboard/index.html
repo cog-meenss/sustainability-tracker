@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Footprint Dashboard - Tracker App</title>
+    <link rel="stylesheet" href="assets/styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <i class="fas fa-leaf"></i>
+                    <h1>Carbon Footprint Dashboard</h1>
+                </div>
+                <div class="header-meta">
+                    <span class="project-name">Tracker Application</span>
+                    <span class="timestamp" id="lastUpdated"></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Navigation -->
+        <nav class="dashboard-nav">
+            <button class="nav-btn active" data-tab="overview">
+                <i class="fas fa-chart-pie"></i>
+                Overview
+            </button>
+            <button class="nav-btn" data-tab="files">
+                <i class="fas fa-file-code"></i>
+                File Analysis
+            </button>
+            <button class="nav-btn" data-tab="recommendations">
+                <i class="fas fa-lightbulb"></i>
+                Recommendations
+            </button>
+            <button class="nav-btn" data-tab="trends">
+                <i class="fas fa-chart-line"></i>
+                Trends
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Overview Tab -->
+            <section id="overview" class="tab-content active">
+                <!-- Summary Cards -->
+                <div class="summary-grid">
+                    <div class="summary-card co2">
+                        <div class="card-icon">
+                            <i class="fas fa-smog"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>CO₂ Emissions</h3>
+                            <div class="value" id="co2Value">0.109</div>
+                            <div class="unit">kg CO₂</div>
+                            <div class="comparison">≈ 383m driving</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card energy">
+                        <div class="card-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Energy Consumption</h3>
+                            <div class="value" id="energyValue">0.219</div>
+                            <div class="unit">kWh</div>
+                            <div class="comparison">≈ 5.5 trees/day</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card files">
+                        <div class="card-icon">
+                            <i class="fas fa-files-o"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Files Analyzed</h3>
+                            <div class="value" id="filesValue">35</div>
+                            <div class="unit">files</div>
+                            <div class="comparison">4,850 lines</div>
+                        </div>
+                    </div>
+
+                    <div class="summary-card dependencies">
+                        <div class="card-icon">
+                            <i class="fas fa-cubes"></i>
+                        </div>
+                        <div class="card-content">
+                            <h3>Dependencies</h3>
+                            <div class="value" id="depsValue">26</div>
+                            <div class="unit">packages</div>
+                            <div class="comparison">6 high-impact</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Grid -->
+                <div class="charts-grid">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-pie"></i> Energy Breakdown</h3>
+                            <div class="chart-controls">
+                                <button class="btn-sm" onclick="downloadChart('energyChart')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="energyChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-chart-bar"></i> File Impact Scores</h3>
+                            <div class="chart-controls">
+                                <button class="btn-sm" onclick="downloadChart('fileImpactChart')">
+                                    <i class="fas fa-download"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="fileImpactChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <h3><i class="fas fa-radar"></i> Code Complexity Analysis</h3>
+                            <div class="chart-controls">
+                                <select id="complexityMetric">
+                                    <option value="all">All Metrics</option>
+                                    <option value="loops">Loops</option>
+                                    <option value="functions">Functions</option>
+                                    <option value="async_operations">Async Operations</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="complexityChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- File Analysis Tab -->
+            <section id="files" class="tab-content">
+                <div class="file-analysis-header">
+                    <h2><i class="fas fa-file-code"></i> Detailed File Analysis</h2>
+                    <div class="analysis-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="fileSearch" placeholder="Search files...">
+                        </div>
+                        <select id="sortBy">
+                            <option value="impact">Sort by Impact</option>
+                            <option value="lines">Sort by Lines</option>
+                            <option value="complexity">Sort by Complexity</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="file-table-container">
+                    <table class="file-table" id="fileTable">
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Lines</th>
+                                <th>Impact Score</th>
+                                <th>Complexity</th>
+                                <th>Issues</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fileTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- File Details Modal -->
+                <div id="fileModal" class="modal">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h3 id="modalFileName"></h3>
+                            <button class="close-btn" onclick="closeFileModal()">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="modal-body" id="modalBody">
+                            <!-- Populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Recommendations Tab -->
+            <section id="recommendations" class="tab-content">
+                <div class="recommendations-header">
+                    <h2><i class="fas fa-lightbulb"></i> Optimization Recommendations</h2>
+                    <div class="priority-filter">
+                        <button class="filter-btn active" data-priority="all">All</button>
+                        <button class="filter-btn" data-priority="high">High Priority</button>
+                        <button class="filter-btn" data-priority="medium">Medium Priority</button>
+                        <button class="filter-btn" data-priority="low">Low Priority</button>
+                    </div>
+                </div>
+
+                <div class="recommendations-grid" id="recommendationsGrid">
+                    <!-- Populated by JavaScript -->
+                </div>
+
+                <!-- Implementation Guide -->
+                <div class="implementation-guide">
+                    <h3><i class="fas fa-tools"></i> Implementation Guide</h3>
+                    <div class="guide-tabs">
+                        <button class="guide-tab active" data-guide="quick">Quick Wins</button>
+                        <button class="guide-tab" data-guide="medium">Medium Term</button>
+                        <button class="guide-tab" data-guide="long">Long Term</button>
+                    </div>
+                    <div class="guide-content" id="guideContent">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Trends Tab -->
+            <section id="trends" class="tab-content">
+                <div class="trends-header">
+                    <h2><i class="fas fa-chart-line"></i> Carbon Footprint Trends</h2>
+                    <div class="trend-controls">
+                        <select id="trendPeriod">
+                            <option value="7d">Last 7 days</option>
+                            <option value="30d">Last 30 days</option>
+                            <option value="90d">Last 90 days</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="trends-grid">
+                    <div class="chart-card full-width">
+                        <div class="chart-header">
+                            <h3>Carbon Emissions Over Time</h3>
+                        </div>
+                        <div class="chart-container large">
+                            <canvas id="trendsChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="metrics-comparison">
+                        <h3>Performance Metrics</h3>
+                        <div class="metrics-grid">
+                            <div class="metric-item">
+                                <span class="metric-label">Avg. Daily Emissions</span>
+                                <span class="metric-value">0.109 kg CO₂</span>
+                                <span class="metric-change positive">
+                                    <i class="fas fa-arrow-down"></i> -15%
+                                </span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Energy Efficiency</span>
+                                <span class="metric-value">22.2 LOC/kWh</span>
+                                <span class="metric-change positive">
+                                    <i class="fas fa-arrow-up"></i> +8%
+                                </span>
+                            </div>
+                            <div class="metric-item">
+                                <span class="metric-label">Code Quality Score</span>
+                                <span class="metric-value">7.8/10</span>
+                                <span class="metric-change neutral">
+                                    <i class="fas fa-minus"></i> 0%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="assets/data.js"></script>
+    <script src="assets/charts.js"></script>
+    <script src="assets/dashboard.js"></script>
+</body>
+</html>

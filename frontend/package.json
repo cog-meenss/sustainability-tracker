@@ -14,18 +14,22 @@
     "@emotion/styled": "^11.11.0",
     "@mui/icons-material": "^5.14.17",
     "@mui/material": "^5.14.17",
-    "@mui/x-charts": "^8.9.2",
-    "@mui/x-data-grid": "^5.14.17",
-    "@reduxjs/toolkit": "^2.8.2",
-    "date-fns": "^4.1.0",
+    "@mui/x-charts": "^7.12.0",
+    "@mui/x-data-grid": "^7.12.0",
+    "exceljs": "^4.4.0",
+    "is-docker": "^3.0.0",
+    "is-wsl": "^3.1.0",
+    "open": "^10.2.0",
+    "openai": "^5.23.1",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
+    "react-dev-utils": "^12.0.1",
     "react-dom": "18.2.0",
     "react-markdown": "^8.0.7",
     "react-redux": "^9.2.0",
-    "react-scripts": "^5.0.1",
-    "xlsx": "^0.18.5"
+    "react-scripts": "^5.0.1"
   },
+  "proxy": "http://localhost:4000",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -37,5 +41,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@reduxjs/toolkit": "^2.5.0",
+    "redux": "^5.0.1"
   }
 }

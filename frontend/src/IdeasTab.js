@@ -1,11 +1,16 @@
 import React, { useState } from "react";
-import { Box, Button, Typography, Paper, TextField, Select, MenuItem, InputLabel, FormControl, OutlinedInput, Chip, Autocomplete, Checkbox, ListItemText, IconButton, Tooltip } from "@mui/material";
+import { Box, Button, Typography, Paper, TextField, Select, MenuItem, InputLabel, FormControl, OutlinedInput, Chip, Autocomplete, Checkbox, ListItemText, IconButton, Tooltip, Dialog, DialogTitle, DialogContent, DialogActions, LinearProgress, Alert, Accordion, AccordionSummary, AccordionDetails, Slider, Grid } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import SaveAltIcon from '@mui/icons-material/SaveAlt';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
+import PsychologyIcon from '@mui/icons-material/Psychology';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
+import { evaluateIdeas, evaluateIdea, getEvaluationParameters, validateParameters, formatEvaluationSummary } from './services/ideaEvaluationService';
 
 function IdeasTab(props) {
   // --- Custom Multi-Column Filter State for IdeasTab ---
@@ -26,6 +31,15 @@ function IdeasTab(props) {
     selectedFile, setSelectedFile
   } = props;
 
+  // --- AI Evaluation State ---
+  const [evaluations, setEvaluations] = useState({});
+  const [evaluationParams, setEvaluationParams] = useState(getEvaluationParameters());
+  const [showEvaluationDialog, setShowEvaluationDialog] = useState(false);
+  const [evaluationProgress, setEvaluationProgress] = useState(null);
+  const [evaluationError, setEvaluationError] = useState('');
+  const [selectedIdeaForEvaluation, setSelectedIdeaForEvaluation] = useState(null);
+  const [evaluationResults, setEvaluationResults] = useState([]);
+
   const handleUpload = async (e) => {
     e.preventDefault();
     setError("");
@@ -36,7 +50,7 @@ function IdeasTab(props) {
     const formData = new FormData();
     formData.append("excel", selectedFile);
     try {
-      const res = await fetch("http://localhost:4000/api/ideas-upload", {
+      const res = await fetch("/api/ideas-upload", {
         method: "POST",
         body: formData,
       });
@@ -96,6 +110,114 @@ function IdeasTab(props) {
     setVisibleCols(cols =>
       cols.includes(idx) ? cols.filter(i => i !== idx) : [...cols, idx].sort((a, b) => a - b)
     );
+  };
+
+  // --- AI Evaluation Functions ---
+  const handleEvaluateAllIdeas = async () => {
+    if (!data || data.length === 0) {
+      setEvaluationError('No ideas to evaluate. Please upload data first.');
+      return;
+    }
+
+    setShowEvaluationDialog(true);
+    setEvaluationError('');
+    setEvaluationProgress({ completed: 0, total: data.length, percentage: 0 });
+
+    try {
+      // Convert data rows to idea objects
+      const ideasToEvaluate = data.map((row, index) => {
+        const idea = {};
+        columns.forEach((col, colIndex) => {
+          idea[col] = row[colIndex];
+        });
+        idea.id = index;
+        return idea;
+      });
+
+      const results = await evaluateIdeas(ideasToEvaluate, evaluationParams, (progress) => {
+        setEvaluationProgress(progress);
+      });
+
+      // Store evaluations
+      const evaluationsMap = {};
+      results.forEach((result) => {
+        evaluationsMap[result.ideaIndex] = result.evaluation;
+      });
+      
+      setEvaluations(evaluationsMap);
+      setEvaluationResults(results);
+      setEvaluationProgress(null);
+      
+    } catch (error) {
+      setEvaluationError(`Evaluation failed: ${error.message}`);
+      setEvaluationProgress(null);
+    }
+  };
+
+  const handleEvaluateSingleIdea = async (rowIndex) => {
+    if (!data || !data[rowIndex]) {
+      setEvaluationError('Invalid idea selected for evaluation.');
+      return;
+    }
+
+    setSelectedIdeaForEvaluation(rowIndex);
+    
+    try {
+      // Convert data row to idea object
+      const idea = {};
+      columns.forEach((col, colIndex) => {
+        idea[col] = data[rowIndex][colIndex];
+      });
+      idea.id = rowIndex;
+
+      const result = await evaluateIdea(idea, evaluationParams);
+      
+      if (result.success) {
+        setEvaluations(prev => ({
+          ...prev,
+          [rowIndex]: result.evaluation
+        }));
+      } else {
+        setEvaluationError(`Evaluation failed: ${result.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      setEvaluationError(`Evaluation failed: ${error.message}`);
+    }
+    
+    setSelectedIdeaForEvaluation(null);
+  };
+
+  const handleUpdateEvaluationParams = (newParams) => {
+    const validation = validateParameters(newParams);
+    if (!validation.valid) {
+      setEvaluationError(validation.error);
+      return;
+    }
+    setEvaluationParams(newParams);
+    setEvaluationError('');
+  };
+
+  const handleCloseEvaluationDialog = () => {
+    setShowEvaluationDialog(false);
+    setEvaluationProgress(null);
+    setEvaluationError('');
+  };
+
+  const getSortedDataWithEvaluations = () => {
+    if (Object.keys(evaluations).length === 0) return filteredData;
+    
+    return [...filteredData].sort((a, b) => {
+      const aIndex = data.indexOf(a);
+      const bIndex = data.indexOf(b);
+      const aEval = evaluations[aIndex];
+      const bEval = evaluations[bIndex];
+      
+      if (!aEval && !bEval) return 0;
+      if (!aEval) return 1;
+      if (!bEval) return -1;
+      
+      return (bEval.overallScore || 0) - (aEval.overallScore || 0);
+    });
   };
 
   const UPLOAD_VERSION = 2;
@@ -446,14 +568,351 @@ function IdeasTab(props) {
         </Box>
       )}
       {columns.length > 0 && (
+        <>
+          {/* AI Evaluation Section */}
+          <Paper sx={{ mb: 3, p: 2, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: 3, boxShadow: 3 }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                <PsychologyIcon sx={{ color: 'white', fontSize: 28 }} />
+                <Typography variant="h6" sx={{ color: 'white', fontWeight: 600 }}>
+                  AI Idea Evaluation & Ranking
+                </Typography>
+              </Box>
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Button
+                  variant="contained"
+                  startIcon={<AssessmentIcon />}
+                  onClick={handleEvaluateAllIdeas}
+                  disabled={!data.length || evaluationProgress !== null}
+                  sx={{
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    backdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.3)',
+                    '&:hover': {
+                      bgcolor: 'rgba(255, 255, 255, 0.3)',
+                    }
+                  }}
+                >
+                  {evaluationProgress ? 'Evaluating...' : 'Evaluate All Ideas'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<TrendingUpIcon />}
+                  onClick={() => setShowEvaluationDialog(true)}
+                  sx={{
+                    color: 'white',
+                    borderColor: 'rgba(255, 255, 255, 0.5)',
+                    '&:hover': {
+                      borderColor: 'white',
+                      bgcolor: 'rgba(255, 255, 255, 0.1)',
+                    }
+                  }}
+                >
+                  View Results
+                </Button>
+              </Box>
+            </Box>
+            
+            {/* Evaluation Progress */}
+            {evaluationProgress && (
+              <Box sx={{ mt: 2 }}>
+                <Typography variant="body2" sx={{ color: 'white', mb: 1 }}>
+                  Evaluating ideas: {evaluationProgress.completed} of {evaluationProgress.total} ({evaluationProgress.percentage}%)
+                </Typography>
+                <LinearProgress 
+                  variant="determinate" 
+                  value={evaluationProgress.percentage}
+                  sx={{ 
+                    height: 8, 
+                    borderRadius: 4,
+                    bgcolor: 'rgba(255, 255, 255, 0.2)',
+                    '& .MuiLinearProgress-bar': {
+                      bgcolor: 'white',
+                      borderRadius: 4,
+                    }
+                  }}
+                />
+              </Box>
+            )}
+
+            {/* Evaluation Summary */}
+            {Object.keys(evaluations).length > 0 && (
+              <Box sx={{ mt: 2, p: 2, bgcolor: 'rgba(255, 255, 255, 0.1)', borderRadius: 2 }}>
+                <Typography variant="body2" sx={{ color: 'white', mb: 1 }}>
+                  <strong>Evaluation Summary:</strong> {Object.keys(evaluations).length} ideas evaluated
+                </Typography>
+                {evaluationResults.length > 0 && (
+                  <Typography variant="body2" sx={{ color: 'white' }}>
+                    <strong>Top Idea:</strong> {evaluationResults[0] && formatEvaluationSummary(evaluationResults[0].evaluation)}
+                  </Typography>
+                )}
+              </Box>
+            )}
+            
+            {evaluationError && (
+              <Alert severity="error" sx={{ mt: 2, bgcolor: 'rgba(255, 255, 255, 0.9)' }}>
+                {evaluationError}
+              </Alert>
+            )}
+          </Paper>
+
+          {/* Evaluation Results Dialog */}
+          <Dialog 
+            open={showEvaluationDialog} 
+            onClose={handleCloseEvaluationDialog}
+            maxWidth="lg"
+            fullWidth
+          >
+            <DialogTitle>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <AssessmentIcon />
+                AI Idea Evaluation Results
+              </Box>
+            </DialogTitle>
+            <DialogContent>
+              {evaluationProgress && (
+                <Box sx={{ mb: 3 }}>
+                  <Typography variant="body2" gutterBottom>
+                    Progress: {evaluationProgress.completed} of {evaluationProgress.total} ideas evaluated
+                  </Typography>
+                  <LinearProgress variant="determinate" value={evaluationProgress.percentage} />
+                </Box>
+              )}
+              
+              {/* Evaluation Parameters */}
+              <Accordion sx={{ mb: 2 }}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Typography variant="h6">Evaluation Parameters</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container spacing={2}>
+                    {Object.entries(evaluationParams).map(([key, param]) => (
+                      <Grid item xs={12} sm={6} key={key}>
+                        <Typography variant="body2" gutterBottom>
+                          {key.charAt(0).toUpperCase() + key.slice(1)} ({(param.weight * 100).toFixed(0)}%)
+                        </Typography>
+                        <Typography variant="caption" color="textSecondary">
+                          {param.description}
+                        </Typography>
+                        <Slider
+                          value={param.weight * 100}
+                          onChange={(_, value) => {
+                            const newParams = {
+                              ...evaluationParams,
+                              [key]: { ...param, weight: value / 100 }
+                            };
+                            handleUpdateEvaluationParams(newParams);
+                          }}
+                          min={5}
+                          max={50}
+                          step={5}
+                          marks
+                          valueLabelDisplay="auto"
+                          valueLabelFormat={(value) => `${value}%`}
+                        />
+                      </Grid>
+                    ))}
+                  </Grid>
+                </AccordionDetails>
+              </Accordion>
+
+              {/* Evaluation Results */}
+              {evaluationResults.length > 0 && (
+                <Box>
+                  <Typography variant="h6" gutterBottom>Results</Typography>
+                  {evaluationResults.map((result, index) => {
+                    const evaluation = result.evaluation;
+                    if (!evaluation) return null;
+                    
+                    return (
+                      <Accordion key={result.ideaIndex} sx={{ mb: 1 }}>
+                        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, width: '100%' }}>
+                            <Typography variant="body1">
+                              #{index + 1} - Score: {evaluation.overallScore?.toFixed(1)}/10
+                            </Typography>
+                            <Chip 
+                              label={evaluation.overallRanking} 
+                              color={evaluation.overallScore >= 8 ? 'success' : evaluation.overallScore >= 6 ? 'primary' : 'warning'}
+                              size="small"
+                            />
+                            <Chip 
+                              label={evaluation.implementationPriority} 
+                              variant="outlined"
+                              size="small"
+                            />
+                          </Box>
+                        </AccordionSummary>
+                        <AccordionDetails>
+                          <Box sx={{ mb: 2 }}>
+                            <Typography variant="body2" paragraph>
+                              <strong>Summary:</strong> {evaluation.summary}
+                            </Typography>
+                            
+                            <Typography variant="subtitle2" gutterBottom>Detailed Scores:</Typography>
+                            <Grid container spacing={1} sx={{ mb: 2 }}>
+                              {Object.entries(evaluation.scores || {}).map(([criterion, score]) => (
+                                <Grid item xs={6} sm={4} key={criterion}>
+                                  <Box sx={{ p: 1, bgcolor: 'grey.50', borderRadius: 1 }}>
+                                    <Typography variant="caption" display="block">
+                                      {criterion.charAt(0).toUpperCase() + criterion.slice(1)}
+                                    </Typography>
+                                    <Typography variant="body2" fontWeight="bold">
+                                      {score.score}/10
+                                    </Typography>
+                                  </Box>
+                                </Grid>
+                              ))}
+                            </Grid>
+
+                            {evaluation.recommendations && evaluation.recommendations.length > 0 && (
+                              <Box sx={{ mb: 2 }}>
+                                <Typography variant="subtitle2" gutterBottom>Recommendations:</Typography>
+                                <Box component="ul" sx={{ pl: 2, mb: 0 }}>
+                                  {evaluation.recommendations.map((rec, i) => (
+                                    <Typography component="li" variant="body2" key={i}>
+                                      {rec}
+                                    </Typography>
+                                  ))}
+                                </Box>
+                              </Box>
+                            )}
+
+                            <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+                              <Chip label={`Effort: ${evaluation.estimatedEffort}`} size="small" />
+                              <Chip label={`Timeline: ${evaluation.marketReadiness}`} size="small" />
+                              {evaluation.isAutomated && (
+                                <Chip label="Automated Assessment" color="info" size="small" />
+                              )}
+                            </Box>
+                          </Box>
+                        </AccordionDetails>
+                      </Accordion>
+                    );
+                  })}
+                </Box>
+              )}
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCloseEvaluationDialog}>Close</Button>
+              {!evaluationProgress && data.length > 0 && (
+                <Button 
+                  variant="contained" 
+                  onClick={handleEvaluateAllIdeas}
+                  startIcon={<AssessmentIcon />}
+                >
+                  Re-evaluate All
+                </Button>
+              )}
+            </DialogActions>
+          </Dialog>
+        </>
+      )}
+      {columns.length > 0 && (
         <Paper sx={{ height: 520, width: '100%', overflow: 'auto', mb: 4, p: 2 }}>
            <DataGrid
-            rows={filteredData.map((row, idx) => {
-              const obj = { id: idx };
+            rows={getSortedDataWithEvaluations().map((row, idx) => {
+              const originalIdx = data.indexOf(row);
+              const obj = { id: originalIdx, _rowIndex: originalIdx };
               (visibleCols.length ? visibleCols : columns.map((_, i) => i)).forEach(i => { obj[columns[i]] = row[i]; });
+              
+              // Add evaluation data
+              const evaluation = evaluations[originalIdx];
+              if (evaluation) {
+                obj['AI_Score'] = evaluation.overallScore ? evaluation.overallScore.toFixed(1) : 'N/A';
+                obj['AI_Ranking'] = evaluation.overallRanking || 'N/A';
+                obj['AI_Priority'] = evaluation.implementationPriority || 'N/A';
+                obj['AI_Effort'] = evaluation.estimatedEffort || 'N/A';
+                obj['AI_Summary'] = evaluation.summary || 'No evaluation';
+              } else {
+                obj['AI_Score'] = 'Not evaluated';
+                obj['AI_Ranking'] = 'Not evaluated';
+                obj['AI_Priority'] = 'Not evaluated';
+                obj['AI_Effort'] = 'Not evaluated';
+                obj['AI_Summary'] = 'Click to evaluate';
+              }
+              
               return obj;
             })}
-            columns={(visibleCols.length ? visibleCols : columns.map((_, i) => i)).map(i => ({
+            columns={[
+              // Evaluation columns first (always visible when evaluations exist)
+              ...(Object.keys(evaluations).length > 0 ? [
+                {
+                  field: 'AI_Score',
+                  headerName: '🤖 AI Score',
+                  width: 120,
+                  sortable: true,
+                  renderCell: (params) => (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Typography variant="body2" fontWeight="bold">
+                        {params.value}
+                      </Typography>
+                      {params.value !== 'Not evaluated' && params.value !== 'N/A' && (
+                        <Typography variant="caption" color="textSecondary">
+                          /10
+                        </Typography>
+                      )}
+                    </Box>
+                  )
+                },
+                {
+                  field: 'AI_Ranking',
+                  headerName: '📊 Ranking',
+                  width: 120,
+                  renderCell: (params) => {
+                    if (params.value === 'Not evaluated') {
+                      return (
+                        <Button
+                          size="small"
+                          startIcon={<PsychologyIcon />}
+                          onClick={() => handleEvaluateSingleIdea(params.row._rowIndex)}
+                          disabled={selectedIdeaForEvaluation === params.row._rowIndex}
+                        >
+                          Evaluate
+                        </Button>
+                      );
+                    }
+                    const color = params.value === 'Excellent' ? 'success' : 
+                                 params.value === 'Good' ? 'primary' : 
+                                 params.value === 'Average' ? 'warning' : 'error';
+                    return <Chip label={params.value} color={color} size="small" />;
+                  }
+                },
+                {
+                  field: 'AI_Priority',
+                  headerName: '⚡ Priority',
+                  width: 100,
+                  renderCell: (params) => {
+                    if (params.value === 'Not evaluated') return <Typography variant="caption">-</Typography>;
+                    const color = params.value === 'High' ? 'error' : 
+                                 params.value === 'Medium' ? 'warning' : 'default';
+                    return <Chip label={params.value} color={color} size="small" variant="outlined" />;
+                  }
+                },
+                {
+                  field: 'AI_Summary',
+                  headerName: '💭 AI Summary',
+                  width: 300,
+                  renderCell: (params) => (
+                    <Tooltip title={params.value} placement="top">
+                      <Typography 
+                        variant="body2" 
+                        sx={{ 
+                          overflow: 'hidden', 
+                          textOverflow: 'ellipsis', 
+                          whiteSpace: 'nowrap',
+                          cursor: params.value !== 'Click to evaluate' ? 'help' : 'pointer'
+                        }}
+                      >
+                        {params.value}
+                      </Typography>
+                    </Tooltip>
+                  )
+                }
+              ] : []),
+              // Original data columns
+              ...(visibleCols.length ? visibleCols : columns.map((_, i) => i)).map(i => ({
               field: columns[i],
               headerName: columns[i],
               flex: 1,
@@ -511,8 +970,9 @@ function IdeasTab(props) {
                     />
                   ),
                 },
-              ]
-            }))}
+              ],
+            }))
+            ]}
             pageSize={10}
             rowsPerPageOptions={[10, 20, 50, 100]}
             disableSelectionOnClick

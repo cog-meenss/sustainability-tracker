@@ -75,7 +75,7 @@ function handleExportCSV(contracts, months) {
 import CloseIcon from '@mui/icons-material/Close';
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import DownloadIcon from '@mui/icons-material/Download';
-import * as XLSX from 'xlsx';
+import ExcelJS from 'exceljs';
 import LeaveSummaryTab from './LeaveSummaryTab';
 import ContractMonthFilter from './ContractMonthFilter';
 import { DataGrid, GridToolbar } from '@mui/x-data-grid';
@@ -224,13 +224,31 @@ const RevenueFteTab = (props) => {
   const extractTableData = async (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         try {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: 'array' });
-          const wsname = workbook.SheetNames[0];
-          const ws = workbook.Sheets[wsname];
-          const json = XLSX.utils.sheet_to_json(ws, { header: 1 });
+          const buffer = e.target.result;
+          const workbook = new ExcelJS.Workbook();
+          await workbook.xlsx.load(buffer);
+          
+          const worksheet = workbook.getWorksheet(1);
+          if (!worksheet) return resolve({ name: file.name, columns: [], rows: [] });
+          
+          const json = [];
+          worksheet.eachRow((row, rowNumber) => {
+            const values = [];
+            row.eachCell((cell, colNumber) => {
+              let value = cell.value;
+              // Handle different cell types
+              if (value && typeof value === 'object' && value.text) {
+                value = value.text; // Rich text
+              } else if (value instanceof Date) {
+                value = value.toISOString().split('T')[0]; // Format dates
+              }
+              values[colNumber - 1] = value;
+            });
+            json.push(values);
+          });
+          
           if (!json.length) return resolve({ name: file.name, columns: [], rows: [] });
           const columns = json[0].map((header, idx) => ({ field: String(header) || `col${idx}`, headerName: String(header) || `Column ${idx+1}`, flex: 1 }));
           const rows = json.slice(1).map((row, i) => {
@@ -361,7 +379,7 @@ const RevenueFteTab = (props) => {
       formData.append('people', files[1]);
       formData.append('peopleSelectedCols', JSON.stringify(peopleSelectedCols.map(c => c.id)));
       formData.append('leaveSelectedCols', JSON.stringify(leaveSelectedCols.map(c => c.id)));
-      const res = await fetch('http://localhost:4000/api/upload', {
+      const res = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
       });

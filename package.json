@@ -8,10 +8,10 @@
   },
   "dependencies": {
     "cors": "^2.8.5",
+    "exceljs": "^4.4.0",
     "express": "^4.21.2",
     "express-fileupload": "^1.4.0",
     "multer": "^2.0.2",
-    "node-fetch": "^3.3.2",
-    "xlsx": "^0.18.5"
+    "node-fetch": "^3.3.2"
   }
 }

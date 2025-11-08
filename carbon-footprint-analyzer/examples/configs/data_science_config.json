@@ -1,0 +1,87 @@
+{
+  "description": "Configuration for data science project analysis",
+  "project_type": "data_analysis",
+  "ignore_patterns": [
+    "__pycache__",
+    ".pytest_cache",
+    ".ipynb_checkpoints",
+    "data/raw",
+    "data/processed",
+    "models/saved",
+    ".git",
+    ".vscode",
+    ".idea",
+    "wandb",
+    "mlruns",
+    "*.pkl",
+    "*.h5",
+    "*.model"
+  ],
+  "analysis_depth": "comprehensive",
+  "carbon_calculation": {
+    "default_grid_type": "global_average",
+    "include_development_energy": true,
+    "include_training_energy": true,
+    "include_inference_energy": true,
+    "data_science_factors": {
+      "gpu_usage_hours": 24,
+      "model_training_iterations": 100,
+      "data_processing_gb": 10,
+      "compute_cluster_nodes": 4
+    },
+    "estimated_development_hours": 200
+  },
+  "reporting": {
+    "default_formats": ["html", "json", "csv"],
+    "include_optimization_guide": true,
+    "include_ml_carbon_tracking": true,
+    "include_compute_efficiency": true
+  },
+  "data_science_specific": {
+    "analyze_notebook_efficiency": true,
+    "check_vectorization_usage": true,
+    "analyze_memory_patterns": true,
+    "check_parallel_processing": true,
+    "monitor_gpu_utilization": true,
+    "analyze_data_loading": true
+  },
+  "optimization_targets": {
+    "training_time_hours": 4,
+    "memory_usage_gb": 16,
+    "data_loading_time_minutes": 5,
+    "model_size_mb": 100
+  },
+  "ml_frameworks": {
+    "tensorflow": {
+      "check_eager_execution": true,
+      "analyze_graph_optimization": true,
+      "monitor_gpu_memory": true
+    },
+    "pytorch": {
+      "check_dataloader_efficiency": true,
+      "analyze_model_complexity": true,
+      "monitor_gradient_computation": true
+    },
+    "scikit_learn": {
+      "check_algorithm_efficiency": true,
+      "analyze_preprocessing_steps": true
+    },
+    "pandas": {
+      "check_vectorization": true,
+      "analyze_memory_usage": true,
+      "optimize_data_types": true
+    }
+  },
+  "compute_environment": {
+    "track_cpu_usage": true,
+    "track_gpu_usage": true,
+    "monitor_memory_allocation": true,
+    "analyze_i_o_patterns": true
+  },
+  "sustainability": {
+    "prefer_efficient_algorithms": true,
+    "recommend_model_compression": true,
+    "suggest_green_computing": true,
+    "track_carbon_per_experiment": true
+  }
+}

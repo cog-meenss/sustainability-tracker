@@ -4,6 +4,7 @@ import IdeasTab from "./IdeasTab";
 import RevenueFteTab from "./RevenueFteTab";
 import ChatSection from "./ChatSection";
 import ChatInput from "./ChatInput";
+import { getChatResponse } from "./services/openaiService";
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Toolbar, Divider, Avatar, IconButton } from "@mui/material";
 import SchoolIcon from '@mui/icons-material/School';
 import LightbulbIcon from '@mui/icons-material/Lightbulb';
@@ -97,55 +98,82 @@ function App() {
     }
   };
 
-  // Chatbot logic: only answer app-related queries
-  function getBotReply(input) {
-    const relevantKeywords = [
-      'training','ideas','revenue','fte','upload','tab','sidebar','switch','filter','view','column','file','data','export','search','tracker','app','application','feature','functionality','leave','people','summary','contract','associate','table','download','sort','filter','profile','settings','responsive','mobile','chat','conversation'
-    ];
-    const lower = input.toLowerCase();
-    const isRelevant = relevantKeywords.some(kw => lower.includes(kw));
-    if (isRelevant) {
-      // Example: context-aware reply
-      if (lower.includes('upload')) return 'You can upload Excel files in the Training, Ideas, or Revenue & FTE tabs using the upload button.';
-      if (lower.includes('switch')) return 'Use the sidebar to switch between Training, Ideas, Revenue & FTE, or start a new chat.';
-      if (lower.includes('export')) return 'Most tabs have an export button to download your data as CSV.';
-      if (lower.includes('filter')) return 'You can filter data in each tab using the filter controls above the tables.';
-      if (lower.includes('profile') || lower.includes('settings')) return 'Profile and settings features are planned for a future release.';
-      if (lower.includes('chat')) return 'This chat can answer questions about how to use the app.';
-      // Generic relevant
-      return 'This app helps you manage training, ideas, and revenue/FTE data. Ask about uploading, filtering, or switching tabs!';
+  // Enhanced chatbot logic using OpenAI with fallback
+  const getBotResponse = async (messages) => {
+    try {
+      const result = await getChatResponse(messages);
+      
+      if (result.success) {
+        return result.response;
+      } else {
+        // If OpenAI fails, use fallback response
+        console.warn('OpenAI API failed:', result.error);
+        return result.fallbackResponse || 'I apologize, but I\'m having trouble connecting to my AI service. Please try again in a moment.';
+      }
+    } catch (error) {
+      console.error('Unexpected error in chat response:', error);
+      return 'I\'m experiencing technical difficulties. Please try again.';
     }
-    return 'Sorry, this is not a relevant search for this application.';
-  }
+  };
 
-  // Chat send handler (async, only create chat after user sends)
+  // Chat send handler with OpenAI integration
   const handleChatSend = async () => {
     const trimmed = chatInput.trim();
     if (!trimmed) return;
+    
     setAiTyping(true);
     let chatId = activeChatId;
+    let currentMessages = [];
+    
     // If no active chat, create one
     if (!chatId) {
       chatId = (Math.max(0, ...chats.map(c => c.id)) + 1);
-      setChats([{ id: chatId, title: trimmed.slice(0, 32), messages: [{ role: 'user', text: trimmed }] }, ...chats]);
+      const newChat = { 
+        id: chatId, 
+        title: trimmed.slice(0, 32), 
+        messages: [{ role: 'user', text: trimmed }] 
+      };
+      setChats([newChat, ...chats]);
       setActiveChatId(chatId);
+      currentMessages = newChat.messages;
     } else {
+      // Add user message to existing chat
+      setChats(chats => chats.map(chat => {
+        if (chat.id === chatId) {
+          const updatedChat = { ...chat, messages: [...chat.messages, { role: 'user', text: trimmed }] };
+          currentMessages = updatedChat.messages;
+          return updatedChat;
+        }
+        return chat;
+      }));
+      // Get current messages from the existing chat
+      const existingChat = chats.find(c => c.id === chatId);
+      if (existingChat) {
+        currentMessages = [...existingChat.messages, { role: 'user', text: trimmed }];
+      }
+    }
+    
+    setChatInput("");
+    
+    // Get AI response
+    try {
+      const botResponse = await getBotResponse(currentMessages);
+      
       setChats(chats => chats.map(chat =>
         chat.id === chatId
-          ? { ...chat, messages: [...chat.messages, { role: 'user', text: trimmed }] }
+          ? { ...chat, messages: [...chat.messages, { role: 'assistant', text: botResponse }] }
           : chat
       ));
-    }
-    setChatInput("");
-    // Async AI response (simulate delay)
-    setTimeout(() => {
+    } catch (error) {
+      console.error('Error getting bot response:', error);
       setChats(chats => chats.map(chat =>
         chat.id === chatId
-          ? { ...chat, messages: [...chat.messages, { role: 'assistant', text: getBotReply(trimmed) }] }
+          ? { ...chat, messages: [...chat.messages, { role: 'assistant', text: 'I apologize, but I encountered an error. Please try again.' }] }
           : chat
-      ))
+      ));
+    } finally {
       setAiTyping(false);
-    }, 1000);
+    }
   };
 
   // Persist sidebar collapsed state

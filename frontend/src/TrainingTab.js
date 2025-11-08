@@ -105,7 +105,7 @@ function TrainingTab(props) {
     const formData = new FormData();
     formData.append("excel", selectedFile);
     try {
-      const res = await fetch("http://localhost:4000/api/training-upload", {
+      const res = await fetch("/api/training-upload", {
         method: "POST",
         body: formData,
       });

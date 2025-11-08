@@ -1,0 +1,76 @@
+{
+  "description": "Configuration for mobile application analysis",
+  "project_type": "mobile_app",
+  "ignore_patterns": [
+    "node_modules",
+    "build",
+    "android/build",
+    "ios/build",
+    ".gradle",
+    "Pods",
+    ".git",
+    ".vscode",
+    ".idea",
+    "coverage",
+    "*.xcworkspace/xcuserdata"
+  ],
+  "analysis_depth": "detailed",
+  "carbon_calculation": {
+    "default_grid_type": "renewable_heavy",
+    "include_development_energy": true,
+    "include_deployment_energy": false,
+    "mobile_specific_factors": {
+      "battery_drain_coefficient": 1.2,
+      "network_usage_multiplier": 1.5,
+      "cpu_efficiency_mobile": 0.8
+    },
+    "estimated_development_hours": 480
+  },
+  "reporting": {
+    "default_formats": ["html", "json"],
+    "include_optimization_guide": true,
+    "include_battery_impact": true,
+    "include_performance_metrics": true
+  },
+  "mobile_specific": {
+    "analyze_battery_usage": true,
+    "check_memory_leaks": true,
+    "analyze_network_efficiency": true,
+    "check_ui_performance": true,
+    "monitor_app_size": true,
+    "analyze_startup_time": true
+  },
+  "optimization_targets": {
+    "app_size_mb": 50,
+    "startup_time_ms": 2000,
+    "memory_usage_mb": 128,
+    "network_requests_per_session": 20
+  },
+  "platforms": {
+    "react_native": {
+      "check_bridge_overhead": true,
+      "analyze_native_modules": true,
+      "check_bundle_splitting": true
+    },
+    "flutter": {
+      "check_widget_efficiency": true,
+      "analyze_build_methods": true
+    },
+    "android_native": {
+      "check_activity_lifecycle": true,
+      "analyze_fragment_usage": true,
+      "monitor_background_tasks": true
+    },
+    "ios_native": {
+      "check_view_controller_efficiency": true,
+      "analyze_arc_usage": true,
+      "monitor_background_processing": true
+    }
+  },
+  "performance_monitoring": {
+    "track_fps": true,
+    "monitor_memory_pressure": true,
+    "analyze_network_patterns": true,
+    "check_background_processing": true
+  }
+}
