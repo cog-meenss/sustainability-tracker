@@ -1,0 +1,58 @@
+# 🌱 Simple GitHub Actions Sustainability Analysis
+# Minimal version for quick testing
+
+name: 🌱 Simple Sustainability Check
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:  # Allow manual trigger
+
+jobs:
+  quick-analysis:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+        
+    - name: 🌱 Quick Analysis
+      run: |
+        echo "🌱 Quick Sustainability Analysis"
+        echo "Repository: ${{ github.repository }}"
+        echo "Branch: ${{ github.ref_name }}"
+        
+        # Count file types
+        JS_FILES=$(find . -name "*.js" | wc -l)
+        PY_FILES=$(find . -name "*.py" | wc -l)
+        TS_FILES=$(find . -name "*.ts" | wc -l)
+        JSON_FILES=$(find . -name "*.json" | wc -l)
+        
+        echo "📊 File Analysis:"
+        echo "- JavaScript: $JS_FILES files"
+        echo "- Python: $PY_FILES files" 
+        echo "- TypeScript: $TS_FILES files"
+        echo "- JSON: $JSON_FILES files"
+        
+        TOTAL=$((JS_FILES + PY_FILES + TS_FILES + JSON_FILES))
+        echo "- Total: $TOTAL files"
+        
+        # Simple sustainability score
+        if [ $TOTAL -gt 0 ]; then
+            SCORE=$((75 + (TOTAL > 50 ? -10 : TOTAL > 20 ? 0 : 10)))
+            echo "📊 Sustainability Score: $SCORE/100"
+            
+            if [ $SCORE -ge 75 ]; then
+                echo "✅ Quality Gate: PASSED"
+            else
+                echo "⚠️ Quality Gate: NEEDS ATTENTION"
+            fi
+        else
+            echo "⚠️ No files found for analysis"
+        fi
+        
+    - name: 📈 Summary
+      run: |
+        echo "📈 Analysis Complete!"
+        echo "🚀 Running on GitHub Actions (Free Tier)"
+        echo "⏰ Completed at: $(date)"
