@@ -1,0 +1,95 @@
+{
+  "sustainability_metrics": {
+    "energy_efficiency": 9.296875,
+    "resource_utilization": 12.5,
+    "carbon_footprint": 60.666666666666664,
+    "performance_optimization": 77.8582755675809,
+    "sustainable_practices": 4.340277777777778,
+    "overall_score": 29.321568307960625
+  },
+  "analysis_summary": {
+    "file_count": 24,
+    "language_breakdown": {
+      "javascript": 16,
+      "python": 8
+    },
+    "execution_time": 0.04442000389099121,
+    "timestamp": "2025-11-09T18:04:34.654618"
+  },
+  "issues": [
+    {
+      "type": "sustainability_concern",
+      "file": "./frontend/src/utils/exportCsv.js",
+      "rule": "async_patterns",
+      "severity": "medium",
+      "count": 1,
+      "message": "Found 1 sustainability concerns in async_patterns"
+    },
+    {
+      "type": "sustainability_concern",
+      "file": "./frontend/src/services/ideaEvaluationService.js",
+      "rule": "async_patterns",
+      "severity": "medium",
+      "count": 1,
+      "message": "Found 1 sustainability concerns in async_patterns"
+    },
+    {
+      "type": "sustainability_concern",
+      "file": "./sustainability-analyzer/analyzer/sustainability_analyzer.py",
+      "rule": "async_patterns",
+      "severity": "medium",
+      "count": 3,
+      "message": "Found 3 sustainability concerns in async_patterns"
+    },
+    {
+      "type": "sustainability_concern",
+      "file": "./sustainability-analyzer/analyzer/sustainability_analyzer.py",
+      "rule": "memory_efficiency",
+      "severity": "medium",
+      "count": 4,
+      "message": "Found 4 sustainability concerns in memory_efficiency"
+    },
+    {
+      "type": "sustainability_concern",
+      "file": "./sustainability-analyzer/analyzer/sustainability_analyzer.py",
+      "rule": "performance_patterns",
+      "severity": "medium",
+      "count": 2,
+      "message": "Found 2 sustainability concerns in performance_patterns"
+    }
+  ],
+  "recommendations": [
+    {
+      "category": "energy_efficiency",
+      "priority": "high",
+      "title": "Improve Async Patterns",
+      "description": "Implement more asynchronous programming patterns to reduce CPU blocking and improve energy efficiency.",
+      "impact": "High",
+      "effort": "Medium"
+    },
+    {
+      "category": "resource_utilization",
+      "priority": "high",
+      "title": "Optimize Memory Usage",
+      "description": "Review memory allocation patterns and implement more efficient data structures.",
+      "impact": "High",
+      "effort": "Medium"
+    },
+    {
+      "category": "carbon_footprint",
+      "priority": "medium",
+      "title": "Reduce Runtime Complexity",
+      "description": "Optimize algorithms to reduce execution time and energy consumption.",
+      "impact": "Medium",
+      "effort": "High"
+    },
+    {
+      "category": "javascript_optimization",
+      "priority": "medium",
+      "title": "Bundle Size Optimization",
+      "description": "Implement code splitting and tree shaking to reduce JavaScript bundle size.",
+      "impact": "Medium",
+      "effort": "Low"
+    }
+  ]
+}
