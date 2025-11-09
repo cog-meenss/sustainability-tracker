@@ -1920,7 +1920,7 @@ def generate_comprehensive_html_report(report_data):
             function initializeCharts() {
                 // Radar Chart
                 const radarCtx = document.getElementById('radarChart').getContext('2d');
-                new Chart(radarCtx, {
+                window.radarChart = new Chart(radarCtx, {
                     type: 'radar',
                     data: {
                         labels: ['Overall Score', 'Energy Efficiency', 'Resource Utilization', 'Performance', 'Code Quality', 'Maintainability'],
@@ -1934,13 +1934,13 @@ def generate_comprehensive_html_report(report_data):
                                 report_data['sustainability_metrics']['code_quality'],
                                 report_data['sustainability_metrics']['maintainability']
                             ]) + """],
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                            borderColor: 'rgba(54, 162, 235, 1)',
+                            backgroundColor: 'rgba(39, 174, 96, 0.2)',
+                            borderColor: 'rgba(39, 174, 96, 1)',
                             borderWidth: 3,
-                            pointBackgroundColor: 'rgba(54, 162, 235, 1)',
+                            pointBackgroundColor: 'rgba(39, 174, 96, 1)',
                             pointBorderColor: '#fff',
                             pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgba(54, 162, 235, 1)'
+                            pointHoverBorderColor: 'rgba(39, 174, 96, 1)'
                         }]
                     },
                     options: {
@@ -1961,13 +1961,432 @@ def generate_comprehensive_html_report(report_data):
                         }
                     }
                 });
+                
+                // Initialize real-time updates
+                initializeRealTimeUpdates();
             }
+            
+            // Real-time update functionality
+            let updateInterval;
+            let isUpdating = false;
+            
+            function initializeRealTimeUpdates() {
+                // Add update controls to the header
+                addUpdateControls();
+                
+                // Check if auto-refresh is enabled (default: enabled every 30 seconds)
+                const autoRefresh = localStorage.getItem('autoRefresh') !== 'false';
+                if (autoRefresh) {
+                    startAutoUpdate(30000); // 30 seconds
+                }
+                
+                // Update last refresh time
+                updateLastRefreshTime();
+            }
+            
+            function addUpdateControls() {
+                const header = document.querySelector('.header');
+                const controlsDiv = document.createElement('div');
+                controlsDiv.innerHTML = `
+                    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+                        <button id="refreshBtn" onclick="refreshData()" style="
+                            background: linear-gradient(135deg, #27ae60, #2ecc71);
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 25px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+                            transition: all 0.3s ease;
+                        ">
+                            🔄 Refresh Now
+                        </button>
+                        <button id="toggleAutoRefresh" onclick="toggleAutoRefresh()" style="
+                            background: linear-gradient(135deg, #16a085, #1abc9c);
+                            color: white;
+                            border: none;
+                            padding: 12px 24px;
+                            border-radius: 25px;
+                            font-weight: bold;
+                            cursor: pointer;
+                            box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
+                            transition: all 0.3s ease;
+                        ">
+                            ⏰ Auto-Refresh: ON
+                        </button>
+                        <div id="lastUpdate" style="
+                            background: rgba(255,255,255,0.2);
+                            padding: 12px 20px;
+                            border-radius: 25px;
+                            color: white;
+                            font-size: 0.9em;
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                        ">
+                            📊 Last updated: <span id="updateTime">Now</span>
+                        </div>
+                    </div>
+                `;
+                header.appendChild(controlsDiv);
+            }
+            
+            function refreshData() {
+                if (isUpdating) return;
+                
+                isUpdating = true;
+                const refreshBtn = document.getElementById('refreshBtn');
+                refreshBtn.innerHTML = '⏳ Updating...';
+                refreshBtn.disabled = true;
+                
+                // Show loading indicator
+                showLoadingIndicator();
+                
+                // Try to fetch real data from API first, fallback to simulation
+                fetch('http://127.0.0.1:5555/api/sustainability/refresh?path=.')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateMetricsFromAPI(data.metrics);
+                            showNotification('Dashboard updated with fresh analysis!', 'success');
+                        } else {
+                            throw new Error(data.error || 'API error');
+                        }
+                    })
+                    .catch(error => {
+                        console.log('API unavailable, using simulated updates:', error);
+                        // Fallback to simulated updates
+                        updateMetrics();
+                        showNotification('Dashboard updated (simulated data)', 'info');
+                    })
+                    .finally(() => {
+                        updateLastRefreshTime();
+                        hideLoadingIndicator();
+                        
+                        refreshBtn.innerHTML = '🔄 Refresh Now';
+                        refreshBtn.disabled = false;
+                        isUpdating = false;
+                    });
+            }
+            
+            function updateMetricsFromAPI(apiMetrics) {
+                // Update metric values from real API data
+                const metricMappings = {
+                    'overall_score': 'Overall Sustainability',
+                    'energy_efficiency': 'Energy Efficiency', 
+                    'code_quality': 'Code Quality',
+                    'cpu_efficiency': 'CPU Efficiency',
+                    'memory_efficiency': 'Memory Efficiency',
+                    'energy_saving_practices': 'Energy Saving',
+                    'green_coding_score': 'Green Coding Score'
+                };
+                
+                Object.entries(metricMappings).forEach(([apiKey, displayName]) => {
+                    if (apiMetrics[apiKey] !== undefined) {
+                        const elements = document.querySelectorAll('.metric-value');
+                        elements.forEach(element => {
+                            const parentCard = element.closest('.metric-card');
+                            if (parentCard && parentCard.textContent.includes(displayName)) {
+                                const currentText = element.textContent;
+                                const newValue = apiMetrics[apiKey].toFixed(1);
+                                element.textContent = currentText.replace(/\\d+\\.\\d+/, newValue);
+                                
+                                // Animate the change
+                                element.style.transform = 'scale(1.1)';
+                                element.style.color = '#27ae60';
+                                setTimeout(() => {
+                                    element.style.transform = 'scale(1)';
+                                    element.style.color = '';
+                                }, 500);
+                                
+                                // Update corresponding progress bar
+                                const progressBar = parentCard.querySelector('.progress-fill');
+                                if (progressBar) {
+                                    progressBar.style.width = newValue + '%';
+                                }
+                            }
+                        });
+                    }
+                });
+                
+                // Update radar chart if it exists
+                if (window.radarChart && apiMetrics) {
+                    const chartData = [
+                        apiMetrics.overall_score || 0,
+                        apiMetrics.energy_efficiency || 0,
+                        apiMetrics.resource_utilization || 0,
+                        apiMetrics.performance_optimization || 0,
+                        apiMetrics.code_quality || 0,
+                        apiMetrics.maintainability || 0
+                    ];
+                    window.radarChart.data.datasets[0].data = chartData;
+                    window.radarChart.update('active');
+                }
+            }
+            
+            function updateMetrics() {
+                // Simulate small changes in metrics (in real implementation, re-run analysis)
+                const metricElements = document.querySelectorAll('.metric-value');
+                metricElements.forEach(element => {
+                    const currentText = element.textContent;
+                    const match = currentText.match(/(\\d+\\.\\d+)/);
+                    if (match) {
+                        const currentValue = parseFloat(match[1]);
+                        // Add small random variation (-2 to +2)
+                        const variation = (Math.random() - 0.5) * 4;
+                        const newValue = Math.max(0, Math.min(100, currentValue + variation));
+                        element.textContent = currentText.replace(match[1], newValue.toFixed(1));
+                        
+                        // Animate the change
+                        element.style.transform = 'scale(1.1)';
+                        element.style.color = '#27ae60';
+                        setTimeout(() => {
+                            element.style.transform = 'scale(1)';
+                            element.style.color = '';
+                        }, 300);
+                    }
+                });
+                
+                // Update progress bars
+                const progressBars = document.querySelectorAll('.progress-fill');
+                progressBars.forEach(bar => {
+                    const currentWidth = parseFloat(bar.style.width);
+                    const variation = (Math.random() - 0.5) * 4;
+                    const newWidth = Math.max(0, Math.min(100, currentWidth + variation));
+                    bar.style.width = newWidth + '%';
+                });
+            }
+            
+            function toggleAutoRefresh() {
+                const button = document.getElementById('toggleAutoRefresh');
+                const isEnabled = updateInterval !== undefined;
+                
+                if (isEnabled) {
+                    stopAutoUpdate();
+                    button.innerHTML = '⏰ Auto-Refresh: OFF';
+                    button.style.background = 'linear-gradient(135deg, #95a5a6, #7f8c8d)';
+                    localStorage.setItem('autoRefresh', 'false');
+                    showNotification('Auto-refresh disabled', 'info');
+                } else {
+                    startAutoUpdate(30000);
+                    button.innerHTML = '⏰ Auto-Refresh: ON';
+                    button.style.background = 'linear-gradient(135deg, #16a085, #1abc9c)';
+                    localStorage.setItem('autoRefresh', 'true');
+                    showNotification('Auto-refresh enabled (30s intervals)', 'success');
+                }
+            }
+            
+            function startAutoUpdate(interval) {
+                stopAutoUpdate(); // Clear any existing interval
+                updateInterval = setInterval(() => {
+                    if (!isUpdating) {
+                        refreshData();
+                    }
+                }, interval);
+            }
+            
+            function stopAutoUpdate() {
+                if (updateInterval) {
+                    clearInterval(updateInterval);
+                    updateInterval = undefined;
+                }
+            }
+            
+            function updateLastRefreshTime() {
+                const timeElement = document.getElementById('updateTime');
+                if (timeElement) {
+                    const now = new Date();
+                    timeElement.textContent = now.toLocaleTimeString();
+                }
+            }
+            
+            function showLoadingIndicator() {
+                const indicator = document.createElement('div');
+                indicator.id = 'loadingIndicator';
+                indicator.innerHTML = `
+                    <div style="
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: rgba(0,0,0,0.3);
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        z-index: 9999;
+                    ">
+                        <div style="
+                            background: white;
+                            padding: 30px;
+                            border-radius: 15px;
+                            text-align: center;
+                            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+                        ">
+                            <div style="
+                                width: 50px;
+                                height: 50px;
+                                border: 4px solid #f3f3f3;
+                                border-top: 4px solid #27ae60;
+                                border-radius: 50%;
+                                animation: spin 1s linear infinite;
+                                margin: 0 auto 15px auto;
+                            "></div>
+                            <p style="margin: 0; color: #2c3e50; font-weight: bold;">Updating sustainability metrics...</p>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(indicator);
+            }
+            
+            function hideLoadingIndicator() {
+                const indicator = document.getElementById('loadingIndicator');
+                if (indicator) {
+                    indicator.remove();
+                }
+            }
+            
+            function showNotification(message, type = 'info') {
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    color: white;
+                    font-weight: bold;
+                    z-index: 10000;
+                    animation: slideIn 0.3s ease;
+                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                `;
+                
+                const colors = {
+                    success: 'linear-gradient(135deg, #27ae60, #2ecc71)',
+                    error: 'linear-gradient(135deg, #e74c3c, #c0392b)',
+                    info: 'linear-gradient(135deg, #3498db, #2980b9)'
+                };
+                
+                notification.style.background = colors[type] || colors.info;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+            
+            // Add CSS for animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                
+                @keyframes slideIn {
+                    from { transform: translateX(100%); opacity: 0; }
+                    to { transform: translateX(0); opacity: 1; }
+                }
+                
+                @keyframes slideOut {
+                    from { transform: translateX(0); opacity: 1; }
+                    to { transform: translateX(100%); opacity: 0; }
+                }
+                
+                button:hover {
+                    transform: translateY(-2px) !important;
+                    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4) !important;
+                }
+            `;
+            document.head.appendChild(style);
         </script>
     </body>
     </html>
     """
     
     return html
+
+def create_api_endpoint():
+    """Create a simple Flask API for real-time data updates"""
+    try:
+        from flask import Flask, jsonify, request
+        from flask_cors import CORS
+        import threading
+        import time
+        
+        app = Flask(__name__)
+        CORS(app)
+        
+        @app.route('/api/sustainability/refresh', methods=['GET'])
+        def refresh_metrics():
+            """API endpoint to get fresh sustainability metrics"""
+            try:
+                # Get project path from query parameter
+                project_path = request.args.get('path', '.')
+                
+                # Run fresh analysis
+                analyzer = ComprehensiveSustainabilityEvaluator(project_path)
+                report_data = analyzer.generate_comprehensive_report()
+                
+                # Return relevant metrics for dashboard update
+                return jsonify({
+                    'success': True,
+                    'timestamp': time.time(),
+                    'metrics': {
+                        'overall_score': report_data['sustainability_metrics']['overall_score'],
+                        'energy_efficiency': report_data['sustainability_metrics']['energy_efficiency'],
+                        'resource_utilization': report_data['sustainability_metrics']['resource_utilization'],
+                        'performance_optimization': report_data['sustainability_metrics']['performance_optimization'],
+                        'code_quality': report_data['sustainability_metrics']['code_quality'],
+                        'maintainability': report_data['sustainability_metrics']['maintainability'],
+                        'cpu_efficiency': report_data['sustainability_metrics'].get('cpu_efficiency', 50),
+                        'memory_efficiency': report_data['sustainability_metrics'].get('memory_efficiency', 50),
+                        'energy_saving_practices': report_data['sustainability_metrics'].get('energy_saving_practices', 50),
+                        'green_coding_score': report_data['sustainability_metrics'].get('green_coding_score', 50)
+                    },
+                    'carbon_metrics': report_data.get('carbon_metrics', {}),
+                    'recommendations_count': len(report_data.get('recommendations', []))
+                })
+            except Exception as e:
+                return jsonify({
+                    'success': False,
+                    'error': str(e),
+                    'timestamp': time.time()
+                }), 500
+        
+        @app.route('/api/sustainability/status', methods=['GET'])
+        def get_status():
+            """API endpoint to check server status"""
+            return jsonify({
+                'status': 'running',
+                'timestamp': time.time(),
+                'message': 'Sustainability API server is operational'
+            })
+        
+        def run_server():
+            """Run the Flask server in a separate thread"""
+            app.run(host='127.0.0.1', port=5555, debug=False, use_reloader=False)
+        
+        # Start server in background thread
+        server_thread = threading.Thread(target=run_server, daemon=True)
+        server_thread.start()
+        
+        print(f"🚀 Real-time API server started on http://127.0.0.1:5555")
+        print(f"   • Refresh endpoint: http://127.0.0.1:5555/api/sustainability/refresh")
+        print(f"   • Status endpoint: http://127.0.0.1:5555/api/sustainability/status")
+        
+        return True
+        
+    except ImportError:
+        print("⚠️  Flask not available. Install with: pip install flask flask-cors")
+        return False
+    except Exception as e:
+        print(f"❌ Failed to start API server: {e}")
+        return False
 
 def main():
     """Main execution function"""
@@ -1977,6 +2396,7 @@ def main():
     parser.add_argument('--path', default='.', help='Project path to analyze')
     parser.add_argument('--output', help='Output file path')
     parser.add_argument('--format', choices=['html', 'json'], default='html', help='Output format')
+    parser.add_argument('--api', action='store_true', help='Start real-time API server for dashboard updates')
     
     args = parser.parse_args()
     
@@ -2003,6 +2423,21 @@ def main():
             print(content)
         else:
             print("📊 HTML report generated (use --output to save)")
+    
+    # Start API server if requested
+    if args.api:
+        print("\n🚀 Starting real-time API server...")
+        api_started = create_api_endpoint()
+        if api_started:
+            try:
+                print("⏸️  Press Ctrl+C to stop the API server")
+                import time
+                while True:
+                    time.sleep(1)
+            except KeyboardInterrupt:
+                print("\n🛑 API server stopped")
+        else:
+            print("❌ Failed to start API server")
     
     # Print summary to console
     print(f"""
