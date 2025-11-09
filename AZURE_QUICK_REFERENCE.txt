@@ -1,0 +1,115 @@
+╭─────────────────────────────────────────────────────────────────╮
+│                🌱 AZURE DEVOPS PIPELINE SETUP                  │
+│                     Sustainability Analysis                     │
+╰─────────────────────────────────────────────────────────────────╯
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                    🚀 QUICK START (5 MINUTES)                  ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+📋 YOUR STATUS:
+   ✅ Pipeline YAML ready: azure-pipelines.yml
+   ✅ Analyzer files ready: 8 Python components  
+   ✅ Git repository ready: All files committed
+   ✅ Configuration ready: Complete setup
+
+🌐 AZURE DEVOPS PORTAL METHOD:
+   1. Open: https://dev.azure.com/[your-org]/[project]
+   2. Click: Pipelines → New Pipeline
+   3. Select: Your repository (GitHub/Azure Repos)
+   4. Choose: "Existing Azure Pipelines YAML file"
+   5. Path: azure-pipelines.yml
+   6. Click: Run
+
+💻 AZURE CLI METHOD:
+   az pipelines create --name "Sustainability-Analysis" \
+     --yaml-path "azure-pipelines.yml" --branch "main"
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                      📊 WHAT YOU GET                           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+🎯 PIPELINE STAGES:
+   Stage 1: Sustainability Analysis (5-10 min)
+   Stage 2: Quality Gate Evaluation (1 min)
+   Stage 3: Report Generation (2-3 min)
+   Stage 4: Publishing & Notifications (1 min)
+
+📦 GENERATED ARTIFACTS:
+   🎨 Interactive Visual Dashboard
+   📋 Advanced Data Tables (filter/export)
+   📄 Executive Summary PDF
+   🔍 Raw JSON Analysis Data
+   🧪 Azure DevOps Test Results
+
+🎯 KEY METRICS ANALYZED:
+   • Overall Sustainability Score (/100)
+   • Energy Efficiency (/100)
+   • Resource Utilization (/100)  
+   • Carbon Footprint (/100)
+   • Performance Optimization (/100)
+   • Sustainable Practices (/100)
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                    ⚡ AUTOMATIC TRIGGERS                        ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+✅ PUSH TRIGGERS:
+   • Push to main branch
+   • Push to develop branch
+   • Excludes: documentation changes
+
+✅ PR TRIGGERS:
+   • Pull requests to main/develop
+   • Shows sustainability impact
+
+📅 SCHEDULED TRIGGERS:
+   • Weekly analysis: Monday 2 AM UTC
+   • Regular monitoring
+
+▶️  MANUAL TRIGGERS:
+   • Run button in Azure DevOps
+   • Azure CLI commands
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                   🛠️ OPTIONAL CONFIGURATION                    ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+🎯 PIPELINE VARIABLES (Edit → Variables):
+   sustainabilityThreshold = 75       # Quality gate minimum
+   reportFormat = all                 # Generate all formats
+   TeamsWebhookUrl = https://...      # Teams notifications
+
+🔔 TEAMS NOTIFICATIONS:
+   1. Create incoming webhook in Teams channel
+   2. Add webhook URL to pipeline variables
+   3. Get alerts for quality gate failures
+
+📊 QUALITY THRESHOLDS:
+   • Default: 75/100 overall score
+   • Configurable per metric type
+   • Warning (not failure) if below threshold
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                     ✅ SUCCESS VERIFICATION                     ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+After pipeline creation, verify:
+   □ Pipeline runs successfully (green status)
+   □ Build summary shows sustainability metrics
+   □ Artifacts published (SustainabilityReports)
+   □ Test results appear in Tests tab
+   □ Quality gate evaluates correctly
+   □ Reports downloadable and readable
+
+┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
+┃                      🎉 READY TO GO!                           ┃
+┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+
+Your sustainability analysis pipeline is ready for Azure DevOps!
+
+📖 Detailed Guide: cat AZURE_DEVOPS_SETUP.md
+🧪 Test Locally: ./sustainability-analyzer/test-pipeline.sh
+🎯 Quick Reference: cat sustainability-analyzer/PIPELINE_QUICKSTART.md
+
+🚀 Just create the pipeline in Azure DevOps and start analyzing! 🌱
