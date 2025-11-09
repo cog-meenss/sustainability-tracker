@@ -40,8 +40,6 @@ variables:
     value: 'all'  # html, json, azure, all
   - name: TeamsWebhookUrl
     value: ''  # Optional: Add your Teams webhook URL here
-  - name: TeamsWebhookUrl
-    value: ''  # Optional: Add your Teams webhook URL here
 
 pool:
   vmImage: 'ubuntu-latest'
