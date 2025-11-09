@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🌱 Sustainability Tracker
 
 A comprehensive code sustainability analysis tool with automated CI/CD integration for business applications.
@@ -54,8 +55,8 @@ cd frontend && npm install && npm start
 
 ## 📊 Pipeline Status
 
-![Sustainability Analysis](https://github.com/USERNAME/sustainability-tracker/workflows/🌱%20Sustainability%20Analysis/badge.svg)
-![Simple Check](https://github.com/USERNAME/sustainability-tracker/workflows/🌱%20Simple%20Sustainability%20Check/badge.svg)
+![Sustainability Analysis](https://github.com/cog-meenss/sustainability-tracker/workflows/🌱%20Sustainability%20Analysis/badge.svg)
+![Simple Check](https://github.com/cog-meenss/sustainability-tracker/workflows/🌱%20Simple%20Sustainability%20Check/badge.svg)
 
 ## 📁 Project Structure
 
@@ -122,9 +123,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 🔗 Links
 
 - **Documentation**: [Setup Guides](GITHUB_ACTIONS_SETUP.md)
-- **Azure DevOps**: [Pipeline Documentation](AZURE_DEVOPS_SETUP.md)
-- **Demo**: [Live Dashboard](https://your-demo-url.com)
+- **Demo**: [Repository](https://github.com/cog-meenss/sustainability-tracker)
 
 ---
 
 **🌱 Built with sustainability in mind** • Automated analysis • Continuous improvement
+=======
+# sustainability-tracker
+Code sustainability analysis and business data tracker
+>>>>>>> github/main
