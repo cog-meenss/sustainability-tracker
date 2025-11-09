@@ -8,10 +8,70 @@ import json
 import sys
 import os
 
+def check_automation_status():
+    """Check status of various automation methods"""
+    automation_status = {}
+    
+    # Check Git hooks
+    git_hook_path = '../.git/hooks/pre-commit'
+    if os.path.exists(git_hook_path):
+        try:
+            with open(git_hook_path, 'r') as f:
+                content = f.read()
+            if 'carbon' in content.lower():
+                automation_status['git_hooks'] = '✅ ACTIVE'
+            else:
+                automation_status['git_hooks'] = '⚠️  EXISTS (not carbon-enabled)'
+        except:
+            automation_status['git_hooks'] = '❌ ERROR reading hook'
+    else:
+        automation_status['git_hooks'] = '❌ NOT INSTALLED'
+    
+    # Check for automation scripts
+    scripts_to_check = [
+        ('../analyze-carbon-now.sh', 'manual_script'),
+        ('../carbon-monitor.py', 'live_monitor'),
+        ('../setup-carbon-automation.sh', 'setup_script')
+    ]
+    
+    for script_path, key in scripts_to_check:
+        if os.path.exists(script_path):
+            automation_status[key] = '✅ AVAILABLE'
+        else:
+            automation_status[key] = '❌ NOT FOUND'
+    
+    # Check for GitHub Actions
+    gh_actions_path = '../.github/workflows/carbon-analysis.yml'
+    if os.path.exists(gh_actions_path):
+        automation_status['github_actions'] = '✅ CONFIGURED'
+    else:
+        automation_status['github_actions'] = '❌ NOT CONFIGURED'
+    
+    return automation_status
+
 def display_pipeline_summary(data):
     """Display comprehensive carbon analysis summary for pipeline"""
     print("📊 CARBON FOOTPRINT ANALYSIS RESULTS")
     print("=" * 50)
+    
+    # Show automation status first
+    automation_status = check_automation_status()
+    print("\n🤖 AUTOMATION STATUS:")
+    print("-" * 40)
+    print(f"Git Hooks (Pre-commit): {automation_status.get('git_hooks', '❌ UNKNOWN')}")
+    print(f"Manual Script:          {automation_status.get('manual_script', '❌ UNKNOWN')}")
+    print(f"Live Monitor:           {automation_status.get('live_monitor', '❌ UNKNOWN')}")
+    print(f"GitHub Actions:         {automation_status.get('github_actions', '❌ UNKNOWN')}")
+    print(f"Setup Script:           {automation_status.get('setup_script', '❌ UNKNOWN')}")
+    
+    # Count active automations
+    active_count = sum(1 for status in automation_status.values() if status.startswith('✅'))
+    print(f"\n🎯 AUTOMATION SUMMARY: {active_count}/5 methods available")
+    
+    if automation_status.get('git_hooks', '').startswith('✅'):
+        print("🔄 LIVE: Carbon analysis runs automatically on every git commit!")
+    else:
+        print("💡 TIP: Run './setup-carbon-automation.sh' to enable git hooks")
     
     # Language Analysis
     lang_analysis = data.get('language_analysis', {})
@@ -165,6 +225,14 @@ def main():
             return
         elif sys.argv[1] == '--start-server':
             start_pipeline_server()
+            return
+        elif sys.argv[1] == '--status-report':
+            # Import and run the comprehensive status report
+            try:
+                from pipeline_status_report import display_pipeline_status_report
+                display_pipeline_status_report()
+            except ImportError:
+                print("❌ Status report module not available")
             return
     
     # Default behavior - show summary

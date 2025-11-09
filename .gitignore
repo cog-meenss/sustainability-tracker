@@ -30,3 +30,29 @@ dist/
 .idea/
 *.swp
 *.swo
+
+# Carbon Analysis Reports - Generated Files
+carbon-reports/
+carbon-analysis-*/
+**/complete_analysis.html
+**/complete_analysis.json
+**/executive_summary.html
+**/executive_summary.json
+**/optimization_guide.html
+**/optimization_guide.json
+pipeline_report.html
+
+# But keep dashboard examples
+!carbon-footprint-analyzer/dashboard/
+
+# Test files
+test-commit.md
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
