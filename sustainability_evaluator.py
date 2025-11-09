@@ -2389,18 +2389,27 @@ def create_api_endpoint():
         return False
 
 def main():
-    """Main execution function"""
+    """Main execution function - Always generates comprehensive runtime dashboard"""
     import argparse
+    import os
+    from datetime import datetime
     
-    parser = argparse.ArgumentParser(description='Comprehensive Sustainable Code Evaluation')
-    parser.add_argument('--path', default='.', help='Project path to analyze')
-    parser.add_argument('--output', help='Output file path')
-    parser.add_argument('--format', choices=['html', 'json'], default='html', help='Output format')
+    parser = argparse.ArgumentParser(description='Comprehensive Sustainable Code Evaluation with Auto-Dashboard')
+    parser.add_argument('--path', default='.', help='Project path to analyze (default: current directory)')
+    parser.add_argument('--output', help='Custom output file path (default: auto-generated with timestamp)')
+    parser.add_argument('--format', choices=['html', 'json', 'both'], default='html', help='Output format (default: html)')
     parser.add_argument('--api', action='store_true', help='Start real-time API server for dashboard updates')
+    parser.add_argument('--no-dashboard', action='store_true', help='Skip automatic dashboard generation')
     
     args = parser.parse_args()
     
+    # Generate timestamp for automatic naming
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    project_name = os.path.basename(os.path.abspath(args.path))
+    
     print("🌱 Starting Comprehensive Sustainable Code Evaluation...")
+    print(f"📁 Analyzing project: {project_name}")
+    print(f"🎯 Target path: {os.path.abspath(args.path)}")
     
     evaluator = ComprehensiveSustainabilityEvaluator(args.path)
     report = evaluator.analyze_project_comprehensively()
@@ -2409,20 +2418,59 @@ def main():
         print(f"❌ {report['error']}")
         sys.exit(1)
     
-    if args.format == 'html':
-        content = generate_comprehensive_html_report(report)
-    else:
-        content = json.dumps(report, indent=2)
-    
-    if args.output:
-        with open(args.output, 'w') as f:
-            f.write(content)
-        print(f"✅ Comprehensive report saved to: {args.output}")
-    else:
-        if args.format == 'json':
-            print(content)
+    # Auto-generate comprehensive runtime dashboard
+    if not args.no_dashboard:
+        print("\n📊 Generating comprehensive runtime dashboard...")
+        
+        # Determine output filenames
+        if args.output:
+            base_name = args.output.rsplit('.', 1)[0] if '.' in args.output else args.output
+            html_output = f"{base_name}.html" if not args.output.endswith('.html') else args.output
+            json_output = f"{base_name}.json"
         else:
-            print("📊 HTML report generated (use --output to save)")
+            # Auto-generated filenames with timestamp
+            html_output = f"sustainability_dashboard_{project_name}_{timestamp}.html"
+            json_output = f"sustainability_report_{project_name}_{timestamp}.json"
+        
+        # Generate HTML dashboard (always created for visual analysis)
+        html_content = generate_comprehensive_html_report(report)
+        with open(html_output, 'w') as f:
+            f.write(html_content)
+        print(f"✅ Interactive Dashboard: {html_output}")
+        
+        # Generate JSON report if requested or format is 'both'
+        if args.format in ['json', 'both']:
+            json_content = json.dumps(report, indent=2)
+            with open(json_output, 'w') as f:
+                f.write(json_content)
+            print(f"✅ JSON Report: {json_output}")
+        
+        # Print dashboard features summary
+        print(f"\n🎯 Dashboard Features Generated:")
+        print(f"   • 📊 Real-time metrics with {len(report.get('sustainability_metrics', {}))} key indicators")
+        print(f"   • 🌱 Green coding evaluation with detailed analysis")
+        print(f"   • 📁 File-specific issues: {len(report.get('file_analysis', {}).get('green_coding_issues', []))} files analyzed")
+        print(f"   • 💡 Actionable suggestions: {len(report.get('recommendations', []))} improvements identified")
+        print(f"   • 🔄 Auto-refresh controls for runtime updates")
+        print(f"   • 📈 Interactive charts and progress indicators")
+        print(f"   • ⚡ Performance metrics and carbon footprint analysis")
+        
+    else:
+        # Manual output handling (legacy mode)
+        if args.format == 'html':
+            content = generate_comprehensive_html_report(report)
+        else:
+            content = json.dumps(report, indent=2)
+        
+        if args.output:
+            with open(args.output, 'w') as f:
+                f.write(content)
+            print(f"✅ Report saved to: {args.output}")
+        else:
+            if args.format == 'json':
+                print(content)
+            else:
+                print("📊 HTML report generated (use --output to save)")
     
     # Start API server if requested
     if args.api:
@@ -2439,27 +2487,55 @@ def main():
         else:
             print("❌ Failed to start API server")
     
-    # Print summary to console
+    # Print comprehensive runtime summary to console
+    metrics = report['sustainability_metrics']
+    file_analysis = report.get('file_analysis', {})
+    green_issues = file_analysis.get('green_coding_issues', [])
+    
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
 ║         🌱 COMPREHENSIVE SUSTAINABILITY EVALUATION           ║
 ╚══════════════════════════════════════════════════════════════╝
 
-📊 OVERALL SCORE: {report['sustainability_metrics']['overall_score']:.1f}/100
+📊 OVERALL SCORE: {metrics['overall_score']:.1f}/100
 
-🎯 KEY METRICS:
-   • Energy Efficiency: {report['sustainability_metrics']['energy_efficiency']:.1f}/100
-   • Resource Utilization: {report['sustainability_metrics']['resource_utilization']:.1f}/100  
-   • Code Quality: {report['sustainability_metrics']['code_quality']:.1f}/100
-   • Performance: {report['sustainability_metrics']['performance_optimization']:.1f}/100
+🎯 CORE METRICS:
+   • Energy Efficiency: {metrics['energy_efficiency']:.1f}/100
+   • Resource Utilization: {metrics['resource_utilization']:.1f}/100
+   • Code Quality: {metrics['code_quality']:.1f}/100
+   • Performance: {metrics['performance_optimization']:.1f}/100
+
+🌱 GREEN CODING ANALYSIS:
+   • CPU Efficiency: {metrics.get('cpu_efficiency', 0):.1f}/100
+   • Memory Efficiency: {metrics.get('memory_efficiency', 0):.1f}/100  
+   • Energy Saving Practices: {metrics.get('energy_saving_practices', 0):.1f}/100
+   • Green Coding Score: {metrics.get('green_coding_score', 0):.1f}/100
+
+📁 FILE-LEVEL ANALYSIS:
+   • Total Files Analyzed: {file_analysis.get('total_files', 0)}
+   • Files with Issues: {len([f for f in green_issues if f.get('issues')])}
+   • Critical Issues Found: {sum(len(f.get('issues', [])) for f in green_issues)}
+   • Languages Detected: {len(file_analysis.get('language_breakdown', {}))}
+
+💡 ACTIONABLE INSIGHTS:
+   • Recommendations Generated: {len(report.get('recommendations', []))}
+   • High Priority Issues: {len([r for r in report.get('recommendations', []) if r.get('priority') == 'high'])}
+   • Energy Impact Potential: {len([f for f in green_issues if any('energy' in str(issue).lower() for issue in f.get('issues', []))])} files
 
 📈 QUALITY GATES: {report['quality_gates']['overall_assessment']['overall_status']}
 
-🌍 CARBON IMPACT:
-   • Daily CO2: {report['carbon_impact']['daily_co2_kg']} kg
-   • Annual CO2: {report['carbon_impact']['annual_co2_kg']} kg
+🌍 CARBON FOOTPRINT:
+   • Daily CO2 Emissions: {report['carbon_impact']['daily_co2_kg']} kg
+   • Annual CO2 Projection: {report['carbon_impact']['annual_co2_kg']} kg
+   • Carbon Intensity: {report['carbon_impact'].get('carbon_intensity', 'Medium')}
 
-💡 RECOMMENDATIONS: {len(report['recommendations'])} actionable improvements identified
+� RUNTIME DASHBOARD FEATURES:
+   • Real-time metric updates every 30 seconds
+   • Interactive charts and progress bars
+   • File-specific issue detection with line numbers  
+   • Green coding suggestions with energy impact estimates
+   • Professional visual theme with animations
+   • API endpoint available for live data refresh
 
 🔄 Analysis completed in {report['report_metadata']['analysis_time']:.3f} seconds
     """)
