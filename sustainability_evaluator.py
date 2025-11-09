@@ -1048,13 +1048,23 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .header {{
-                background: linear-gradient(135deg, #1e3c72 0%, #16a085 50%, #27ae60 100%);
+                background: linear-gradient(135deg, #0f5132 0%, #198754 25%, #20c997 50%, #0dcaf0 75%, #6f42c1 100%);
+                background-size: 400% 400%;
+                animation: headerGradient 8s ease infinite;
                 color: white;
-                padding: 50px 40px;
+                padding: 60px 40px;
                 text-align: center;
                 position: relative;
                 overflow: hidden;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+                box-shadow: 0 12px 40px rgba(39, 174, 96, 0.25);
+            }}
+            
+            @keyframes headerGradient {{
+                0% {{ background-position: 0% 50%; }}
+                25% {{ background-position: 100% 50%; }}
+                50% {{ background-position: 100% 100%; }}
+                75% {{ background-position: 0% 100%; }}
+                100% {{ background-position: 0% 50%; }}
             }}
             
             .header::before {{
@@ -1069,11 +1079,25 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .header h1 {{
-                font-size: 3em;
-                margin-bottom: 10px;
-                text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+                font-size: 3.5em;
+                margin-bottom: 15px;
+                text-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
                 position: relative;
                 z-index: 1;
+                font-weight: 900;
+                letter-spacing: -1px;
+                animation: titleGlow 3s ease-in-out infinite alternate;
+            }}
+            
+            @keyframes titleGlow {{
+                0% {{ 
+                    text-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
+                    transform: scale(1);
+                }}
+                100% {{ 
+                    text-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.2);
+                    transform: scale(1.02);
+                }}
             }}
             
             .header .subtitle {{
@@ -1139,14 +1163,15 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .metric-card {{
-                background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
                 border-radius: 20px;
                 padding: 30px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-                transition: all 0.3s ease;
-                border: 1px solid #e9ecef;
+                box-shadow: 0 10px 30px rgba(39, 174, 96, 0.08);
+                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                border: 1px solid rgba(39, 174, 96, 0.1);
                 position: relative;
                 overflow: hidden;
+                backdrop-filter: blur(10px);
             }}
             
             .metric-card::before {{
@@ -1156,12 +1181,21 @@ def generate_comprehensive_html_report(report_data):
                 left: 0;
                 right: 0;
                 height: 4px;
-                background: linear-gradient(90deg, #28a745, #20c997, #17a2b8);
+                background: linear-gradient(90deg, #27ae60, #16a085, #2ecc71, #1abc9c);
+                background-size: 300% 100%;
+                animation: gradientShift 3s ease infinite;
             }}
             
             .metric-card:hover {{
-                transform: translateY(-10px);
-                box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+                transform: translateY(-12px) scale(1.02);
+                box-shadow: 0 25px 50px rgba(39, 174, 96, 0.2);
+                border-color: rgba(39, 174, 96, 0.3);
+            }}
+            
+            @keyframes gradientShift {{
+                0% {{ background-position: 0% 50%; }}
+                50% {{ background-position: 100% 50%; }}
+                100% {{ background-position: 0% 50%; }}
             }}
             
             .metric-header {{
@@ -1183,31 +1217,101 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .metric-value {{
-                font-size: 3em;
-                font-weight: bold;
+                font-size: 3.5em;
+                font-weight: 900;
                 text-align: center;
-                margin: 20px 0;
+                margin: 25px 0;
+                letter-spacing: -1px;
+                text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                transition: all 0.3s ease;
             }}
             
-            .score-excellent {{ color: #28a745; }}
-            .score-good {{ color: #ffc107; }}
-            .score-fair {{ color: #fd7e14; }}
-            .score-poor {{ color: #dc3545; }}
+            .metric-value:hover {{
+                transform: scale(1.05);
+                text-shadow: 0 4px 16px rgba(39, 174, 96, 0.4);
+            }}
+            
+            .score-excellent {{ 
+                color: #27ae60;
+                text-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
+            }}
+            .score-good {{ 
+                color: #f39c12;
+                text-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
+            }}
+            .score-fair {{ 
+                color: #e67e22;
+                text-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
+            }}
+            .score-poor {{ 
+                color: #e74c3c;
+                text-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+            }}
             
             .progress-bar {{
                 width: 100%;
-                height: 12px;
-                background: #e9ecef;
-                border-radius: 6px;
+                height: 14px;
+                background: linear-gradient(90deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+                border-radius: 12px;
                 overflow: hidden;
-                margin: 15px 0;
+                margin: 18px 0;
+                box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+                position: relative;
+            }}
+            
+            .progress-bar::before {{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+                animation: shimmer 2s infinite;
+            }}
+            
+            @keyframes shimmer {{
+                0% {{ transform: translateX(-100%); }}
+                100% {{ transform: translateX(100%); }}
             }}
             
             .progress-fill {{
                 height: 100%;
-                border-radius: 6px;
-                transition: width 1.5s ease-in-out;
-                background: linear-gradient(90deg, #28a745 0%, #20c997 50%, #17a2b8 100%);
+                border-radius: 12px;
+                transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+                background: linear-gradient(90deg, #27ae60 0%, #2ecc71 30%, #16a085 70%, #1abc9c 100%);
+                background-size: 200% 100%;
+                animation: progressGlow 3s ease-in-out infinite alternate;
+                position: relative;
+                overflow: hidden;
+            }}
+            
+            .progress-fill::after {{
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+                animation: progressShine 2s infinite;
+            }}
+            
+            @keyframes progressGlow {{
+                0% {{ 
+                    background-position: 0% 50%;
+                    box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
+                }}
+                100% {{ 
+                    background-position: 100% 50%;
+                    box-shadow: 0 0 20px rgba(39, 174, 96, 0.6);
+                }}
+            }}
+            
+            @keyframes progressShine {{
+                0% {{ transform: translateX(-100%); }}
+                50% {{ transform: translateX(100%); }}
+                100% {{ transform: translateX(100%); }}
             }}
             
             .chart-container {{
