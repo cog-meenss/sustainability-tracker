@@ -218,8 +218,12 @@ app.post('/api/training-upload', upload.single('excel'), async (req, res) => {
       return res.status(400).json({ error: 'The Excel file is empty or has no data.' });
     }
 
+    const columns = json.length > 0 ? json[0] : [];
+    const data = json.length > 1 ? json.slice(1) : [];
+
     res.json({ 
-      data: json,
+      columns,
+      data,
       message: 'Training data uploaded successfully' 
     });
   } catch (error) {

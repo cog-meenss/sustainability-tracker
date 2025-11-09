@@ -1,50 +1,96 @@
-trigger:
-- main
+# ⚠️ NOTICE: Azure DevOps Pipeline Deprecatedtrigger:
 
-pool:
-  vmImage: ubuntu-latest
+# This pipeline requires hosted parallelism grants which need approval.- main
 
-steps:
+# 
+
+# ✅ RECOMMENDED: Use GitHub Actions instead!pool:
+
+#   vmImage: ubuntu-latest
+
+# GitHub Actions provides:
+
+# - No parallelism grants requiredsteps:
+
+# - 2000+ free minutes monthly- script: |
+
+# - Rich integration and reporting    echo "🌱 Starting Sustainability Analysis..."
+
+# - Interactive dashboards    echo "Build ID: $(Build.BuildId)"
+
+#     echo "Repository: $(Build.Repository.Name)"
+
+# See: .github/workflows/sustainability-analysis.yml  displayName: 'Initialize Analysis'
+
+# Setup Guide: GITHUB_ACTIONS_SETUP.md
+
 - script: |
-    echo "🌱 Starting Sustainability Analysis..."
-    echo "Build ID: $(Build.BuildId)"
-    echo "Repository: $(Build.Repository.Name)"
-  displayName: 'Initialize Analysis'
 
-- script: |
-    echo "📂 Project Structure:"
-    ls -la
+trigger:    echo "📂 Project Structure:"
+
+- main    ls -la
+
     echo "📊 File Count:"
-    find . -type f | wc -l
-  displayName: 'Project Overview'
 
-- script: |
-    echo "🐍 Environment Check:"
-    python3 --version
-    echo "📦 Available tools:"
-    which git python3 pip3
-  displayName: 'Environment Info'
+pool:    find . -type f | wc -l
 
-- script: |
-    echo "📊 Basic Sustainability Analysis:"
-    echo "Analyzing project files..."
-    
-    # Count different file types
-    JS_FILES=$(find . -name "*.js" | wc -l)
-    PY_FILES=$(find . -name "*.py" | wc -l) 
-    JSON_FILES=$(find . -name "*.json" | wc -l)
-    
-    echo "JavaScript files: $JS_FILES"
-    echo "Python files: $PY_FILES"
-    echo "JSON files: $JSON_FILES"
-    
+  vmImage: ubuntu-latest  displayName: 'Project Overview'
+
+
+
+steps:- script: |
+
+- script: |    echo "🐍 Environment Check:"
+
+    echo "⚠️ NOTICE: This Azure DevOps pipeline is deprecated"    python3 --version
+
+    echo ""    echo "📦 Available tools:"
+
+    echo "🚀 Please use GitHub Actions instead:"    which git python3 pip3
+
+    echo "   - No parallelism grants required"  displayName: 'Environment Info'
+
+    echo "   - 2000+ free minutes monthly" 
+
+    echo "   - Rich integration and reporting"- script: |
+
+    echo ""    echo "📊 Basic Sustainability Analysis:"
+
+    echo "📋 Setup Steps:"    echo "Analyzing project files..."
+
+    echo "   1. Create GitHub repository"    
+
+    echo "   2. Push code with .github/workflows/ folder"    # Count different file types
+
+    echo "   3. Enable GitHub Actions"    JS_FILES=$(find . -name "*.js" | wc -l)
+
+    echo "   4. Enjoy unlimited sustainability analysis!"    PY_FILES=$(find . -name "*.py" | wc -l) 
+
+    echo ""    JSON_FILES=$(find . -name "*.json" | wc -l)
+
+    echo "📖 See: GITHUB_ACTIONS_SETUP.md for detailed instructions"    
+
+    echo ""    echo "JavaScript files: $JS_FILES"
+
+    echo "✅ This pipeline will still run for compatibility,"    echo "Python files: $PY_FILES"
+
+    echo "   but GitHub Actions provides much better features."    echo "JSON files: $JSON_FILES"
+
+  displayName: 'Migration Notice'    
+
     # Simple sustainability score calculation
-    TOTAL_FILES=$((JS_FILES + PY_FILES + JSON_FILES))
-    echo "Total analyzed files: $TOTAL_FILES"
-    
-    if [ $TOTAL_FILES -gt 0 ]; then
-        echo "✅ Project contains analyzable files"
-        echo "📊 Sustainability Score: 75/100"
+
+- script: |    TOTAL_FILES=$((JS_FILES + PY_FILES + JSON_FILES))
+
+    echo "📊 Basic file count (for compatibility):"    echo "Total analyzed files: $TOTAL_FILES"
+
+    find . -name "*.js" | wc -l | xargs echo "JavaScript files:"    
+
+    find . -name "*.py" | wc -l | xargs echo "Python files:"    if [ $TOTAL_FILES -gt 0 ]; then
+
+    echo "📖 For full analysis, use GitHub Actions!"        echo "✅ Project contains analyzable files"
+
+  displayName: 'Basic Analysis (Limited)'        echo "📊 Sustainability Score: 75/100"
     else
         echo "⚠️ No files found for analysis"
         echo "� Sustainability Score: 50/100"

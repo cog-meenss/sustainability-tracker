@@ -163,21 +163,22 @@ function TrainingTab(props) {
   };
 
   // Compute filteredData using custom multi-column filter logic
-  const filteredData = data.filter(row => {
-    if (!multiColumnFilters.length) return true;
+  const filteredData = (data && Array.isArray(data)) ? data.filter(row => {
+    if (!multiColumnFilters || !multiColumnFilters.length) return true;
     return multiColumnFilters.every(fil => {
-      const colIdx = columns.indexOf(fil.col);
+      const colIdx = columns ? columns.indexOf(fil.col) : -1;
       if (colIdx === -1) return true;
       const cell = row[colIdx];
       return fil.vals.some(val => cell !== undefined && cell !== null && String(cell).toLowerCase().includes(String(val).toLowerCase()));
     });
-  });
+  }) : [];
 
   // --- Customizable Completion Chart State and Logic ---
   
 
   // Get unique values for a given column
   const getUniqueValues = (col) => {
+    if (!columns || !filteredData) return [];
     const colIdx = columns.indexOf(col);
     if (colIdx === -1) return [];
     return Array.from(new Set(filteredData.map(row => row[colIdx]).filter(v => v !== undefined && v !== null && String(v).trim() !== '')));
@@ -185,6 +186,7 @@ function TrainingTab(props) {
 
   // Calculate completion percent for a column+value
   const getCompletionPercent = (col, value) => {
+    if (!columns || !filteredData) return 0;
     const colIdx = columns.indexOf(col);
     if (colIdx === -1) return 0;
     const total = filteredData.length;
@@ -579,7 +581,7 @@ function TrainingTab(props) {
         
       </Box>
       </Box>
-      {columns.length > 0 && (
+      {columns && columns.length > 0 && (
         <Box sx={{ mb: 2, width: 400 }}>
           {/* Saved Views Dropdown */}
           <Box sx={{ display: 'flex', alignItems: 'center', mb: 1, gap: 1 }}>
@@ -706,7 +708,7 @@ function TrainingTab(props) {
       )}
 
       {/* Custom Multi-Column Filter Bar */}
-      {columns.length > 0 && (
+      {columns && columns.length > 0 && (
         <Box sx={{ mb: 2, display: 'flex', alignItems: 'flex-end', gap: 3, flexWrap: 'nowrap' }}>
           <FormControl size="small" sx={{ minWidth: 180 }}>
             <InputLabel>Column</InputLabel>
@@ -784,7 +786,7 @@ function TrainingTab(props) {
       )}
 
       {/* Multi-Filter Chips Bar */}
-      {columns.length > 0 && multiColumnFilters.length > 0 && (
+      {columns && columns.length > 0 && multiColumnFilters && multiColumnFilters.length > 0 && (
         <Box sx={{ mb: 1, pl: 1, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 1 }}>
           <Typography sx={{ fontWeight: 500, mr: 1, fontSize: 14, color: '#003366' }}>Active Filters:</Typography>
           {multiColumnFilters.map((filter, fIdx) =>
@@ -807,7 +809,7 @@ function TrainingTab(props) {
       )}
 
       {/* Data Table */}
-      {columns.length > 0 && (
+      {columns && columns.length > 0 && (
         <Paper sx={{ height: 520, width: '100%', overflow: 'auto', mb: 4, p: 2 }}>
            <DataGrid
             rows={filteredData.map((row, idx) => {
@@ -840,7 +842,7 @@ function TrainingTab(props) {
           />
         </Paper>
       )}
-      {columns.length > 0 && filteredData.length > 0 && (
+      {columns && columns.length > 0 && filteredData && filteredData.length > 0 && (
         <Box sx={{ mt: 2, mb: 4, maxWidth: 700, p: 2, background: '#f4f7fa', borderRadius: 2, boxShadow: 1 }}>
           {visibleCols.length > 0 && (() => {
             const chartCol = columns[visibleCols[0]];
