@@ -1,7 +1,7 @@
-# GitHub Actions Sustainability Analysis Pipeline
-# Comprehensive code sustainability evaluation with visual reporting
+# GitHub Actions Runtime Sustainability Analysis
+# Dynamic report generation without static files
 
-name: Sustainability Analysis
+name: Runtime Sustainability Analysis
 
 on:
  push:
@@ -23,389 +23,126 @@ env:
  PYTHON_VERSION: '3.9'
 
 jobs:
- sustainability-analysis:
+ runtime-sustainability:
  runs-on: ubuntu-latest
+ timeout-minutes: 10
  
  steps:
- - name: Checkout Code
+ - name: Checkout Repository
  uses: actions/checkout@v4
  with:
- fetch-depth: 0 # Full history for better analysis
+ fetch-depth: 0
  
- - name: Setup Python
+ - name: Setup Python Environment  
  uses: actions/setup-python@v5
  with:
  python-version: ${{ env.PYTHON_VERSION }}
  cache: 'pip'
  
- - name: Initialize Analysis
+ - name: 📦 Install Analysis Dependencies
  run: |
- echo "Starting Sustainability Analysis..."
- echo "Repository: ${{ github.repository }}"
- echo "Branch: ${{ github.ref_name }}"
- echo "Commit: ${{ github.sha }}"
- echo "Event: ${{ github.event_name }}"
- echo "Runner: ${{ runner.os }}"
- 
- - name: Install Dependencies
- run: |
- echo "Installing dependencies..."
+ echo "Installing runtime analysis dependencies..."
  python -m pip install --upgrade pip
+ pip install radon xenon bandit safety pylint flake8 mypy
+ echo "✅ Dependencies installed successfully"
  
- # Install requirements if file exists
- if [ -f "sustainability-analyzer/requirements.txt" ]; then
- pip install -r sustainability-analyzer/requirements.txt
+ - name: 🔄 Generate Runtime Sustainability Report
+ id: runtime_analysis
+ run: |
+ echo "🔄 Generating runtime sustainability analysis..."
+ 
+ # Make runtime reporter executable
+ chmod +x runtime_sustainability_reporter.py
+ chmod +x sustainability-analyzer/analyzer/sustainability_analyzer.py
+ 
+ # Generate runtime report in multiple formats
+ echo " Generating JSON report..."
+ python3 runtime_sustainability_reporter.py --path . --format json --output runtime_report.json
+ 
+ echo " Generating HTML report..."
+ python3 runtime_sustainability_reporter.py --path . --format html --output runtime_report.html
+ 
+ echo " Generating Markdown report..."
+ python3 runtime_sustainability_reporter.py --path . --format markdown --output runtime_report.md
+ 
+ # Extract metrics for GitHub Actions summary
+ if [ -f runtime_report.json ]; then
+ OVERALL_SCORE=$(python3 -c "
+ import json
+ with open('runtime_report.json') as f:
+ data = json.load(f)
+ print(f'{data[\"sustainability_metrics\"][\"overall_score\"]:.1f}')
+ ")
+ 
+ ENERGY_SCORE=$(python3 -c "
+ import json
+ with open('runtime_report.json') as f:
+ data = json.load(f)
+ print(f'{data[\"sustainability_metrics\"][\"energy_efficiency\"]:.1f}')
+ ")
+ 
+ RESOURCE_SCORE=$(python3 -c "
+ import json
+ with open('runtime_report.json') as f:
+ data = json.load(f)
+ print(f'{data[\"sustainability_metrics\"][\"resource_utilization\"]:.1f}')
+ ")
+ 
+ PERFORMANCE_SCORE=$(python3 -c "
+ import json
+ with open('runtime_report.json') as f:
+ data = json.load(f)
+ print(f'{data[\"sustainability_metrics\"][\"performance_optimization\"]:.1f}')
+ ")
+ 
+ GENERATION_TIME=$(python3 -c "
+ import json
+ with open('runtime_report.json') as f:
+ data = json.load(f)
+ print(f'{data[\"runtime_info\"][\"generation_time\"]:.3f}')
+ ")
+ 
+ echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
+ echo "energy_score=$ENERGY_SCORE" >> $GITHUB_OUTPUT
+ echo "resource_score=$RESOURCE_SCORE" >> $GITHUB_OUTPUT
+ echo "performance_score=$PERFORMANCE_SCORE" >> $GITHUB_OUTPUT
+ echo "generation_time=$GENERATION_TIME" >> $GITHUB_OUTPUT
+ 
+ echo "✅ Runtime analysis completed in ${GENERATION_TIME}s"
+ echo "📊 Overall Score: $OVERALL_SCORE/100"
  else
- echo "requirements.txt not found, installing basic packages"
- pip install pyyaml requests pandas matplotlib plotly seaborn numpy jinja2
+ echo "❌ Runtime analysis failed"
+ exit 1
  fi
  
- echo "Dependencies installed successfully"
- 
- - name: Run Sustainability Analysis
+ - name: 🎯 Quality Gate Evaluation
  run: |
- echo "Running comprehensive sustainability analysis..."
+ echo "🎯 Evaluating sustainability quality gate..."
  
- # Create reports directory
- mkdir -p reports
- 
- # Run core sustainability analysis if analyzer exists
- if [ -f "sustainability-analyzer/analyzer/sustainability_analyzer.py" ]; then
- echo "Running full sustainability analyzer..."
- python sustainability-analyzer/analyzer/sustainability_analyzer.py \
- --path . \
- --output reports/analysis.json \
- --format json || echo "Full analysis failed, running basic analysis..."
- fi
- 
- # Always run basic analysis as fallback
- echo "Running basic file analysis..."
- python3 << 'EOF'
+ # Extract scores from runtime analysis
+ OVERALL_SCORE=$(python3 -c "
  import json
- import os
- from datetime import datetime
- import subprocess
+ with open('runtime_report.json', 'r') as f:
+ data = json.load(f)
+ print(data['sustainability_metrics']['overall_score'])
+ ")
  
- def count_files(extension):
- result = subprocess.run(['find', '.', '-name', f'*.{extension}'], 
- capture_output=True, text=True)
- return len(result.stdout.strip().split('\n')) if result.stdout.strip() else 0
+ THRESHOLD=${{ env.SUSTAINABILITY_THRESHOLD }}
  
- # Count different file types
- js_files = count_files('js')
- py_files = count_files('py')
- json_files = count_files('json')
- ts_files = count_files('ts')
- css_files = count_files('css')
+ echo "📊 Overall Score: $OVERALL_SCORE"
+ echo "🎯 Required Threshold: $THRESHOLD"
  
- total_files = js_files + py_files + json_files + ts_files + css_files
+ # Set outputs for other steps
+ echo "SUSTAINABILITY_SCORE=$OVERALL_SCORE" >> $GITHUB_ENV
  
- # Calculate sustainability metrics
- def calculate_score(file_count, max_score=100):
- if file_count == 0:
- return 50
- elif file_count < 10:
- return min(90, 60 + file_count * 3)
- elif file_count < 50:
- return min(85, 50 + file_count)
- else:
- return max(60, 90 - (file_count - 50) * 0.5)
- 
- overall_score = calculate_score(total_files)
- energy_score = calculate_score(js_files + ts_files, 90)
- resource_score = calculate_score(py_files, 85)
- carbon_score = max(60, 100 - (total_files * 0.5)) # Lower is better for carbon
- 
- # Create comprehensive analysis
- analysis = {
- "timestamp": datetime.now().isoformat(),
- "repository": os.environ.get('GITHUB_REPOSITORY', 'unknown'),
- "branch": os.environ.get('GITHUB_REF_NAME', 'unknown'),
- "commit": os.environ.get('GITHUB_SHA', 'unknown'),
- "runner": "GitHub Actions",
- "file_analysis": {
- "javascript_files": js_files,
- "python_files": py_files,
- "typescript_files": ts_files,
- "json_files": json_files,
- "css_files": css_files,
- "total_files": total_files
- },
- "sustainability_metrics": {
- "overall_score": round(overall_score, 1),
- "energy_efficiency": round(energy_score, 1),
- "resource_utilization": round(resource_score, 1),
- "carbon_footprint": round(carbon_score, 1)
- },
- "quality_gate": {
- "threshold": int(os.environ.get('SUSTAINABILITY_THRESHOLD', 75)),
- "passed": overall_score >= int(os.environ.get('SUSTAINABILITY_THRESHOLD', 75))
- },
- "recommendations": [
- "Consider optimizing JavaScript/TypeScript files for better energy efficiency" if js_files + ts_files > 20 else "Good JavaScript/TypeScript file management",
- "Review Python code for resource optimization opportunities" if py_files > 15 else "Python file count is manageable",
- "Implement sustainable coding practices across the project",
- "Consider code splitting and lazy loading for large applications" if total_files > 100 else "Project size is sustainable"
- ],
- "status": "completed"
- }
- 
- # Save analysis
- with open('reports/analysis.json', 'w') as f:
- json.dump(analysis, f, indent=2)
- 
- print(f"Analysis completed: {total_files} files analyzed")
- print(f"Overall Score: {overall_score}/100")
- print(f"Energy Efficiency: {energy_score}/100")
- print(f"Resource Utilization: {resource_score}/100") 
- print(f"Carbon Footprint: {carbon_score}/100")
- EOF
- 
- - name: Generate Reports
- run: |
- echo "Generating interactive reports..."
- 
- # Generate HTML dashboard if generator exists
- if [ -f "sustainability-analyzer/reports/html_generator.py" ]; then
- python sustainability-analyzer/reports/html_generator.py \
- --input reports/analysis.json \
- --output reports/dashboard.html \
- --template comprehensive || echo "HTML generation failed, creating basic dashboard"
+ if (( $(echo "$OVERALL_SCORE >= $THRESHOLD" | bc -l) )); then
+ echo "✅ Sustainability quality gate PASSED!"
+ echo "QUALITY_GATE_PASSED=true" >> $GITHUB_ENV
+ else
+ echo "❌ Sustainability quality gate FAILED!"
+ echo "📈 Score ($OVERALL_SCORE) is below threshold ($THRESHOLD)"
+ echo "QUALITY_GATE_PASSED=false" >> $GITHUB_ENV
  fi
- 
- # Create basic HTML dashboard as fallback
- python3 << 'EOF'
- import json
- from datetime import datetime
- 
- # Load analysis
- with open('reports/analysis.json', 'r') as f:
- analysis = json.load(f)
- 
- metrics = analysis['sustainability_metrics']
- files = analysis['file_analysis']
- 
- # Create HTML dashboard
- html = f"""<!DOCTYPE html>
- <html lang="en">
- <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <title>Sustainability Analysis Dashboard</title>
- <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
- <style>
- body {{
- font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
- margin: 0;
- padding: 20px;
- background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
- min-height: 100vh;
- }}
- .container {{
- max-width: 1200px;
- margin: 0 auto;
- background: white;
- border-radius: 15px;
- box-shadow: 0 10px 30px rgba(0,0,0,0.2);
- overflow: hidden;
- }}
- .header {{
- background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
- color: white;
- padding: 30px;
- text-align: center;
- }}
- .header h1 {{
- margin: 0;
- font-size: 2.5em;
- text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
- }}
- .metrics-grid {{
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
- gap: 20px;
- padding: 30px;
- }}
- .metric-card {{
- padding: 25px;
- border-radius: 10px;
- text-align: center;
- box-shadow: 0 4px 6px rgba(0,0,0,0.1);
- transition: transform 0.3s ease;
- }}
- .metric-card:hover {{
- transform: translateY(-5px);
- }}
- .metric-good {{ background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%); }}
- .metric-warning {{ background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); }}
- .metric-danger {{ background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%); }}
- .score {{
- font-size: 3em;
- font-weight: bold;
- margin: 10px 0;
- }}
- .score-good {{ color: #28a745; }}
- .score-warning {{ color: #ffc107; }}
- .score-danger {{ color: #dc3545; }}
- .chart-container {{
- padding: 30px;
- text-align: center;
- }}
- .file-stats {{
- display: grid;
- grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
- gap: 15px;
- padding: 30px;
- background: #f8f9fa;
- }}
- .file-stat {{
- padding: 15px;
- background: white;
- border-radius: 8px;
- text-align: center;
- box-shadow: 0 2px 4px rgba(0,0,0,0.1);
- }}
- .recommendations {{
- padding: 30px;
- background: #e9ecef;
- }}
- .recommendations ul {{
- list-style: none;
- padding: 0;
- }}
- .recommendations li {{
- padding: 10px;
- margin: 10px 0;
- background: white;
- border-left: 4px solid #007bff;
- border-radius: 4px;
- }}
- .footer {{
- text-align: center;
- padding: 20px;
- color: #6c757d;
- font-style: italic;
- }}
- </style>
- </head>
- <body>
- <div class="container">
- <div class="header">
- <h1>Sustainability Analysis Dashboard</h1>
- <p>Repository: {analysis['repository']}</p>
- <p>Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}</p>
- </div>
- 
- <div class="metrics-grid">
- <div class="metric-card {'metric-good' if metrics['overall_score'] >= 80 else 'metric-warning' if metrics['overall_score'] >= 60 else 'metric-danger'}">
- <h2>Overall Score</h2>
- <div class="score {'score-good' if metrics['overall_score'] >= 80 else 'score-warning' if metrics['overall_score'] >= 60 else 'score-danger'}">{metrics['overall_score']}</div>
- <p>/100</p>
- </div>
- 
- <div class="metric-card {'metric-good' if metrics['energy_efficiency'] >= 75 else 'metric-warning' if metrics['energy_efficiency'] >= 50 else 'metric-danger'}">
- <h3>Energy Efficiency</h3>
- <div class="score {'score-good' if metrics['energy_efficiency'] >= 75 else 'score-warning' if metrics['energy_efficiency'] >= 50 else 'score-danger'}">{metrics['energy_efficiency']}</div>
- <p>/100</p>
- </div>
- 
- <div class="metric-card {'metric-good' if metrics['resource_utilization'] >= 75 else 'metric-warning' if metrics['resource_utilization'] >= 50 else 'metric-danger'}">
- <h3>Resource Utilization</h3>
- <div class="score {'score-good' if metrics['resource_utilization'] >= 75 else 'score-warning' if metrics['resource_utilization'] >= 50 else 'score-danger'}">{metrics['resource_utilization']}</div>
- <p>/100</p>
- </div>
- 
- <div class="metric-card {'metric-good' if metrics['carbon_footprint'] >= 75 else 'metric-warning' if metrics['carbon_footprint'] >= 50 else 'metric-danger'}">
- <h3>Carbon Footprint</h3>
- <div class="score {'score-good' if metrics['carbon_footprint'] >= 75 else 'score-warning' if metrics['carbon_footprint'] >= 50 else 'score-danger'}">{metrics['carbon_footprint']}</div>
- <p>/100 (lower is better)</p>
- </div>
- </div>
- 
- <div class="chart-container">
- <h2>Sustainability Metrics</h2>
- <canvas id="sustainabilityChart" width="400" height="200"></canvas>
- </div>
- 
- <div class="file-stats">
- <div class="file-stat">
- <h4>📜 JavaScript</h4>
- <p>{files['javascript_files']} files</p>
- </div>
- <div class="file-stat">
- <h4>Python</h4>
- <p>{files['python_files']} files</p>
- </div>
- <div class="file-stat">
- <h4>📘 TypeScript</h4>
- <p>{files['typescript_files']} files</p>
- </div>
- <div class="file-stat">
- <h4>JSON</h4>
- <p>{files['json_files']} files</p>
- </div>
- <div class="file-stat">
- <h4>🎨 CSS</h4>
- <p>{files['css_files']} files</p>
- </div>
- <div class="file-stat">
- <h4>Total</h4>
- <p>{files['total_files']} files</p>
- </div>
- </div>
- 
- <div class="recommendations">
- <h2>Recommendations</h2>
- <ul>
- """
- 
- for rec in analysis['recommendations']:
- html += f"<li>{rec}</li>"
- 
- html += f"""
- </ul>
- </div>
- 
- <div class="footer">
- <p>Generated by GitHub Actions • {analysis['timestamp']}</p>
- <p>Quality Gate: {'PASSED' if analysis['quality_gate']['passed'] else 'FAILED'} (Threshold: {analysis['quality_gate']['threshold']})</p>
- </div>
- </div>
- 
- <script>
- const ctx = document.getElementById('sustainabilityChart').getContext('2d');
- new Chart(ctx, {{
- type: 'radar',
- data: {{
- labels: ['Overall Score', 'Energy Efficiency', 'Resource Utilization', 'Carbon Footprint'],
- datasets: [{{
- label: 'Sustainability Metrics',
- data: [{metrics['overall_score']}, {metrics['energy_efficiency']}, {metrics['resource_utilization']}, {metrics['carbon_footprint']}],
- backgroundColor: 'rgba(76, 175, 80, 0.2)',
- borderColor: 'rgba(76, 175, 80, 1)',
- borderWidth: 2,
- pointBackgroundColor: 'rgba(76, 175, 80, 1)'
- }}]
- }},
- options: {{
- responsive: true,
- scales: {{
- r: {{
- beginAtZero: true,
- max: 100
- }}
- }}
- }}
- }});
- </script>
- </body>
- </html>"""
- 
- with open('reports/dashboard.html', 'w') as f:
- f.write(html)
- 
- print("HTML dashboard created")
- EOF
  
  - name: Quality Gate Evaluation
  run: |
@@ -436,23 +173,23 @@ jobs:
  echo "QUALITY_GATE_PASSED=false" >> $GITHUB_ENV
  fi
  
- - name: Create Job Summary
+ - name: 📋 Create Runtime Job Summary
  run: |
- echo "Creating GitHub Actions job summary..."
+ echo "📋 Creating runtime GitHub Actions job summary..."
  
- # Extract key metrics
+ # Extract key metrics from runtime report
  python3 << 'EOF'
  import json
  import os
  
- with open('reports/analysis.json', 'r') as f:
+ with open('runtime_report.json', 'r') as f:
  analysis = json.load(f)
  
  metrics = analysis['sustainability_metrics']
- files = analysis['file_analysis']
- quality_gate = analysis['quality_gate']
+ summary = analysis['analysis_summary']
+ runtime_info = analysis['runtime_info']
  
- # Create enhanced GitHub Actions job summary with visual elements
+ # Create enhanced GitHub Actions job summary with runtime data
  def get_score_bar(score):
  filled = int(score / 5) # 20 blocks for 100%
  empty = 20 - filled
@@ -467,9 +204,9 @@ jobs:
  overall_bar = get_score_bar(metrics['overall_score'])
  energy_bar = get_score_bar(metrics['energy_efficiency'])
  resource_bar = get_score_bar(metrics['resource_utilization'])
- carbon_bar = get_score_bar(metrics['carbon_footprint'])
+ performance_bar = get_score_bar(metrics['performance_optimization'])
  
- summary = f"""# Sustainability Analysis Dashboard
+ job_summary = f"""# 🔄 Runtime Sustainability Analysis Dashboard
  
  ## Overall Score: {metrics['overall_score']}/100 {get_score_status(metrics['overall_score'])}
  
@@ -477,131 +214,133 @@ jobs:
  Overall Score [{overall_bar}] {metrics['overall_score']}/100
  ```
  
- ### Detailed Performance Metrics
+ ### ⚡ Runtime Performance
+ 
+ | Metric | Value | Details |
+ |--------|-------|---------|
+ | 🔄 **Analysis Time** | **{summary['execution_time']:.3f}s** | Core analysis execution |
+ | 📊 **Report Generation** | **{runtime_info['generation_time']:.3f}s** | Multi-format report creation |
+ | 📁 **Files Analyzed** | **{summary['file_count']}** | Total project files processed |
+ | 🕐 **Generated At** | **{runtime_info['generated_at'][:19]}** | Fresh analysis timestamp |
+ 
+ ### 📊 Detailed Performance Metrics
  
  | Metric | Score | Visual Progress | Status | Impact |
  |--------|-------|----------------|--------|---------|
  | **Energy Efficiency** | **{metrics['energy_efficiency']}/100** | `{energy_bar}` | {get_score_status(metrics['energy_efficiency'])} | 🔋 Computational overhead |
  | **Resource Utilization** | **{metrics['resource_utilization']}/100** | `{resource_bar}` | {get_score_status(metrics['resource_utilization'])} | 💿 Memory & storage |
- | **Carbon Footprint** | **{metrics['carbon_footprint']}/100** | `{carbon_bar}` | {get_score_status(metrics['carbon_footprint'])} | Environmental impact |
+ | **Performance Optimization** | **{metrics['performance_optimization']}/100** | `{performance_bar}` | {get_score_status(metrics['performance_optimization'])} | ⚡ Runtime efficiency |
  
- ### Quality Gate Assessment
+ ### 🎯 Quality Gate Assessment
  
- > **Result:** {'**PASSED** ' if quality_gate['passed'] else '**FAILED** '} 
- > **Threshold:** {quality_gate['threshold']}/100 | **Achieved:** {metrics['overall_score']}/100
+ > **Result:** {'**✅ PASSED** ' if metrics['overall_score'] >= 75 else '**❌ FAILED** '} 
+ > **Threshold:** 75/100 | **Achieved:** {metrics['overall_score']}/100
  
- ### Project Composition Analysis
+ ### 🗂️ Language Analysis
  
- | File Type | Count | Percentage | Sustainability Impact |
- |-----------|-------|------------|----------------------|
- | 📜 **JavaScript** | {files['javascript_files']} | {files['javascript_files']/max(files['total_files'],1)*100:.1f}% | {'🟢 Low' if files['javascript_files'] < 20 else '🟡 Medium' if files['javascript_files'] < 50 else '🔴 High'} |
- | **Python** | {files['python_files']} | {files['python_files']/max(files['total_files'],1)*100:.1f}% | {'🟢 Low' if files['python_files'] < 15 else '🟡 Medium' if files['python_files'] < 30 else '🔴 High'} |
- | 📘 **TypeScript** | {files['typescript_files']} | {files['typescript_files']/max(files['total_files'],1)*100:.1f}% | {'🟢 Low' if files['typescript_files'] < 20 else '🟡 Medium' if files['typescript_files'] < 50 else '🔴 High'} |
- | **JSON** | {files['json_files']} | {files['json_files']/max(files['total_files'],1)*100:.1f}% | 🟢 Minimal |
- | 🎨 **CSS** | {files['css_files']} | {files['css_files']/max(files['total_files'],1)*100:.1f}% | 🟢 Minimal |
- | **Total** | **{files['total_files']}** | **100%** | {'🟢 Sustainable' if files['total_files'] < 100 else '🟡 Growing' if files['total_files'] < 200 else '🔴 Large'} |
+ | Language | Count | Impact |
+ |----------|-------|--------|"""
  
- ### Priority Recommendations
+ for lang, count in summary['language_breakdown'].items():
+ lang_name = lang.title()
+ if count > 0:
+ impact = '🟢 Low' if count < 10 else '🟡 Medium' if count < 25 else '🔴 High'
+ job_summary += f"""
+ | **{lang_name}** | {count} | {impact} |"""
+ 
+ job_summary += f"""
+ 
+ ### 💡 Priority Recommendations
  
  """
  
- for i, rec in enumerate(analysis['recommendations'], 1):
- priority = 'High' if i <= 2 else 'Medium' if i <= 4 else '📋 Low'
- summary += f"{i}. **{priority} Priority:** {rec}\n"
+ for i, rec in enumerate(analysis.get('recommendations', []), 1):
+ if isinstance(rec, dict):
+ priority_icon = {'high': '🔴', 'medium': '🟡', 'low': '🟢'}.get(rec.get('priority', 'medium'), '🔵')
+ job_summary += f"{i}. {priority_icon} **{rec.get('title', 'Recommendation')}** - {rec.get('description', 'No description')}\n"
+ else:
+ priority = '🔴 High' if i <= 2 else '🟡 Medium' if i <= 4 else '� Low'
+ job_summary += f"{i}. {priority} Priority: {rec}\n"
  
- # Add trend analysis
- trend_emoji = '' if metrics['overall_score'] >= 75 else '' if metrics['overall_score'] >= 60 else '📉'
+ # Add runtime analysis insights
+ trend_emoji = '📈' if metrics['overall_score'] >= 75 else '⚖️' if metrics['overall_score'] >= 60 else '📉'
  
- summary += f"""
- ### � Score Breakdown & Insights
+ job_summary += f"""
  
- ```mermaid
- %%{{init: {{'theme':'base', 'themeVariables': {{'primaryColor':'#4CAF50'}}}}}}%%
- pie title Sustainability Score Components
- "Energy Efficiency" : {metrics['energy_efficiency']}
- "Resource Utilization" : {metrics['resource_utilization']} 
- "Carbon Footprint" : {metrics['carbon_footprint']}
- ```
+ ### 🔄 Runtime Analysis Insights
  
- ### Action Items
+ {trend_emoji} **Performance Analysis:** 
+ - **Generation Speed:** {runtime_info['generation_time']:.3f}s (Real-time analysis)
+ - **Current Score:** **{metrics['overall_score']}/100**
+ - **Quality Gate:** **{'✅ Passing' if metrics['overall_score'] >= 75 else '❌ Failing'}**
+ - **Project Health:** **{get_score_status(metrics['overall_score'])}**
  
- | Priority | Action | Expected Impact | Effort |
- |----------|--------|-----------------|--------|
- | | Optimize most frequent JavaScript patterns | +5-10 points | Medium |
- | | Review Python resource usage patterns | +3-7 points | Low |
- | 📋 | Implement sustainable coding guidelines | +2-5 points | High |
+ ### 📊 Available Runtime Reports
  
- ### Historical Comparison
- 
- {trend_emoji} **Trend Analysis:** 
- - Current Score: **{metrics['overall_score']}/100**
- - Quality Gate: **{'Passing' if quality_gate['passed'] else 'Failing'}**
- - Project Health: **{get_score_status(metrics['overall_score'])}**
- 
- ---
- 
- ### Detailed Reports Available
- 
- | Report Type | Description | Access |
- |-------------|-------------|--------|
- | 🎨 **Interactive Dashboard** | Visual charts and graphs | Download `sustainability-dashboard` artifact |
- | **Raw Data Analysis** | Complete JSON metrics | Download `sustainability-reports` artifact |
- | 📋 **Executive Summary** | High-level overview | View in job summary above |
+ | Report Format | Description | Access Method |
+ |---------------|-------------|---------------|
+ | 🎨 **HTML Interactive** | Visual dashboard with charts | Download `runtime-reports` artifact |
+ | 📊 **JSON Data** | Machine-readable metrics | Download `runtime-reports` artifact |
+ | � **Markdown Report** | Human-readable summary | Download `runtime-reports` artifact |
+ | 🔄 **Live Server** | Start with `python3 runtime_report_server.py` | Real-time updates |
  
  ---
  <div align="center">
  
- **Generated by Sustainability Tracker** 
- *{analysis['timestamp']} • Powered by GitHub Actions*
+ **🔄 Generated by Runtime Sustainability Analyzer** 
+ *{runtime_info['generated_at']} • Fresh Analysis Every Run*
  
- [📖 Documentation](../../blob/main/HOW_TO_VIEW_REPORTS.md) • [Configuration](../../settings) • [All Runs](../../actions)
+ [� Runtime Server Guide](../../blob/main/README.md) • [📊 All Workflow Runs](../../actions)
  
  </div>
  """
  
  with open(os.environ['GITHUB_STEP_SUMMARY'], 'w') as f:
- f.write(summary)
+ f.write(job_summary)
  
  print("Job summary created")
  EOF
  
- - name: Upload Analysis Reports
+ - name: 📤 Upload Runtime Reports
  uses: actions/upload-artifact@v4
  with:
- name: sustainability-reports
- path: reports/
+ name: runtime-reports
+ path: |
+ runtime_report.json
+ runtime_report.html
+ runtime_report.md
  retention-days: 30
  
- - name: Upload Dashboard 
- uses: actions/upload-artifact@v4
- with:
- name: sustainability-dashboard
- path: reports/dashboard.html
- retention-days: 90
- 
- - name: Comment on PR (if applicable)
+ - name: 💬 Comment on PR (Runtime Analysis)
  if: github.event_name == 'pull_request'
  uses: actions/github-script@v7
  with:
  script: |
  const fs = require('fs');
- const analysis = JSON.parse(fs.readFileSync('reports/analysis.json', 'utf8'));
+ const analysis = JSON.parse(fs.readFileSync('runtime_report.json', 'utf8'));
  
- const comment = `## Sustainability Analysis Results
+ const metrics = analysis.sustainability_metrics;
+ const runtime = analysis.runtime_info;
+ const summary = analysis.analysis_summary;
  
- ### Overall Score: ${analysis.sustainability_metrics.overall_score}/100
+ const comment = `## 🔄 Runtime Sustainability Analysis Results
  
- **Quality Gate:** ${analysis.quality_gate.passed ? 'PASSED' : 'FAILED'} (Threshold: ${analysis.quality_gate.threshold})
+ ### Overall Score: ${metrics.overall_score}/100 ${metrics.overall_score >= 75 ? '✅' : '❌'}
  
- | Metric | Score |
- |--------|-------|
- | Energy Efficiency | ${analysis.sustainability_metrics.energy_efficiency}/100 |
- | Resource Utilization | ${analysis.sustainability_metrics.resource_utilization}/100 |
- | Carbon Footprint | ${analysis.sustainability_metrics.carbon_footprint}/100 |
+ **Quality Gate:** ${metrics.overall_score >= 75 ? '✅ PASSED' : '❌ FAILED'} (Threshold: 75)  
+ **Analysis Time:** ${summary.execution_time}s | **Report Generation:** ${runtime.generation_time}s
  
- **Files Analyzed:** ${analysis.file_analysis.total_files}
+ | Metric | Score | Status |
+ |--------|-------|--------|
+ | Energy Efficiency | ${metrics.energy_efficiency}/100 | ${metrics.energy_efficiency >= 70 ? '✅' : metrics.energy_efficiency >= 40 ? '⚠️' : '❌'} |
+ | Resource Utilization | ${metrics.resource_utilization}/100 | ${metrics.resource_utilization >= 70 ? '✅' : metrics.resource_utilization >= 40 ? '⚠️' : '❌'} |
+ | Performance Optimization | ${metrics.performance_optimization}/100 | ${metrics.performance_optimization >= 70 ? '✅' : metrics.performance_optimization >= 40 ? '⚠️' : '❌'} |
  
- [View Full Dashboard](../actions/runs/${context.runId})`;
+ **Files Analyzed:** ${summary.file_count} • **Generated:** ${runtime.generated_at.substring(0, 19)}
+ 
+ 🔄 *Fresh analysis generated at runtime - no static files*
+ 
+ [📊 View Full Dashboard](../actions/runs/${context.runId}) • [📁 Download Reports](../actions/runs/${context.runId})`;
  
  github.rest.issues.createComment({
  issue_number: context.issue.number,
