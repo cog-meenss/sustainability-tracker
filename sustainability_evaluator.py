@@ -2313,8 +2313,21 @@ def generate_comprehensive_html_report(report_data):
 def create_api_endpoint():
     """Create a simple Flask API for real-time data updates"""
     try:
-        from flask import Flask, jsonify, request
-        from flask_cors import CORS
+        # Check if Flask dependencies are available
+        import importlib.util
+        flask_spec = importlib.util.find_spec("flask")
+        cors_spec = importlib.util.find_spec("flask_cors")
+        
+        if flask_spec is None or cors_spec is None:
+            print("⚠️  Flask dependencies not available. Install with: pip install flask flask-cors")
+            return False
+        
+        # Import Flask modules only if available
+        Flask = importlib.import_module("flask").Flask
+        jsonify = importlib.import_module("flask").jsonify  
+        request = importlib.import_module("flask").request
+        CORS = importlib.import_module("flask_cors").CORS
+        
         import threading
         import time
         
