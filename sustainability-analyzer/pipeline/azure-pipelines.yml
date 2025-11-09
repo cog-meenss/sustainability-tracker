@@ -32,13 +32,16 @@ schedules:
   always: true
 
 variables:
-  - group: sustainability-analysis-config
   - name: pythonVersion
     value: '3.9'
   - name: sustainabilityThreshold
     value: 75
   - name: reportFormat
     value: 'all'  # html, json, azure, all
+  - name: TeamsWebhookUrl
+    value: ''  # Optional: Add your Teams webhook URL here
+  - name: TeamsWebhookUrl
+    value: ''  # Optional: Add your Teams webhook URL here
 
 pool:
   vmImage: 'ubuntu-latest'
