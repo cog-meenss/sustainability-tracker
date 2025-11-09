@@ -1,357 +1,318 @@
-# GitHub Actions Runtime Sustainability Analysis
-# Dynamic report generation without static files
-
 name: Runtime Sustainability Analysis
 
 on:
- push:
- branches: [ main, develop ]
- paths-ignore:
- - 'README.md'
- - 'docs/**'
- pull_request:
- branches: [ main ]
- paths-ignore:
- - 'README.md'
- - 'docs/**'
- schedule:
- - cron: '0 2 * * 1' # Weekly analysis on Monday 2 AM UTC
- workflow_dispatch: # Allow manual trigger
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 1'
+  workflow_dispatch:
 
 env:
- SUSTAINABILITY_THRESHOLD: 75
- PYTHON_VERSION: '3.9'
+  SUSTAINABILITY_THRESHOLD: 75
+  PYTHON_VERSION: '3.9'
 
 jobs:
- runtime-sustainability:
- runs-on: ubuntu-latest
- timeout-minutes: 10
- 
- steps:
- - name: Checkout Repository
- uses: actions/checkout@v4
- with:
- fetch-depth: 0
- 
- - name: Setup Python Environment  
- uses: actions/setup-python@v5
- with:
- python-version: ${{ env.PYTHON_VERSION }}
- cache: 'pip'
- 
- - name: 📦 Install Analysis Dependencies
- run: |
- echo "Installing runtime analysis dependencies..."
- python -m pip install --upgrade pip
- pip install radon xenon bandit safety pylint flake8 mypy
- echo "✅ Dependencies installed successfully"
- 
- - name: 🔄 Generate Runtime Sustainability Report
- id: runtime_analysis
- run: |
- echo "🔄 Generating runtime sustainability analysis..."
- 
- # Make runtime reporter executable
- chmod +x runtime_sustainability_reporter.py
- chmod +x sustainability-analyzer/analyzer/sustainability_analyzer.py
- 
- # Generate runtime report in multiple formats
- echo " Generating JSON report..."
- python3 runtime_sustainability_reporter.py --path . --format json --output runtime_report.json
- 
- echo " Generating HTML report..."
- python3 runtime_sustainability_reporter.py --path . --format html --output runtime_report.html
- 
- echo " Generating Markdown report..."
- python3 runtime_sustainability_reporter.py --path . --format markdown --output runtime_report.md
- 
- # Extract metrics for GitHub Actions summary
- if [ -f runtime_report.json ]; then
- OVERALL_SCORE=$(python3 -c "
- import json
- with open('runtime_report.json') as f:
- data = json.load(f)
- print(f'{data[\"sustainability_metrics\"][\"overall_score\"]:.1f}')
- ")
- 
- ENERGY_SCORE=$(python3 -c "
- import json
- with open('runtime_report.json') as f:
- data = json.load(f)
- print(f'{data[\"sustainability_metrics\"][\"energy_efficiency\"]:.1f}')
- ")
- 
- RESOURCE_SCORE=$(python3 -c "
- import json
- with open('runtime_report.json') as f:
- data = json.load(f)
- print(f'{data[\"sustainability_metrics\"][\"resource_utilization\"]:.1f}')
- ")
- 
- PERFORMANCE_SCORE=$(python3 -c "
- import json
- with open('runtime_report.json') as f:
- data = json.load(f)
- print(f'{data[\"sustainability_metrics\"][\"performance_optimization\"]:.1f}')
- ")
- 
- GENERATION_TIME=$(python3 -c "
- import json
- with open('runtime_report.json') as f:
- data = json.load(f)
- print(f'{data[\"runtime_info\"][\"generation_time\"]:.3f}')
- ")
- 
- echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
- echo "energy_score=$ENERGY_SCORE" >> $GITHUB_OUTPUT
- echo "resource_score=$RESOURCE_SCORE" >> $GITHUB_OUTPUT
- echo "performance_score=$PERFORMANCE_SCORE" >> $GITHUB_OUTPUT
- echo "generation_time=$GENERATION_TIME" >> $GITHUB_OUTPUT
- 
- echo "✅ Runtime analysis completed in ${GENERATION_TIME}s"
- echo "📊 Overall Score: $OVERALL_SCORE/100"
- else
- echo "❌ Runtime analysis failed"
- exit 1
- fi
- 
- - name: 🎯 Quality Gate Evaluation
- run: |
- echo "🎯 Evaluating sustainability quality gate..."
- 
- # Extract scores from runtime analysis
- OVERALL_SCORE=$(python3 -c "
- import json
- with open('runtime_report.json', 'r') as f:
- data = json.load(f)
- print(data['sustainability_metrics']['overall_score'])
- ")
- 
- THRESHOLD=${{ env.SUSTAINABILITY_THRESHOLD }}
- 
- echo "📊 Overall Score: $OVERALL_SCORE"
- echo "🎯 Required Threshold: $THRESHOLD"
- 
- # Set outputs for other steps
- echo "SUSTAINABILITY_SCORE=$OVERALL_SCORE" >> $GITHUB_ENV
- 
- if (( $(echo "$OVERALL_SCORE >= $THRESHOLD" | bc -l) )); then
- echo "✅ Sustainability quality gate PASSED!"
- echo "QUALITY_GATE_PASSED=true" >> $GITHUB_ENV
- else
- echo "❌ Sustainability quality gate FAILED!"
- echo "📈 Score ($OVERALL_SCORE) is below threshold ($THRESHOLD)"
- echo "QUALITY_GATE_PASSED=false" >> $GITHUB_ENV
- fi
- 
- - name: Quality Gate Evaluation
- run: |
- echo "Evaluating sustainability quality gate..."
- 
- # Extract scores from analysis
- OVERALL_SCORE=$(python3 -c "
- import json
- with open('reports/analysis.json', 'r') as f:
- data = json.load(f)
- print(data['sustainability_metrics']['overall_score'])
- ")
- 
- THRESHOLD=${{ env.SUSTAINABILITY_THRESHOLD }}
- 
- echo "Overall Score: $OVERALL_SCORE"
- echo "Required Threshold: $THRESHOLD"
- 
- # Set outputs for other steps
- echo "SUSTAINABILITY_SCORE=$OVERALL_SCORE" >> $GITHUB_ENV
- 
- if (( $(echo "$OVERALL_SCORE >= $THRESHOLD" | bc -l) )); then
- echo "Sustainability quality gate PASSED!"
- echo "QUALITY_GATE_PASSED=true" >> $GITHUB_ENV
- else
- echo "Sustainability quality gate FAILED!"
- echo "Score ($OVERALL_SCORE) is below threshold ($THRESHOLD)"
- echo "QUALITY_GATE_PASSED=false" >> $GITHUB_ENV
- fi
- 
- - name: 📋 Create Runtime Job Summary
- run: |
- echo "📋 Creating runtime GitHub Actions job summary..."
- 
- # Extract key metrics from runtime report
- python3 << 'EOF'
- import json
- import os
- 
- with open('runtime_report.json', 'r') as f:
- analysis = json.load(f)
- 
- metrics = analysis['sustainability_metrics']
- summary = analysis['analysis_summary']
- runtime_info = analysis['runtime_info']
- 
- # Create enhanced GitHub Actions job summary with runtime data
- def get_score_bar(score):
- filled = int(score / 5) # 20 blocks for 100%
- empty = 20 - filled
- return '🟩' * filled + '⬜' * empty
- 
- def get_score_status(score):
- if score >= 90: return '🏆 Excellent'
- elif score >= 75: return 'Good'
- elif score >= 60: return 'Fair'
- else: return 'Needs Work'
- 
- overall_bar = get_score_bar(metrics['overall_score'])
- energy_bar = get_score_bar(metrics['energy_efficiency'])
- resource_bar = get_score_bar(metrics['resource_utilization'])
- performance_bar = get_score_bar(metrics['performance_optimization'])
- 
- job_summary = f"""# 🔄 Runtime Sustainability Analysis Dashboard
- 
- ## Overall Score: {metrics['overall_score']}/100 {get_score_status(metrics['overall_score'])}
- 
- ```
- Overall Score [{overall_bar}] {metrics['overall_score']}/100
- ```
- 
- ### ⚡ Runtime Performance
- 
- | Metric | Value | Details |
- |--------|-------|---------|
- | 🔄 **Analysis Time** | **{summary['execution_time']:.3f}s** | Core analysis execution |
- | 📊 **Report Generation** | **{runtime_info['generation_time']:.3f}s** | Multi-format report creation |
- | 📁 **Files Analyzed** | **{summary['file_count']}** | Total project files processed |
- | 🕐 **Generated At** | **{runtime_info['generated_at'][:19]}** | Fresh analysis timestamp |
- 
- ### 📊 Detailed Performance Metrics
- 
- | Metric | Score | Visual Progress | Status | Impact |
- |--------|-------|----------------|--------|---------|
- | **Energy Efficiency** | **{metrics['energy_efficiency']}/100** | `{energy_bar}` | {get_score_status(metrics['energy_efficiency'])} | 🔋 Computational overhead |
- | **Resource Utilization** | **{metrics['resource_utilization']}/100** | `{resource_bar}` | {get_score_status(metrics['resource_utilization'])} | 💿 Memory & storage |
- | **Performance Optimization** | **{metrics['performance_optimization']}/100** | `{performance_bar}` | {get_score_status(metrics['performance_optimization'])} | ⚡ Runtime efficiency |
- 
- ### 🎯 Quality Gate Assessment
- 
- > **Result:** {'**✅ PASSED** ' if metrics['overall_score'] >= 75 else '**❌ FAILED** '} 
- > **Threshold:** 75/100 | **Achieved:** {metrics['overall_score']}/100
- 
- ### 🗂️ Language Analysis
- 
- | Language | Count | Impact |
- |----------|-------|--------|"""
- 
- for lang, count in summary['language_breakdown'].items():
- lang_name = lang.title()
- if count > 0:
- impact = '🟢 Low' if count < 10 else '🟡 Medium' if count < 25 else '🔴 High'
- job_summary += f"""
- | **{lang_name}** | {count} | {impact} |"""
- 
- job_summary += f"""
- 
- ### 💡 Priority Recommendations
- 
- """
- 
- for i, rec in enumerate(analysis.get('recommendations', []), 1):
- if isinstance(rec, dict):
- priority_icon = {'high': '🔴', 'medium': '🟡', 'low': '🟢'}.get(rec.get('priority', 'medium'), '🔵')
- job_summary += f"{i}. {priority_icon} **{rec.get('title', 'Recommendation')}** - {rec.get('description', 'No description')}\n"
- else:
- priority = '🔴 High' if i <= 2 else '🟡 Medium' if i <= 4 else '� Low'
- job_summary += f"{i}. {priority} Priority: {rec}\n"
- 
- # Add runtime analysis insights
- trend_emoji = '📈' if metrics['overall_score'] >= 75 else '⚖️' if metrics['overall_score'] >= 60 else '📉'
- 
- job_summary += f"""
- 
- ### 🔄 Runtime Analysis Insights
- 
- {trend_emoji} **Performance Analysis:** 
- - **Generation Speed:** {runtime_info['generation_time']:.3f}s (Real-time analysis)
- - **Current Score:** **{metrics['overall_score']}/100**
- - **Quality Gate:** **{'✅ Passing' if metrics['overall_score'] >= 75 else '❌ Failing'}**
- - **Project Health:** **{get_score_status(metrics['overall_score'])}**
- 
- ### 📊 Available Runtime Reports
- 
- | Report Format | Description | Access Method |
- |---------------|-------------|---------------|
- | 🎨 **HTML Interactive** | Visual dashboard with charts | Download `runtime-reports` artifact |
- | 📊 **JSON Data** | Machine-readable metrics | Download `runtime-reports` artifact |
- | � **Markdown Report** | Human-readable summary | Download `runtime-reports` artifact |
- | 🔄 **Live Server** | Start with `python3 runtime_report_server.py` | Real-time updates |
- 
- ---
- <div align="center">
- 
- **🔄 Generated by Runtime Sustainability Analyzer** 
- *{runtime_info['generated_at']} • Fresh Analysis Every Run*
- 
- [� Runtime Server Guide](../../blob/main/README.md) • [📊 All Workflow Runs](../../actions)
- 
- </div>
- """
- 
- with open(os.environ['GITHUB_STEP_SUMMARY'], 'w') as f:
- f.write(job_summary)
- 
- print("Job summary created")
- EOF
- 
- - name: 📤 Upload Runtime Reports
- uses: actions/upload-artifact@v4
- with:
- name: runtime-reports
- path: |
- runtime_report.json
- runtime_report.html
- runtime_report.md
- retention-days: 30
- 
- - name: 💬 Comment on PR (Runtime Analysis)
- if: github.event_name == 'pull_request'
- uses: actions/github-script@v7
- with:
- script: |
- const fs = require('fs');
- const analysis = JSON.parse(fs.readFileSync('runtime_report.json', 'utf8'));
- 
- const metrics = analysis.sustainability_metrics;
- const runtime = analysis.runtime_info;
- const summary = analysis.analysis_summary;
- 
- const comment = `## 🔄 Runtime Sustainability Analysis Results
- 
- ### Overall Score: ${metrics.overall_score}/100 ${metrics.overall_score >= 75 ? '✅' : '❌'}
- 
- **Quality Gate:** ${metrics.overall_score >= 75 ? '✅ PASSED' : '❌ FAILED'} (Threshold: 75)  
- **Analysis Time:** ${summary.execution_time}s | **Report Generation:** ${runtime.generation_time}s
- 
- | Metric | Score | Status |
- |--------|-------|--------|
- | Energy Efficiency | ${metrics.energy_efficiency}/100 | ${metrics.energy_efficiency >= 70 ? '✅' : metrics.energy_efficiency >= 40 ? '⚠️' : '❌'} |
- | Resource Utilization | ${metrics.resource_utilization}/100 | ${metrics.resource_utilization >= 70 ? '✅' : metrics.resource_utilization >= 40 ? '⚠️' : '❌'} |
- | Performance Optimization | ${metrics.performance_optimization}/100 | ${metrics.performance_optimization >= 70 ? '✅' : metrics.performance_optimization >= 40 ? '⚠️' : '❌'} |
- 
- **Files Analyzed:** ${summary.file_count} • **Generated:** ${runtime.generated_at.substring(0, 19)}
- 
- 🔄 *Fresh analysis generated at runtime - no static files*
- 
- [📊 View Full Dashboard](../actions/runs/${context.runId}) • [📁 Download Reports](../actions/runs/${context.runId})`;
- 
- github.rest.issues.createComment({
- issue_number: context.issue.number,
- owner: context.repo.owner,
- repo: context.repo.repo,
- body: comment
- });
- 
- - name: Fail if Quality Gate Failed
- if: env.QUALITY_GATE_PASSED == 'false'
- run: |
- echo "Failing build due to sustainability quality gate failure"
- echo "Check the recommendations in the analysis report"
- exit 1
+  runtime-sustainability:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: Setup Python Environment  
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: Install Analysis Dependencies
+      run: |
+        echo "Installing runtime analysis dependencies..."
+        python -m pip install --upgrade pip
+        pip install radon xenon bandit safety pylint flake8 mypy
+        echo "Dependencies installed successfully"
+        
+    - name: Generate Runtime Sustainability Report
+      id: runtime_analysis
+      run: |
+        echo "Generating runtime sustainability analysis..."
+        
+        # Make runtime reporter executable
+        chmod +x runtime_sustainability_reporter.py
+        chmod +x sustainability-analyzer/analyzer/sustainability_analyzer.py
+        
+        # Generate runtime report in multiple formats
+        echo "Generating JSON report..."
+        python3 runtime_sustainability_reporter.py --path . --format json --output runtime_report.json
+        
+        echo "Generating HTML report..."
+        python3 runtime_sustainability_reporter.py --path . --format html --output runtime_report.html
+        
+        echo "Generating Markdown report..."
+        python3 runtime_sustainability_reporter.py --path . --format markdown --output runtime_report.md
+        
+        # Extract metrics for GitHub Actions summary
+        if [ -f runtime_report.json ]; then
+          OVERALL_SCORE=$(python3 -c "
+        import json
+        with open('runtime_report.json') as f:
+            data = json.load(f)
+        print(f'{data[\"sustainability_metrics\"][\"overall_score\"]:.1f}')
+        ")
+          
+          ENERGY_SCORE=$(python3 -c "
+        import json
+        with open('runtime_report.json') as f:
+            data = json.load(f)
+        print(f'{data[\"sustainability_metrics\"][\"energy_efficiency\"]:.1f}')
+        ")
+          
+          RESOURCE_SCORE=$(python3 -c "
+        import json
+        with open('runtime_report.json') as f:
+            data = json.load(f)
+        print(f'{data[\"sustainability_metrics\"][\"resource_utilization\"]:.1f}')
+        ")
+          
+          PERFORMANCE_SCORE=$(python3 -c "
+        import json
+        with open('runtime_report.json') as f:
+            data = json.load(f)
+        print(f'{data[\"sustainability_metrics\"][\"performance_optimization\"]:.1f}')
+        ")
+          
+          GENERATION_TIME=$(python3 -c "
+        import json
+        with open('runtime_report.json') as f:
+            data = json.load(f)
+        print(f'{data[\"runtime_info\"][\"generation_time\"]:.3f}')
+        ")
+          
+          echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
+          echo "energy_score=$ENERGY_SCORE" >> $GITHUB_OUTPUT
+          echo "resource_score=$RESOURCE_SCORE" >> $GITHUB_OUTPUT
+          echo "performance_score=$PERFORMANCE_SCORE" >> $GITHUB_OUTPUT
+          echo "generation_time=$GENERATION_TIME" >> $GITHUB_OUTPUT
+          
+          echo "Runtime analysis completed in ${GENERATION_TIME}s"
+          echo "Overall Score: $OVERALL_SCORE/100"
+        else
+          echo "Runtime analysis failed"
+          exit 1
+        fi
+        
+    - name: Quality Gate Evaluation
+      run: |
+        echo "Evaluating sustainability quality gate..."
+        
+        # Extract scores from runtime analysis
+        OVERALL_SCORE=$(python3 -c "
+        import json
+        with open('runtime_report.json', 'r') as f:
+            data = json.load(f)
+        print(data['sustainability_metrics']['overall_score'])
+        ")
+        
+        THRESHOLD=${{ env.SUSTAINABILITY_THRESHOLD }}
+        
+        echo "Overall Score: $OVERALL_SCORE"
+        echo "Required Threshold: $THRESHOLD"
+        
+        # Set outputs for other steps
+        echo "SUSTAINABILITY_SCORE=$OVERALL_SCORE" >> $GITHUB_ENV
+        
+        if (( $(echo "$OVERALL_SCORE >= $THRESHOLD" | bc -l) )); then
+          echo "Sustainability quality gate PASSED!"
+          echo "QUALITY_GATE_PASSED=true" >> $GITHUB_ENV
+        else
+          echo "Sustainability quality gate FAILED!"
+          echo "Score ($OVERALL_SCORE) is below threshold ($THRESHOLD)"
+          echo "QUALITY_GATE_PASSED=false" >> $GITHUB_ENV
+        fi
+        
+    - name: Create Runtime Job Summary
+      run: |
+        echo "Creating runtime GitHub Actions job summary..."
+        
+        # Extract key metrics from runtime report
+        python3 << 'EOF'
+        import json
+        import os
+        
+        with open('runtime_report.json', 'r') as f:
+            analysis = json.load(f)
+        
+        metrics = analysis['sustainability_metrics']
+        summary = analysis['analysis_summary']
+        runtime_info = analysis['runtime_info']
+        
+        # Create enhanced GitHub Actions job summary with runtime data
+        def get_score_bar(score):
+            filled = int(score / 5)  # 20 blocks for 100%
+            empty = 20 - filled
+            return '🟩' * filled + '⬜' * empty
+        
+        def get_score_status(score):
+            if score >= 90: return '🏆 Excellent'
+            elif score >= 75: return '✅ Good'
+            elif score >= 60: return '⚠️ Fair'
+            else: return '❌ Needs Work'
+        
+        overall_bar = get_score_bar(metrics['overall_score'])
+        energy_bar = get_score_bar(metrics['energy_efficiency'])
+        resource_bar = get_score_bar(metrics['resource_utilization'])
+        performance_bar = get_score_bar(metrics['performance_optimization'])
+        
+        job_summary = f"""# 🔄 Runtime Sustainability Analysis Dashboard
+        
+        ## Overall Score: {metrics['overall_score']:.1f}/100 {get_score_status(metrics['overall_score'])}
+        
+        ```
+        Overall Score [{overall_bar}] {metrics['overall_score']:.1f}/100
+        ```
+        
+        ### ⚡ Runtime Performance
+        
+        | Metric | Value | Details |
+        |--------|-------|---------|
+        | 🔄 **Analysis Time** | **{summary['execution_time']:.3f}s** | Core analysis execution |
+        | 📊 **Report Generation** | **{runtime_info['generation_time']:.3f}s** | Multi-format report creation |
+        | 📁 **Files Analyzed** | **{summary['file_count']}** | Total project files processed |
+        | 🕐 **Generated At** | **{runtime_info['generated_at'][:19]}** | Fresh analysis timestamp |
+        
+        ### 📊 Detailed Performance Metrics
+        
+        | Metric | Score | Visual Progress | Status | Impact |
+        |--------|-------|----------------|--------|---------|
+        | **Energy Efficiency** | **{metrics['energy_efficiency']:.1f}/100** | `{energy_bar}` | {get_score_status(metrics['energy_efficiency'])} | 🔋 Computational overhead |
+        | **Resource Utilization** | **{metrics['resource_utilization']:.1f}/100** | `{resource_bar}` | {get_score_status(metrics['resource_utilization'])} | 💿 Memory & storage |
+        | **Performance Optimization** | **{metrics['performance_optimization']:.1f}/100** | `{performance_bar}` | {get_score_status(metrics['performance_optimization'])} | ⚡ Runtime efficiency |
+        
+        ### 🎯 Quality Gate Assessment
+        
+        > **Result:** {'**✅ PASSED** ' if metrics['overall_score'] >= 75 else '**❌ FAILED** '} 
+        > **Threshold:** 75/100 | **Achieved:** {metrics['overall_score']:.1f}/100
+        
+        ### 🗂️ Language Analysis
+        
+        | Language | Count | Impact |
+        |----------|-------|--------|"""
+        
+        for lang, count in summary['language_breakdown'].items():
+            lang_name = lang.title()
+            if count > 0:
+                impact = '🟢 Low' if count < 10 else '🟡 Medium' if count < 25 else '🔴 High'
+                job_summary += f"""
+        | **{lang_name}** | {count} | {impact} |"""
+        
+        job_summary += f"""
+        
+        ### 💡 Priority Recommendations
+        
+        """
+        
+        for i, rec in enumerate(analysis.get('recommendations', []), 1):
+            if isinstance(rec, dict):
+                priority_icon = {'high': '🔴', 'medium': '🟡', 'low': '🟢'}.get(rec.get('priority', 'medium'), '🔵')
+                job_summary += f"{i}. {priority_icon} **{rec.get('title', 'Recommendation')}** - {rec.get('description', 'No description')}\n"
+            else:
+                priority = '🔴 High' if i <= 2 else '🟡 Medium' if i <= 4 else '🟢 Low'
+                job_summary += f"{i}. {priority} Priority: {rec}\n"
+        
+        # Add runtime analysis insights
+        trend_emoji = '📈' if metrics['overall_score'] >= 75 else '⚖️' if metrics['overall_score'] >= 60 else '📉'
+        
+        job_summary += f"""
+        
+        ### 🔄 Runtime Analysis Insights
+        
+        {trend_emoji} **Performance Analysis:** 
+        - **Generation Speed:** {runtime_info['generation_time']:.3f}s (Real-time analysis)
+        - **Current Score:** **{metrics['overall_score']:.1f}/100**
+        - **Quality Gate:** **{'✅ Passing' if metrics['overall_score'] >= 75 else '❌ Failing'}**
+        - **Project Health:** **{get_score_status(metrics['overall_score'])}**
+        
+        ### 📊 Available Runtime Reports
+        
+        | Report Format | Description | Access Method |
+        |---------------|-------------|---------------|
+        | 🎨 **HTML Interactive** | Visual dashboard with charts | Download `runtime-reports` artifact |
+        | 📊 **JSON Data** | Machine-readable metrics | Download `runtime-reports` artifact |
+        | 📝 **Markdown Report** | Human-readable summary | Download `runtime-reports` artifact |
+        
+        ---
+        <div align="center">
+        
+        **🔄 Generated by Runtime Sustainability Analyzer** 
+        *{runtime_info['generated_at']} • Fresh Analysis Every Run*
+        
+        [🔄 Runtime Server Guide](../../blob/main/RUNTIME_SUSTAINABILITY_GUIDE.md) • [📊 All Workflow Runs](../../actions)
+        
+        </div>
+        """
+        
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'w') as f:
+            f.write(job_summary)
+        
+        print("Job summary created successfully")
+        EOF
+        
+    - name: Upload Runtime Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: runtime-reports
+        path: |
+          runtime_report.json
+          runtime_report.html
+          runtime_report.md
+        retention-days: 30
+        
+    - name: Comment on PR (Runtime Analysis)
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const analysis = JSON.parse(fs.readFileSync('runtime_report.json', 'utf8'));
+          
+          const metrics = analysis.sustainability_metrics;
+          const runtime = analysis.runtime_info;
+          const summary = analysis.analysis_summary;
+          
+          const comment = `## 🔄 Runtime Sustainability Analysis Results
+          
+          ### Overall Score: ${metrics.overall_score.toFixed(1)}/100 ${metrics.overall_score >= 75 ? '✅' : '❌'}
+          
+          **Quality Gate:** ${metrics.overall_score >= 75 ? '✅ PASSED' : '❌ FAILED'} (Threshold: 75)  
+          **Analysis Time:** ${summary.execution_time.toFixed(3)}s | **Report Generation:** ${runtime.generation_time.toFixed(3)}s
+          
+          | Metric | Score | Status |
+          |--------|-------|--------|
+          | Energy Efficiency | ${metrics.energy_efficiency.toFixed(1)}/100 | ${metrics.energy_efficiency >= 70 ? '✅' : metrics.energy_efficiency >= 40 ? '⚠️' : '❌'} |
+          | Resource Utilization | ${metrics.resource_utilization.toFixed(1)}/100 | ${metrics.resource_utilization >= 70 ? '✅' : metrics.resource_utilization >= 40 ? '⚠️' : '❌'} |
+          | Performance Optimization | ${metrics.performance_optimization.toFixed(1)}/100 | ${metrics.performance_optimization >= 70 ? '✅' : metrics.performance_optimization >= 40 ? '⚠️' : '❌'} |
+          
+          **Files Analyzed:** ${summary.file_count} • **Generated:** ${runtime.generated_at.substring(0, 19)}
+          
+          🔄 *Fresh analysis generated at runtime - no static files*
+          
+          [📊 View Full Dashboard](../actions/runs/${context.runId}) • [📁 Download Reports](../actions/runs/${context.runId})`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: comment
+          });
+          
+    - name: Fail if Quality Gate Failed
+      if: env.QUALITY_GATE_PASSED == 'false'
+      run: |
+        echo "Failing build due to sustainability quality gate failure"
+        echo "Check the recommendations in the analysis report"
+        exit 1
