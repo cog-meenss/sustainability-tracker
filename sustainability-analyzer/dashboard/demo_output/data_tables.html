@@ -1,0 +1,1224 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Sustainability Data Tables</title>
+    
+    <!-- External Libraries -->
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/searchpanes/2.2.0/css/searchPanes.bootstrap5.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.bootstrap5.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        .header-section {
+            background: linear-gradient(135deg, #2d5016 0%, #3e7b00 100%);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
+        .header-section h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 0.5rem;
+        }
+        
+        .nav-tabs {
+            background: white;
+            border-radius: 10px 10px 0 0;
+            padding: 1rem 1rem 0 1rem;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+        }
+        
+        .nav-tabs .nav-link {
+            color: #666;
+            border: none;
+            padding: 1rem 1.5rem;
+            margin-right: 0.5rem;
+            border-radius: 8px 8px 0 0;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-tabs .nav-link:hover {
+            background: #e9ecef;
+            color: #333;
+            transform: translateY(-2px);
+        }
+        
+        .nav-tabs .nav-link.active {
+            background: linear-gradient(135deg, #3e7b00, #2d5016);
+            color: white;
+            border: none;
+        }
+        
+        .tab-pane {
+            background: white;
+            padding: 2rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 10px;
+            padding: 1.5rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            margin-bottom: 2rem;
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .table-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #2d5016;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .table-stats {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .stat-badge {
+            background: linear-gradient(135deg, #3e7b00, #2d5016);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        
+        .dataTables_wrapper {
+            font-size: 0.9rem;
+        }
+        
+        .dataTables_wrapper .dataTables_length,
+        .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 1rem;
+        }
+        
+        .dataTables_wrapper .dataTables_filter input {
+            border-radius: 20px;
+            border: 2px solid #e9ecef;
+            padding: 0.5rem 1rem;
+            margin-left: 0.5rem;
+        }
+        
+        .dataTables_wrapper .dataTables_filter input:focus {
+            border-color: #3e7b00;
+            outline: none;
+            box-shadow: 0 0 0 0.2rem rgba(62, 123, 0, 0.25);
+        }
+        
+        table.dataTable {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 1px solid #e9ecef;
+        }
+        
+        table.dataTable thead th {
+            background: linear-gradient(135deg, #3e7b00, #2d5016);
+            color: white;
+            border: none;
+            padding: 1rem 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-size: 0.8rem;
+        }
+        
+        table.dataTable tbody td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #f1f1f1;
+            vertical-align: middle;
+        }
+        
+        table.dataTable tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .score-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-align: center;
+            min-width: 60px;
+            display: inline-block;
+        }
+        
+        .score-excellent {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        
+        .score-good {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+        }
+        
+        .score-fair {
+            background: linear-gradient(135deg, #f1c40f, #f39c12);
+            color: white;
+        }
+        
+        .score-poor {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .priority-high {
+            background: #e74c3c;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .priority-medium {
+            background: #f39c12;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .priority-low {
+            background: #3498db;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .dt-buttons {
+            margin-bottom: 1rem;
+        }
+        
+        .dt-button {
+            background: linear-gradient(135deg, #3e7b00, #2d5016) !important;
+            color: white !important;
+            border: none !important;
+            border-radius: 20px !important;
+            padding: 0.5rem 1rem !important;
+            margin-right: 0.5rem !important;
+            transition: all 0.3s ease !important;
+            font-size: 0.85rem !important;
+        }
+        
+        .dt-button:hover {
+            transform: translateY(-2px) !important;
+            box-shadow: 0 5px 15px rgba(62, 123, 0, 0.4) !important;
+        }
+        
+        .export-section {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 2rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .export-btn {
+            background: linear-gradient(135deg, #3e7b00, #2d5016);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .export-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(62, 123, 0, 0.4);
+        }
+        
+        .progress-bar-custom {
+            background: #e9ecef;
+            height: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill-custom {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        .footer-section {
+            background: #333;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+            margin-top: 3rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-tabs {
+                padding: 0.5rem;
+            }
+            
+            .nav-tabs .nav-link {
+                padding: 0.75rem 1rem;
+                font-size: 0.9rem;
+            }
+            
+            .table-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .export-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        
+        <div class="header-section">
+            <div class="container">
+                <h1><i class="fas fa-table"></i> Sustainability Data Tables</h1>
+                <p class="lead">Comprehensive data analysis and interactive tables</p>
+                <small>Generated on 2025-11-09 12:11:36 UTC</small>
+            </div>
+        </div>
+        
+        
+        <ul class="nav nav-tabs" id="tablesTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+                    <i class="fas fa-tachometer-alt"></i> Overview
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="metrics-tab" data-bs-toggle="tab" data-bs-target="#metrics" type="button" role="tab">
+                    <i class="fas fa-chart-bar"></i> Metrics
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="files-tab" data-bs-toggle="tab" data-bs-target="#files" type="button" role="tab">
+                    <i class="fas fa-file-code"></i> Files
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="issues-tab" data-bs-toggle="tab" data-bs-target="#issues" type="button" role="tab">
+                    <i class="fas fa-exclamation-triangle"></i> Issues
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="recommendations-tab" data-bs-toggle="tab" data-bs-target="#recommendations" type="button" role="tab">
+                    <i class="fas fa-lightbulb"></i> Recommendations
+                </button>
+            </li>
+        </ul>
+        
+        
+        <div class="tab-content" id="tablesTabContent">
+            
+        <div class="tab-pane fade show active" id="overview" role="tabpanel">
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-info-circle"></i> Analysis Overview
+                    </h3>
+                    <div class="table-stats">
+                        <span class="stat-badge">Overall Score: 78.5</span>
+                        <span class="stat-badge">Files: 25</span>
+                    </div>
+                </div>
+                
+                <table id="overviewTable" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Property</th>
+                            <th>Value</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Overall Score</strong></td>
+                            <td>78.50/100</td>
+                            <td>Performance</td>
+                            <td><span class="score-badge score-good">78.5 - Good</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Energy Efficiency</strong></td>
+                            <td>82.30/100</td>
+                            <td>Sustainability</td>
+                            <td><span class="score-badge score-good">82.3 - Good</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Resource Utilization</strong></td>
+                            <td>76.80/100</td>
+                            <td>Efficiency</td>
+                            <td><span class="score-badge score-good">76.8 - Good</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Carbon Footprint</strong></td>
+                            <td>45.20/100</td>
+                            <td>Environmental</td>
+                            <td><span class="score-badge score-poor">54.8 - Poor</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance Optimization</strong></td>
+                            <td>85.10/100</td>
+                            <td>Performance</td>
+                            <td><span class="score-badge score-good">85.1 - Good</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sustainable Practices</strong></td>
+                            <td>72.90/100</td>
+                            <td>Best Practices</td>
+                            <td><span class="score-badge score-fair">72.9 - Fair</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Total Files</strong></td>
+                            <td>25</td>
+                            <td>Analysis</td>
+                            <td><span class="score-badge score-excellent">Complete</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Execution Time</strong></td>
+                            <td>1.234s</td>
+                            <td>Performance</td>
+                            <td><span class="score-badge score-good">Fast</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Languages Detected</strong></td>
+                            <td>4</td>
+                            <td>Analysis</td>
+                            <td><span class="score-badge score-excellent">Multi-Lang</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong>Analysis Date</strong></td>
+                            <td>2024-01-15T10:30:00Z</td>
+                            <td>Metadata</td>
+                            <td><span class="score-badge score-excellent">Current</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+            
+        <div class="tab-pane fade" id="metrics" role="tabpanel">
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-chart-bar"></i> Detailed Metrics Analysis
+                    </h3>
+                    <div class="table-stats">
+                        <span class="stat-badge">Metrics: 6</span>
+                    </div>
+                </div>
+                
+                <table id="metricsTable" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Metric</th>
+                            <th>Current Score</th>
+                            <th>Target Score</th>
+                            <th>Progress</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Impact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Energy Efficiency</strong></td>
+                            <td>82.3</td>
+                            <td>85.0</td>
+                            <td>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill-custom score-good" 
+                                         style="width: 82.3%"></div>
+                                </div>
+                            </td>
+                            <td><span class="score-badge score-good">82.3 - Good</span></td>
+                            <td><span class="priority-low">
+                                LOW
+                            </span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Resource Utilization</strong></td>
+                            <td>76.8</td>
+                            <td>80.0</td>
+                            <td>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill-custom score-good" 
+                                         style="width: 76.8%"></div>
+                                </div>
+                            </td>
+                            <td><span class="score-badge score-good">76.8 - Good</span></td>
+                            <td><span class="priority-low">
+                                LOW
+                            </span></td>
+                            <td>Medium</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Carbon Footprint</strong></td>
+                            <td>45.2</td>
+                            <td>40.0</td>
+                            <td>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill-custom score-poor" 
+                                         style="width: 54.8%"></div>
+                                </div>
+                            </td>
+                            <td><span class="score-badge score-poor">54.8 - Poor</span></td>
+                            <td><span class="priority-high">
+                                HIGH
+                            </span></td>
+                            <td>Critical</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Performance Optimization</strong></td>
+                            <td>85.1</td>
+                            <td>90.0</td>
+                            <td>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill-custom score-good" 
+                                         style="width: 85.1%"></div>
+                                </div>
+                            </td>
+                            <td><span class="score-badge score-good">85.1 - Good</span></td>
+                            <td><span class="priority-low">
+                                LOW
+                            </span></td>
+                            <td>High</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Sustainable Practices</strong></td>
+                            <td>72.9</td>
+                            <td>75.0</td>
+                            <td>
+                                <div class="progress-bar-custom">
+                                    <div class="progress-fill-custom score-fair" 
+                                         style="width: 72.9%"></div>
+                                </div>
+                            </td>
+                            <td><span class="score-badge score-fair">72.9 - Fair</span></td>
+                            <td><span class="priority-medium">
+                                MEDIUM
+                            </span></td>
+                            <td>Medium</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+            
+        <div class="tab-pane fade" id="files" role="tabpanel">
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-file-code"></i> Files Analysis
+                    </h3>
+                    <div class="table-stats">
+                        <span class="stat-badge">Files: 15</span>
+                        <span class="stat-badge">Languages: 4</span>
+                    </div>
+                </div>
+                
+                <table id="filesTable" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>File Name</th>
+                            <th>Language</th>
+                            <th>Size</th>
+                            <th>Score</th>
+                            <th>Issues</th>
+                            <th>Complexity</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_javascript_1.js</td>
+                <td><span class="badge bg-primary">Javascript</span></td>
+                <td>2.5 KB</td>
+                <td><span class="score-badge score-good">83.0 - Good</span></td>
+                <td>3</td>
+                <td><span class="badge bg-success">Low</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_javascript_1.js')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_javascript_2.js</td>
+                <td><span class="badge bg-primary">Javascript</span></td>
+                <td>5.0 KB</td>
+                <td><span class="score-badge score-good">88.0 - Good</span></td>
+                <td>2</td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_javascript_2.js')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_javascript_3.js</td>
+                <td><span class="badge bg-primary">Javascript</span></td>
+                <td>7.5 KB</td>
+                <td><span class="score-badge score-excellent">93.0 - Excellent</span></td>
+                <td>1</td>
+                <td><span class="badge bg-danger">High</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_javascript_3.js')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_javascript_4.js</td>
+                <td><span class="badge bg-primary">Javascript</span></td>
+                <td>10.0 KB</td>
+                <td><span class="score-badge score-excellent">98.0 - Excellent</span></td>
+                <td>0</td>
+                <td><span class="badge bg-success">Low</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_javascript_4.js')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_javascript_5.js</td>
+                <td><span class="badge bg-primary">Javascript</span></td>
+                <td>12.5 KB</td>
+                <td><span class="score-badge score-excellent">103.0 - Excellent</span></td>
+                <td>0</td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_javascript_5.js')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_python_1.py</td>
+                <td><span class="badge bg-primary">Python</span></td>
+                <td>2.5 KB</td>
+                <td><span class="score-badge score-good">78.0 - Good</span></td>
+                <td>3</td>
+                <td><span class="badge bg-success">Low</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_python_1.py')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_python_2.py</td>
+                <td><span class="badge bg-primary">Python</span></td>
+                <td>5.0 KB</td>
+                <td><span class="score-badge score-good">83.0 - Good</span></td>
+                <td>2</td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_python_2.py')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_python_3.py</td>
+                <td><span class="badge bg-primary">Python</span></td>
+                <td>7.5 KB</td>
+                <td><span class="score-badge score-good">88.0 - Good</span></td>
+                <td>1</td>
+                <td><span class="badge bg-danger">High</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_python_3.py')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_python_4.py</td>
+                <td><span class="badge bg-primary">Python</span></td>
+                <td>10.0 KB</td>
+                <td><span class="score-badge score-excellent">93.0 - Excellent</span></td>
+                <td>0</td>
+                <td><span class="badge bg-success">Low</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_python_4.py')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_python_5.py</td>
+                <td><span class="badge bg-primary">Python</span></td>
+                <td>12.5 KB</td>
+                <td><span class="score-badge score-excellent">98.0 - Excellent</span></td>
+                <td>0</td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_python_5.py')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_html_1.txt</td>
+                <td><span class="badge bg-primary">Html</span></td>
+                <td>2.5 KB</td>
+                <td><span class="score-badge score-good">75.0 - Good</span></td>
+                <td>3</td>
+                <td><span class="badge bg-success">Low</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_html_1.txt')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_html_2.txt</td>
+                <td><span class="badge bg-primary">Html</span></td>
+                <td>5.0 KB</td>
+                <td><span class="score-badge score-good">80.0 - Good</span></td>
+                <td>2</td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_html_2.txt')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_html_3.txt</td>
+                <td><span class="badge bg-primary">Html</span></td>
+                <td>7.5 KB</td>
+                <td><span class="score-badge score-good">85.0 - Good</span></td>
+                <td>1</td>
+                <td><span class="badge bg-danger">High</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_html_3.txt')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_css_1.txt</td>
+                <td><span class="badge bg-primary">Css</span></td>
+                <td>2.5 KB</td>
+                <td><span class="score-badge score-excellent">92.0 - Excellent</span></td>
+                <td>3</td>
+                <td><span class="badge bg-success">Low</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_css_1.txt')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><i class="fas fa-file-code"></i> example_css_2.txt</td>
+                <td><span class="badge bg-primary">Css</span></td>
+                <td>5.0 KB</td>
+                <td><span class="score-badge score-excellent">97.0 - Excellent</span></td>
+                <td>2</td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="viewFile('example_css_2.txt')">
+                        <i class="fas fa-eye"></i> View
+                    </button>
+                </td>
+            </tr>
+            
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+            
+        <div class="tab-pane fade" id="issues" role="tabpanel">
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-exclamation-triangle"></i> Issues & Problems
+                    </h3>
+                    <div class="table-stats">
+                        <span class="stat-badge">Issues: 3</span>
+                    </div>
+                </div>
+                
+                <table id="issuesTable" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Severity</th>
+                            <th>Type</th>
+                            <th>File</th>
+                            <th>Line</th>
+                            <th>Description</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr>
+                <td><span class="priority-high">HIGH</span></td>
+                <td><strong>Energy Inefficiency</strong></td>
+                <td><code>src/TrainingTab.js</code></td>
+                <td>145</td>
+                <td>Inefficient data processing loop could consume unnecessary CPU cycles</td>
+                <td><span class="badge bg-secondary">Performance</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="fixIssue(0)">
+                        <i class="fas fa-wrench"></i> Fix
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span class="priority-medium">MEDIUM</span></td>
+                <td><strong>Memory Leak</strong></td>
+                <td><code>src/RevenueFteTab.js</code></td>
+                <td>89</td>
+                <td>Event listeners not properly cleaned up on component unmount</td>
+                <td><span class="badge bg-secondary">Resource Management</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="fixIssue(1)">
+                        <i class="fas fa-wrench"></i> Fix
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span class="priority-low">LOW</span></td>
+                <td><strong>Suboptimal Algorithm</strong></td>
+                <td><code>backend/server.js</code></td>
+                <td>234</td>
+                <td>O(n²) sorting algorithm could be optimized to O(n log n)</td>
+                <td><span class="badge bg-secondary">Algorithm</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-primary" onclick="fixIssue(2)">
+                        <i class="fas fa-wrench"></i> Fix
+                    </button>
+                </td>
+            </tr>
+            
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+            
+        <div class="tab-pane fade" id="recommendations" role="tabpanel">
+            <div class="table-container">
+                <div class="table-header">
+                    <h3 class="table-title">
+                        <i class="fas fa-lightbulb"></i> Recommendations & Improvements
+                    </h3>
+                    <div class="table-stats">
+                        <span class="stat-badge">Recommendations: 3</span>
+                    </div>
+                </div>
+                
+                <table id="recommendationsTable" class="table table-striped" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Priority</th>
+                            <th>Title</th>
+                            <th>Description</th>
+                            <th>Impact</th>
+                            <th>Effort</th>
+                            <th>Category</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        
+            <tr>
+                <td><span class="priority-high">HIGH</span></td>
+                <td><strong>Implement Virtual Scrolling</strong></td>
+                <td>Use virtual scrolling in data grids to reduce memory usage and improve performance with large datasets</td>
+                <td><span class="badge bg-info">High</span></td>
+                <td><span class="badge bg-warning">Medium</span></td>
+                <td><span class="badge bg-secondary">Performance</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-success" onclick="implementRecommendation(0)">
+                        <i class="fas fa-play"></i> Implement
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span class="priority-medium">MEDIUM</span></td>
+                <td><strong>Add Code Splitting</strong></td>
+                <td>Implement code splitting to reduce initial bundle size and improve loading performance</td>
+                <td><span class="badge bg-info">Medium</span></td>
+                <td><span class="badge bg-warning">Low</span></td>
+                <td><span class="badge bg-secondary">Optimization</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-success" onclick="implementRecommendation(1)">
+                        <i class="fas fa-play"></i> Implement
+                    </button>
+                </td>
+            </tr>
+            
+            <tr>
+                <td><span class="priority-low">LOW</span></td>
+                <td><strong>Optimize Bundle Size</strong></td>
+                <td>Remove unused dependencies and optimize webpack configuration for smaller bundles</td>
+                <td><span class="badge bg-info">Low</span></td>
+                <td><span class="badge bg-warning">High</span></td>
+                <td><span class="badge bg-secondary">Build Process</span></td>
+                <td>
+                    <button class="btn btn-sm btn-outline-success" onclick="implementRecommendation(2)">
+                        <i class="fas fa-play"></i> Implement
+                    </button>
+                </td>
+            </tr>
+            
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+            
+        <div class="export-section">
+            <h3 class="text-center mb-4">
+                <i class="fas fa-download"></i> Export Data
+            </h3>
+            <p class="text-center mb-4">Download your sustainability analysis data in various formats</p>
+            
+            <div class="export-buttons">
+                <button class="export-btn" onclick="exportAllData('csv')">
+                    <i class="fas fa-file-csv"></i> Export as CSV
+                </button>
+                <button class="export-btn" onclick="exportAllData('excel')">
+                    <i class="fas fa-file-excel"></i> Export as Excel
+                </button>
+                <button class="export-btn" onclick="exportAllData('pdf')">
+                    <i class="fas fa-file-pdf"></i> Export as PDF
+                </button>
+                <button class="export-btn" onclick="exportAllData('json')">
+                    <i class="fas fa-file-code"></i> Export as JSON
+                </button>
+            </div>
+        </div>
+        
+        </div>
+        
+        
+        <div class="footer-section">
+            <p>
+                <i class="fas fa-table"></i> Sustainability Data Tables | 
+                Generated on 2025-11-09 12:11:36 UTC | 
+                <i class="fas fa-leaf"></i> Building sustainable software solutions
+            </p>
+        </div>
+        
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/dataTables.searchPanes.min.js"></script>
+    <script src="https://cdn.datatables.net/searchpanes/2.2.0/js/searchPanes.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script>
+        
+        $(document).ready(function() {
+            // Initialize all DataTables with advanced features
+            const commonConfig = {
+                responsive: true,
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                dom: 'Bfrtip',
+                buttons: [
+                    'copy', 'csv', 'excel', 'pdf', 'print'
+                ],
+                order: [[0, 'asc']],
+                language: {
+                    search: "_INPUT_",
+                    searchPlaceholder: "Search records...",
+                    lengthMenu: "Show _MENU_ records per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ records",
+                    infoEmpty: "No records available",
+                    infoFiltered: "(filtered from _MAX_ total records)"
+                }
+            };
+            
+            // Initialize each table
+            $('#overviewTable').DataTable({
+                ...commonConfig,
+                columnDefs: [
+                    { targets: [3], orderable: false }
+                ]
+            });
+            
+            $('#metricsTable').DataTable({
+                ...commonConfig,
+                columnDefs: [
+                    { targets: [3], orderable: false },
+                    { targets: [1, 2], type: 'num' }
+                ]
+            });
+            
+            $('#filesTable').DataTable({
+                ...commonConfig,
+                columnDefs: [
+                    { targets: [6], orderable: false }
+                ]
+            });
+            
+            $('#issuesTable').DataTable({
+                ...commonConfig,
+                columnDefs: [
+                    { targets: [6], orderable: false }
+                ],
+                order: [[0, 'desc']] // Order by severity
+            });
+            
+            $('#recommendationsTable').DataTable({
+                ...commonConfig,
+                columnDefs: [
+                    { targets: [6], orderable: false }
+                ],
+                order: [[0, 'desc']] // Order by priority
+            });
+            
+            // Animate progress bars
+            setTimeout(() => {
+                $('.progress-fill-custom').each(function() {
+                    const width = $(this).css('width');
+                    $(this).css('width', '0%').animate({ width: width }, 1500);
+                });
+            }, 500);
+        });
+        
+        // Export functionality
+        function exportAllData(format) {
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+            const filename = `sustainability-analysis-${timestamp}`;
+            
+            switch(format) {
+                case 'csv':
+                    exportTableToCSV(filename + '.csv');
+                    break;
+                case 'excel':
+                    exportTableToExcel(filename + '.xlsx');
+                    break;
+                case 'pdf':
+                    exportTableToPDF(filename + '.pdf');
+                    break;
+                case 'json':
+                    exportDataAsJSON(filename + '.json');
+                    break;
+            }
+        }
+        
+        function exportTableToCSV(filename) {
+            const tables = ['overviewTable', 'metricsTable', 'filesTable', 'issuesTable', 'recommendationsTable'];
+            let csvContent = '';
+            
+            tables.forEach(tableId => {
+                const table = document.getElementById(tableId);
+                if (table) {
+                    csvContent += `\n\n=== ${tableId.replace('Table', '').toUpperCase()} ===\n`;
+                    const rows = table.querySelectorAll('tr');
+                    rows.forEach(row => {
+                        const cols = row.querySelectorAll('th, td');
+                        const rowData = Array.from(cols).map(col => 
+                            `"${col.textContent.trim().replace(/"/g, '""')}"`
+                        ).join(',');
+                        csvContent += rowData + '\n';
+                    });
+                }
+            });
+            
+            downloadFile(csvContent, filename, 'text/csv');
+        }
+        
+        function exportDataAsJSON(filename) {
+            const analysisData = {
+  "sustainability_metrics": {
+    "overall_score": 78.5,
+    "energy_efficiency": 82.3,
+    "resource_utilization": 76.8,
+    "carbon_footprint": 45.2,
+    "performance_optimization": 85.1,
+    "sustainable_practices": 72.9
+  },
+  "analysis_summary": {
+    "file_count": 25,
+    "execution_time": 1.234,
+    "timestamp": "2024-01-15T10:30:00Z",
+    "language_breakdown": {
+      "javascript": 12,
+      "python": 8,
+      "html": 3,
+      "css": 2
+    }
+  },
+  "issues": [
+    {
+      "type": "Energy Inefficiency",
+      "severity": "high",
+      "file": "src/TrainingTab.js",
+      "line": 145,
+      "message": "Inefficient data processing loop could consume unnecessary CPU cycles",
+      "category": "Performance"
+    },
+    {
+      "type": "Memory Leak",
+      "severity": "medium",
+      "file": "src/RevenueFteTab.js",
+      "line": 89,
+      "message": "Event listeners not properly cleaned up on component unmount",
+      "category": "Resource Management"
+    },
+    {
+      "type": "Suboptimal Algorithm",
+      "severity": "low",
+      "file": "backend/server.js",
+      "line": 234,
+      "message": "O(n\u00b2) sorting algorithm could be optimized to O(n log n)",
+      "category": "Algorithm"
+    }
+  ],
+  "recommendations": [
+    {
+      "title": "Implement Virtual Scrolling",
+      "description": "Use virtual scrolling in data grids to reduce memory usage and improve performance with large datasets",
+      "priority": "high",
+      "impact": "High",
+      "effort": "Medium",
+      "category": "Performance"
+    },
+    {
+      "title": "Add Code Splitting",
+      "description": "Implement code splitting to reduce initial bundle size and improve loading performance",
+      "priority": "medium",
+      "impact": "Medium",
+      "effort": "Low",
+      "category": "Optimization"
+    },
+    {
+      "title": "Optimize Bundle Size",
+      "description": "Remove unused dependencies and optimize webpack configuration for smaller bundles",
+      "priority": "low",
+      "impact": "Low",
+      "effort": "High",
+      "category": "Build Process"
+    }
+  ]
+};
+            downloadFile(JSON.stringify(analysisData, null, 2), filename, 'application/json');
+        }
+        
+        function downloadFile(content, filename, mimeType) {
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        // Action handlers
+        function viewFile(filename) {
+            alert(`Viewing file: ${filename}\n\nThis would open the file details in a modal or new page.`);
+        }
+        
+        function fixIssue(issueIndex) {
+            alert(`Initiating fix for issue #${issueIndex + 1}\n\nThis would trigger automated fixing or provide detailed guidance.`);
+        }
+        
+        function implementRecommendation(recIndex) {
+            alert(`Implementing recommendation #${recIndex + 1}\n\nThis would start the implementation process or provide step-by-step guidance.`);
+        }
+        
+    </script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+{
+  "sustainability_metrics": {
+    "overall_score": 78.5,
+    "energy_efficiency": 82.3,
+    "resource_utilization": 76.8,
+    "carbon_footprint": 45.2,
+    "performance_optimization": 85.1,
+    "sustainable_practices": 72.9
+  },
+  "analysis_summary": {
+    "file_count": 25,
+    "execution_time": 1.234,
+    "timestamp": "2024-01-15T10:30:00Z",
+    "language_breakdown": {
+      "javascript": 12,
+      "python": 8,
+      "html": 3,
+      "css": 2
+    }
+  },
+  "issues": [
+    {
+      "type": "Energy Inefficiency",
+      "severity": "high",
+      "file": "src/TrainingTab.js",
+      "line": 145,
+      "message": "Inefficient data processing loop could consume unnecessary CPU cycles",
+      "category": "Performance"
+    },
+    {
+      "type": "Memory Leak",
+      "severity": "medium",
+      "file": "src/RevenueFteTab.js",
+      "line": 89,
+      "message": "Event listeners not properly cleaned up on component unmount",
+      "category": "Resource Management"
+    },
+    {
+      "type": "Suboptimal Algorithm",
+      "severity": "low",
+      "file": "backend/server.js",
+      "line": 234,
+      "message": "O(n\u00b2) sorting algorithm could be optimized to O(n log n)",
+      "category": "Algorithm"
+    }
+  ],
+  "recommendations": [
+    {
+      "title": "Implement Virtual Scrolling",
+      "description": "Use virtual scrolling in data grids to reduce memory usage and improve performance with large datasets",
+      "priority": "high",
+      "impact": "High",
+      "effort": "Medium",
+      "category": "Performance"
+    },
+    {
+      "title": "Add Code Splitting",
+      "description": "Implement code splitting to reduce initial bundle size and improve loading performance",
+      "priority": "medium",
+      "impact": "Medium",
+      "effort": "Low",
+      "category": "Optimization"
+    },
+    {
+      "title": "Optimize Bundle Size",
+      "description": "Remove unused dependencies and optimize webpack configuration for smaller bundles",
+      "priority": "low",
+      "impact": "Low",
+      "effort": "High",
+      "category": "Build Process"
+    }
+  ]
+}
