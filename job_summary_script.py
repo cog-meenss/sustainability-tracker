@@ -96,7 +96,11 @@ Overall Score [{overall_bar}] {metrics['overall_score']:.1f}/100
 |-----------|-------|----------------------|
 | **Carbon Footprint** | **{metrics['carbon_footprint']:.1f}/100** | {carbon_potential} |
 | **Energy Efficiency** | **{metrics['energy_efficiency']:.1f}/100** | {energy_potential} |
-| **Sustainable Practices** | **{metrics['sustainable_practices']:.1f}/100** | {practices_potential} |"""
+| **Sustainable Practices** | **{metrics['sustainable_practices']:.1f}/100** | {practices_potential} |
+
+### 💡 Priority Action Items
+
+"""
 
 # Generate recommendations based on metrics
 recommendations = []
@@ -110,12 +114,6 @@ if metrics['carbon_footprint'] < 50:
     recommendations.append(f"🟡 **Medium**: Improve carbon footprint score from {metrics['carbon_footprint']:.1f}/100")
 if metrics['maintainability'] < 60:
     recommendations.append("🟢 **Low**: Improve code maintainability for long-term sustainability")
-
-job_summary += f"""
-
-### 💡 Priority Action Items
-
-"""
 
 for i, rec in enumerate(recommendations, 1):
     job_summary += f"{i}. {rec}\\n"
