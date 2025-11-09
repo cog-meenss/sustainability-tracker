@@ -1,18 +1,30 @@
 # 🔧 GitHub Pages Troubleshooting Guide
 
-## Current Issue
-GitHub Pages URL https://cog-meenss.github.io/sustainability-tracker/ is not accessible even though:
-- ✅ Repository exists: https://github.com/cog-meenss/sustainability-tracker
-- ✅ Workflow has Pages deployment configured
-- ✅ Proper permissions are set
+## Current Issue ❌ 404 ERROR
+GitHub Pages URL https://cog-meenss.github.io/sustainability-tracker/ shows:
+```
+404 - There isn't a GitHub Pages site here.
+```
 
-## Quick Fixes
+**Root Cause:** GitHub Pages is not enabled or configured in repository settings.
 
-### 1. Enable GitHub Pages in Repository Settings
-1. Go to: https://github.com/cog-meenss/sustainability-tracker/settings/pages
-2. Under "Source" section:
-   - Select **"GitHub Actions"** (not "Deploy from branch")
-   - This allows the workflow to deploy Pages automatically
+## ⚡ IMMEDIATE SOLUTION - Manual Setup
+
+### 🚀 OPTION 1: Simple Branch-Based Deployment (RECOMMENDED)
+
+Since the workflow-based deployment isn't working, let's use the simpler branch method:
+
+1. **Go to Repository Settings:** https://github.com/cog-meenss/sustainability-tracker/settings/pages
+
+2. **Under "Source" section:**
+   - Select **"Deploy from a branch"** 
+   - Choose **"main"** branch
+   - Select **"/ (root)"** folder
+   - Click **"Save"**
+
+3. **GitHub will automatically deploy from the main branch**
+   - Reports are already in `sustainability-reports/` folder
+   - Should be live in 2-5 minutes at: https://cog-meenss.github.io/sustainability-tracker/sustainability-reports/latest-report.html
 
 ### 2. Check Workflow Permissions
 Ensure the workflow has proper permissions (already configured in workflow file):

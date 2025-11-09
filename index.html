@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Sustainability Tracker - Live Reports</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.2em;
+        }
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .report-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #27ae60;
+        }
+        .report-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+        .report-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        .report-card p {
+            color: #7f8c8d;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(39, 174, 96, 0.3);
+        }
+        .btn.secondary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        .btn.secondary:hover {
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.3);
+        }
+        .stats {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+        .stats h2 {
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .stat-item {
+            background: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2ecc71;
+        }
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+        .info-box {
+            background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+            border-left: 4px solid #27ae60;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .alert {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 4px solid #f39c12;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Sustainability Tracker</h1>
+            <p>Live Sustainability Reports & Green Coding Analysis</p>
+        </div>
+
+        <div class="alert">
+            <h3>🎯 Quick Access to Reports</h3>
+            <p>This GitHub Pages site provides direct access to automatically generated sustainability reports.</p>
+        </div>
+
+        <div class="reports-grid">
+            <div class="report-card">
+                <h3>📊 Latest Interactive Dashboard</h3>
+                <p>Comprehensive sustainability analysis with real-time metrics, file-specific issues, and actionable recommendations.</p>
+                <a href="sustainability-reports/latest-report.html" class="btn">🎯 View Dashboard</a>
+                <a href="sustainability-reports/latest-report.json" class="btn secondary">📋 Raw Data (JSON)</a>
+            </div>
+            
+            <div class="report-card">
+                <h3>📈 Alternative Reports</h3>
+                <p>Additional sustainability reports and analysis tools.</p>
+                <a href="dashboard.html" class="btn secondary">📊 Dashboard</a>
+                <a href="docs/index.html" class="btn secondary">📚 Documentation</a>
+            </div>
+        </div>
+
+        <div class="reports-grid">
+            <div class="report-card">
+                <h3>🔄 Auto-Generated Reports</h3>
+                <p>Reports are automatically generated on every commit and updated in real-time through GitHub Actions workflows.</p>
+                <a href="https://github.com/cog-meenss/sustainability-tracker/actions" class="btn secondary">⚙️ View Workflows</a>
+                <a href="https://github.com/cog-meenss/sustainability-tracker" class="btn">📁 Source Code</a>
+            </div>
+
+            <div class="report-card">
+                <h3>🛠️ Setup & Troubleshooting</h3>
+                <p>Need help setting up or troubleshooting the sustainability tracker?</p>
+                <a href="GITHUB_PAGES_TROUBLESHOOTING.md" class="btn secondary">🔧 Troubleshooting</a>
+                <a href="README.md" class="btn secondary">📖 README</a>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <h2>📈 Latest Analysis Results</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">25.7</div>
+                    <div class="stat-label">Overall Score</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100.0</div>
+                    <div class="stat-label">Green Coding</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">Recommendations</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">11/09</div>
+                    <div class="stat-label">Last Updated</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>🌍 About Sustainability Tracking</h3>
+            <p>This project demonstrates sustainable software development practices including efficient algorithms, minimal resource consumption, carbon-aware development practices, and automated sustainability monitoring.</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px; color: #7f8c8d;">
+            <p>Generated by <strong>Automated Sustainability Analysis</strong> • Updated November 9, 2025</p>
+            <p>🌱 Built with sustainability in mind • Automated analysis • Continuous improvement</p>
+        </div>
+    </div>
+</body>
+</html>
