@@ -163,25 +163,66 @@ class ComprehensiveSustainabilityEvaluator:
             'wasteful_patterns': defaultdict(int),
             'cpu_efficiency_score': 0,
             'memory_efficiency_score': 0,
-            'energy_saving_score': 0
+            'energy_saving_score': 0,
+            'file_issues': [],
+            'file_improvements': []
         }
         
         for file_path in files[:50]:  # Limit to avoid long processing
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
-                    content = f.read()
+                    lines = f.readlines()
+                    content = ''.join(lines)
                     
-                # Analyze green patterns
+                relative_path = str(file_path.relative_to(self.project_path))
+                file_issues = []
+                file_improvements = []
+                    
+                # Analyze green patterns with line numbers
                 for pattern_name, pattern in green_patterns.items():
-                    matches = len(re.findall(pattern, content, re.IGNORECASE))
-                    self.green_coding_metrics['green_patterns'][pattern_name] += matches
+                    matches = re.finditer(pattern, content, re.IGNORECASE)
+                    for match in matches:
+                        line_num = content[:match.start()].count('\n') + 1
+                        line_content = lines[line_num - 1].strip() if line_num <= len(lines) else ""
+                        file_improvements.append({
+                            'type': pattern_name,
+                            'line': line_num,
+                            'content': line_content,
+                            'severity': 'good'
+                        })
+                    self.green_coding_metrics['green_patterns'][pattern_name] += len(list(re.finditer(pattern, content, re.IGNORECASE)))
                 
-                # Analyze wasteful patterns
+                # Analyze wasteful patterns with detailed info
                 for pattern_name, pattern in wasteful_patterns.items():
-                    matches = len(re.findall(pattern, content, re.IGNORECASE))
-                    self.green_coding_metrics['wasteful_patterns'][pattern_name] += matches
+                    matches = re.finditer(pattern, content, re.IGNORECASE)
+                    for match in matches:
+                        line_num = content[:match.start()].count('\n') + 1
+                        line_content = lines[line_num - 1].strip() if line_num <= len(lines) else ""
+                        
+                        # Generate specific suggestions based on pattern
+                        suggestion = self._generate_green_coding_suggestion(pattern_name, line_content)
+                        
+                        file_issues.append({
+                            'type': pattern_name,
+                            'line': line_num,
+                            'content': line_content,
+                            'severity': 'high' if pattern_name in ['inefficient_algorithms', 'memory_waste'] else 'medium',
+                            'suggestion': suggestion,
+                            'estimated_impact': self._estimate_energy_impact(pattern_name)
+                        })
+                    self.green_coding_metrics['wasteful_patterns'][pattern_name] += len(list(re.finditer(pattern, content, re.IGNORECASE)))
+                
+                # Store file-specific data if there are issues or improvements
+                if file_issues or file_improvements:
+                    self.green_coding_metrics['file_issues'].append({
+                        'file': relative_path,
+                        'lines_of_code': len(lines),
+                        'issues': file_issues,
+                        'improvements': file_improvements,
+                        'green_score': max(0, 100 - (len(file_issues) * 15) + (len(file_improvements) * 5))
+                    })
                     
-            except Exception:
+            except Exception as e:
                 continue
         
         # Calculate efficiency scores
@@ -233,6 +274,51 @@ class ComprehensiveSustainabilityEvaluator:
         self.green_coding_metrics['energy_saving_score'] = min(100, max(0,
             60 + (energy_saving_patterns * 8) - (energy_waste_patterns * 12)
         ))
+
+    def _generate_green_coding_suggestion(self, pattern_type, line_content):
+        """Generate specific suggestions for green coding improvements"""
+        suggestions = {
+            'inefficient_algorithms': {
+                'message': 'Replace with optimized algorithm (O(n log n) or O(n))',
+                'example': 'Use dict/set for lookups instead of nested loops'
+            },
+            'memory_waste': {
+                'message': 'Implement memory-efficient patterns',
+                'example': 'Use specific imports, avoid global variables, add proper cleanup'
+            },
+            'excessive_logging': {
+                'message': 'Remove debug logs from production code',
+                'example': 'Replace console.log/print with proper logging levels'
+            },
+            'blocking_operations': {
+                'message': 'Replace with non-blocking async operations',
+                'example': 'Use async/await, Promise.all(), or background tasks'
+            },
+            'redundant_computation': {
+                'message': 'Implement caching or memoization',
+                'example': 'Cache expensive function results or use lazy evaluation'
+            },
+            'large_file_operations': {
+                'message': 'Use streaming or chunked processing',
+                'example': 'Process files in chunks or use generators'
+            }
+        }
+        return suggestions.get(pattern_type, {
+            'message': 'Optimize for better energy efficiency',
+            'example': 'Review code for performance improvements'
+        })
+
+    def _estimate_energy_impact(self, pattern_type):
+        """Estimate energy impact of wasteful patterns"""
+        impact_levels = {
+            'inefficient_algorithms': 'High (20-50% CPU reduction possible)',
+            'memory_waste': 'High (15-40% memory reduction possible)',
+            'excessive_logging': 'Medium (5-15% I/O reduction possible)',
+            'blocking_operations': 'High (25-60% responsiveness improvement)',
+            'redundant_computation': 'Medium (10-30% computation savings)',
+            'large_file_operations': 'Medium (20-40% memory/I/O savings)'
+        }
+        return impact_levels.get(pattern_type, 'Low (5-10% improvement possible)')
 
     def _analyze_file_complexity(self):
         """Analyze file complexity metrics"""
@@ -945,27 +1031,30 @@ def generate_comprehensive_html_report(report_data):
             * {{ margin: 0; padding: 0; box-sizing: border-box; }}
             
             body {{
-                font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #16a085 50%, #27ae60 75%, #2ecc71 100%);
                 min-height: 100vh;
-                color: #333;
+                color: #2c3e50;
+                line-height: 1.6;
             }}
             
             .container {{
-                max-width: 1400px;
+                max-width: 1600px;
                 margin: 0 auto;
-                background: rgba(255, 255, 255, 0.98);
+                background: #fefefe;
                 min-height: 100vh;
-                box-shadow: 0 0 50px rgba(0,0,0,0.1);
+                box-shadow: 0 0 80px rgba(0,0,0,0.15);
+                border-radius: 0;
             }}
             
             .header {{
-                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                background: linear-gradient(135deg, #1e3c72 0%, #16a085 50%, #27ae60 100%);
                 color: white;
-                padding: 40px;
+                padding: 50px 40px;
                 text-align: center;
                 position: relative;
                 overflow: hidden;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.15);
             }}
             
             .header::before {{
@@ -1529,6 +1618,132 @@ def generate_comprehensive_html_report(report_data):
                 <div class="chart-container">
                     <h3 class="chart-title">🎯 Sustainability Metrics Radar</h3>
                     <canvas id="radarChart" width="400" height="300"></canvas>
+                </div>
+                
+                <!-- Detailed Green Coding File Analysis -->
+                <div style="margin-top: 50px;">
+                    <h2 style="color: #1e3c72; font-size: 2.2em; text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #27ae60, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
+                        🌱 Detailed Green Coding Analysis
+                    </h2>
+    """
+    
+    # Add file-specific analysis
+    green_analysis = report_data.get('detailed_analysis', {}).get('green_coding_analysis', {})
+    file_issues = green_analysis.get('file_issues', [])
+    
+    if file_issues:
+        html += """
+                    <div style="background: linear-gradient(135deg, #e8f8f5 0%, #f0fff4 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; border-left: 5px solid #27ae60;">
+                        <h3 style="color: #1e3c72; margin-bottom: 20px; font-size: 1.6em;">📂 File-by-File Green Coding Assessment</h3>
+        """
+        
+        for file_data in file_issues[:10]:  # Limit to top 10 files
+            file_name = file_data['file']
+            issues = file_data['issues']
+            improvements = file_data['improvements']
+            green_score = file_data['green_score']
+            
+            # Color coding based on green score
+            if green_score >= 80:
+                score_color = "#27ae60"
+                badge_class = "excellent"
+            elif green_score >= 60:
+                score_color = "#f39c12"
+                badge_class = "good"
+            else:
+                score_color = "#e74c3c"
+                badge_class = "poor"
+                
+            html += f"""
+                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid {score_color};">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
+                                    📄 {file_name}
+                                </h4>
+                                <div style="background: {score_color}; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
+                                    Green Score: {green_score:.0f}/100
+                                </div>
+                            </div>
+            """
+            
+            # Add issues section
+            if issues:
+                html += f"""
+                            <div style="margin-bottom: 20px;">
+                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues ({len(issues)} found)</h5>
+                """
+                
+                for issue in issues[:5]:  # Limit to top 5 issues per file
+                    severity_colors = {
+                        'high': '#e74c3c',
+                        'medium': '#f39c12',
+                        'low': '#3498db'
+                    }
+                    severity_color = severity_colors.get(issue['severity'], '#95a5a6')
+                    
+                    html += f"""
+                                <div style="background: #fff5f5; border-left: 3px solid {severity_color}; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                                        <span style="background: {severity_color}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
+                                            {issue['severity']} Priority
+                                        </span>
+                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line {issue['line']}</span>
+                                    </div>
+                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
+                                        {issue['content'][:150]}{'...' if len(issue['content']) > 150 else ''}
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
+                                        <span style="color: #2c3e50;">{issue['suggestion']['message']}</span>
+                                    </div>
+                                    <div style="margin-bottom: 8px;">
+                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
+                                        <span style="color: #2c3e50; font-style: italic;">{issue['suggestion']['example']}</span>
+                                    </div>
+                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
+                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
+                                        <span style="color: #2c3e50;">{issue['estimated_impact']}</span>
+                                    </div>
+                                </div>
+                    """
+                
+                html += """
+                            </div>
+                """
+            
+            # Add improvements section
+            if improvements:
+                html += f"""
+                            <div>
+                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found ({len(improvements)})</h5>
+                """
+                
+                for improvement in improvements[:3]:  # Limit to top 3 improvements per file
+                    html += f"""
+                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
+                                    <div style="display: flex; justify-content: between; align-items: center;">
+                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">{improvement['type'].replace('_', ' ')}</span>
+                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line {improvement['line']}</span>
+                                    </div>
+                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
+                                        {improvement['content'][:100]}{'...' if len(improvement['content']) > 100 else ''}
+                                    </div>
+                                </div>
+                    """
+                
+                html += """
+                            </div>
+                """
+                
+            html += """
+                        </div>
+            """
+            
+        html += """
+                    </div>
+        """
+    
+    html += """
                 </div>
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
