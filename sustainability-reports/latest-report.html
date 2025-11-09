@@ -1,2077 +1,503 @@
-
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Comprehensive Sustainable Code Evaluation Report</title>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-        <style>
-            * { margin: 0; padding: 0; box-sizing: border-box; }
-            
-            body {
-                font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #16a085 50%, #27ae60 75%, #2ecc71 100%);
-                min-height: 100vh;
-                color: #2c3e50;
-                line-height: 1.6;
-            }
-            
-            .container {
-                max-width: 1600px;
-                margin: 0 auto;
-                background: #fefefe;
-                min-height: 100vh;
-                box-shadow: 0 0 80px rgba(0,0,0,0.15);
-                border-radius: 0;
-            }
-            
-            .header {
-                background: linear-gradient(135deg, #0f5132 0%, #198754 25%, #20c997 50%, #0dcaf0 75%, #6f42c1 100%);
-                background-size: 400% 400%;
-                animation: headerGradient 8s ease infinite;
-                color: white;
-                padding: 60px 40px;
-                text-align: center;
-                position: relative;
-                overflow: hidden;
-                box-shadow: 0 12px 40px rgba(39, 174, 96, 0.25);
-            }
-            
-            @keyframes headerGradient {
-                0% { background-position: 0% 50%; }
-                25% { background-position: 100% 50%; }
-                50% { background-position: 100% 100%; }
-                75% { background-position: 0% 100%; }
-                100% { background-position: 0% 50%; }
-            }
-            
-            .header::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-                opacity: 0.1;
-            }
-            
-            .header h1 {
-                font-size: 3.5em;
-                margin-bottom: 15px;
-                text-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
-                position: relative;
-                z-index: 1;
-                font-weight: 900;
-                letter-spacing: -1px;
-                animation: titleGlow 3s ease-in-out infinite alternate;
-            }
-            
-            @keyframes titleGlow {
-                0% { 
-                    text-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
-                    transform: scale(1);
-                }
-                100% { 
-                    text-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.2);
-                    transform: scale(1.02);
-                }
-            }
-            
-            .header .subtitle {
-                font-size: 1.2em;
-                opacity: 0.9;
-                position: relative;
-                z-index: 1;
-            }
-            
-            .nav-tabs {
-                display: flex;
-                background: #f8f9fa;
-                border-bottom: 3px solid #dee2e6;
-                position: sticky;
-                top: 0;
-                z-index: 100;
-            }
-            
-            .nav-tab {
-                flex: 1;
-                padding: 15px 20px;
-                background: #e9ecef;
-                border: none;
-                cursor: pointer;
-                font-size: 16px;
-                font-weight: 600;
-                transition: all 0.3s ease;
-                border-right: 1px solid #dee2e6;
-            }
-            
-            .nav-tab:last-child { border-right: none; }
-            
-            .nav-tab.active {
-                background: white;
-                color: #2c3e50;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }
-            
-            .nav-tab:hover {
-                background: #f1f3f4;
-                transform: translateY(-1px);
-            }
-            
-            .tab-content {
-                display: none;
-                padding: 40px;
-                animation: fadeIn 0.5s ease-in;
-            }
-            
-            .tab-content.active { display: block; }
-            
-            @keyframes fadeIn {
-                from { opacity: 0; transform: translateY(10px); }
-                to { opacity: 1; transform: translateY(0); }
-            }
-            
-            .metric-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 30px;
-                margin-bottom: 40px;
-            }
-            
-            .metric-card {
-                background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
-                border-radius: 20px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(39, 174, 96, 0.08);
-                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-                border: 1px solid rgba(39, 174, 96, 0.1);
-                position: relative;
-                overflow: hidden;
-                backdrop-filter: blur(10px);
-            }
-            
-            .metric-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, #27ae60, #16a085, #2ecc71, #1abc9c);
-                background-size: 300% 100%;
-                animation: gradientShift 3s ease infinite;
-            }
-            
-            .metric-card:hover {
-                transform: translateY(-12px) scale(1.02);
-                box-shadow: 0 25px 50px rgba(39, 174, 96, 0.2);
-                border-color: rgba(39, 174, 96, 0.3);
-            }
-            
-            @keyframes gradientShift {
-                0% { background-position: 0% 50%; }
-                50% { background-position: 100% 50%; }
-                100% { background-position: 0% 50%; }
-            }
-            
-            .metric-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }
-            
-            .metric-title {
-                font-size: 1.4em;
-                font-weight: 600;
-                color: #2c3e50;
-            }
-            
-            .metric-icon {
-                font-size: 2em;
-                opacity: 0.7;
-            }
-            
-            .metric-value {
-                font-size: 3.5em;
-                font-weight: 900;
-                text-align: center;
-                margin: 25px 0;
-                letter-spacing: -1px;
-                text-shadow: 0 2px 8px rgba(0,0,0,0.1);
-                transition: all 0.3s ease;
-            }
-            
-            .metric-value:hover {
-                transform: scale(1.05);
-                text-shadow: 0 4px 16px rgba(39, 174, 96, 0.4);
-            }
-            
-            .score-excellent { 
-                color: #27ae60;
-                text-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
-            }
-            .score-good { 
-                color: #f39c12;
-                text-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
-            }
-            .score-fair { 
-                color: #e67e22;
-                text-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
-            }
-            .score-poor { 
-                color: #e74c3c;
-                text-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
-            }
-            
-            .progress-bar {
-                width: 100%;
-                height: 14px;
-                background: linear-gradient(90deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
-                border-radius: 12px;
-                overflow: hidden;
-                margin: 18px 0;
-                box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
-                position: relative;
-            }
-            
-            .progress-bar::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
-                animation: shimmer 2s infinite;
-            }
-            
-            @keyframes shimmer {
-                0% { transform: translateX(-100%); }
-                100% { transform: translateX(100%); }
-            }
-            
-            .progress-fill {
-                height: 100%;
-                border-radius: 12px;
-                transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
-                background: linear-gradient(90deg, #27ae60 0%, #2ecc71 30%, #16a085 70%, #1abc9c 100%);
-                background-size: 200% 100%;
-                animation: progressGlow 3s ease-in-out infinite alternate;
-                position: relative;
-                overflow: hidden;
-            }
-            
-            .progress-fill::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
-                animation: progressShine 2s infinite;
-            }
-            
-            @keyframes progressGlow {
-                0% { 
-                    background-position: 0% 50%;
-                    box-shadow: 0 0 10px rgba(39, 174, 96, 0.4);
-                }
-                100% { 
-                    background-position: 100% 50%;
-                    box-shadow: 0 0 20px rgba(39, 174, 96, 0.6);
-                }
-            }
-            
-            @keyframes progressShine {
-                0% { transform: translateX(-100%); }
-                50% { transform: translateX(100%); }
-                100% { transform: translateX(100%); }
-            }
-            
-            .chart-container {
-                background: white;
-                border-radius: 20px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-                margin: 30px 0;
-                border: 1px solid #e9ecef;
-            }
-            
-            .chart-title {
-                font-size: 1.8em;
-                font-weight: 600;
-                color: #2c3e50;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            
-            .recommendations-grid {
-                display: grid;
-                gap: 25px;
-            }
-            
-            .recommendation-card {
-                background: white;
-                border-radius: 15px;
-                padding: 25px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-                border-left: 5px solid #17a2b8;
-                transition: all 0.3s ease;
-            }
-            
-            .recommendation-card:hover {
-                transform: translateX(5px);
-                box-shadow: 0 12px 35px rgba(0,0,0,0.12);
-            }
-            
-            .priority-high { border-left-color: #dc3545; }
-            .priority-medium { border-left-color: #ffc107; }
-            .priority-low { border-left-color: #28a745; }
-            
-            .recommendation-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 15px;
-            }
-            
-            .recommendation-title {
-                font-size: 1.3em;
-                font-weight: 600;
-                color: #2c3e50;
-            }
-            
-            .priority-badge {
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.85em;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-            
-            .priority-high .priority-badge {
-                background: #f8d7da;
-                color: #721c24;
-            }
-            
-            .priority-medium .priority-badge {
-                background: #fff3cd;
-                color: #856404;
-            }
-            
-            .priority-low .priority-badge {
-                background: #d4edda;
-                color: #155724;
-            }
-            
-            .code-example {
-                background: #f8f9fa;
-                border: 1px solid #e9ecef;
-                border-radius: 8px;
-                padding: 20px;
-                margin: 15px 0;
-                font-family: 'Monaco', 'Consolas', monospace;
-                font-size: 0.9em;
-                overflow-x: auto;
-            }
-            
-            .implementation-list {
-                list-style: none;
-                padding: 0;
-            }
-            
-            .implementation-list li {
-                padding: 8px 0;
-                padding-left: 25px;
-                position: relative;
-            }
-            
-            .implementation-list li::before {
-                content: '✓';
-                position: absolute;
-                left: 0;
-                color: #28a745;
-                font-weight: bold;
-            }
-            
-            .data-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin: 20px 0;
-                background: white;
-                border-radius: 12px;
-                overflow: hidden;
-                box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            }
-            
-            .data-table th {
-                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-                color: white;
-                padding: 15px;
-                text-align: left;
-                font-weight: 600;
-            }
-            
-            .data-table td {
-                padding: 12px 15px;
-                border-bottom: 1px solid #e9ecef;
-            }
-            
-            .data-table tr:hover {
-                background: #f8f9fa;
-            }
-            
-            .status-badge {
-                padding: 4px 10px;
-                border-radius: 12px;
-                font-size: 0.85em;
-                font-weight: 600;
-                text-transform: uppercase;
-            }
-            
-            .status-pass {
-                background: #d4edda;
-                color: #155724;
-            }
-            
-            .status-fail {
-                background: #f8d7da;
-                color: #721c24;
-            }
-            
-            .status-conditional {
-                background: #fff3cd;
-                color: #856404;
-            }
-            
-            .action-plan {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-                gap: 25px;
-                margin: 30px 0;
-            }
-            
-            .action-phase {
-                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                border-radius: 15px;
-                padding: 25px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-                border-top: 4px solid #17a2b8;
-            }
-            
-            .phase-title {
-                font-size: 1.4em;
-                font-weight: 600;
-                color: #2c3e50;
-                margin-bottom: 15px;
-            }
-            
-            .phase-timeframe {
-                background: #e3f2fd;
-                color: #1565c0;
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.9em;
-                font-weight: 600;
-                display: inline-block;
-                margin-bottom: 15px;
-            }
-            
-            .carbon-impact {
-                background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
-                border-radius: 20px;
-                padding: 30px;
-                margin: 30px 0;
-                border: 2px solid #c8e6c9;
-            }
-            
-            .carbon-title {
-                font-size: 1.6em;
-                color: #2e7d32;
-                font-weight: 600;
-                margin-bottom: 20px;
-                text-align: center;
-            }
-            
-            .carbon-metrics {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-            }
-            
-            .carbon-metric {
-                background: white;
-                border-radius: 12px;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            }
-            
-            .carbon-value {
-                font-size: 2em;
-                font-weight: bold;
-                color: #2e7d32;
-            }
-            
-            .carbon-label {
-                color: #4caf50;
-                font-weight: 600;
-                margin-top: 5px;
-            }
-            
-            .footer {
-                background: #2c3e50;
-                color: white;
-                padding: 30px;
-                text-align: center;
-                margin-top: 50px;
-            }
-            
-            @media (max-width: 768px) {
-                .container { margin: 0; }
-                .header { padding: 20px; }
-                .header h1 { font-size: 2em; }
-                .tab-content { padding: 20px; }
-                .metric-grid { grid-template-columns: 1fr; }
-                .nav-tabs { flex-direction: column; }
-                .nav-tab { border-right: none; border-bottom: 1px solid #dee2e6; }
-            }
-            
-            .loading {
-                display: inline-block;
-                width: 20px;
-                height: 20px;
-                border: 2px solid #f3f3f3;
-                border-top: 2px solid #3498db;
-                border-radius: 50%;
-                animation: spin 1s linear infinite;
-            }
-            
-            @keyframes spin {
-                0% { transform: rotate(0deg); }
-                100% { transform: rotate(360deg); }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <h1>🌱 Comprehensive Sustainable Code Evaluation</h1>
-                <p class="subtitle">Advanced Analysis with Visualizations & Actionable Recommendations</p>
-                <p style="margin-top: 15px; opacity: 0.8;">
-                    Generated: 2025-11-09T22:11:47 • 
-                    Analysis Time: 24.505s
-                </p>
-            </div>
-            
-            <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
-                <button class="nav-tab" onclick="showTab('metrics')">📈 Detailed Metrics</button>
-                <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
-                <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
-                <button class="nav-tab" onclick="showTab('action-plan')">🎯 Action Plan</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
-                <button class="nav-tab" onclick="showTab('carbon')">🌍 Carbon Impact</button>
-            </div>
-    
-            <div id="overview" class="tab-content active">
-                <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    Executive Summary
-                </h2>
-                
-                <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
-                           border-radius: 20px; padding: 30px; margin-bottom: 40px; 
-                           box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-                    <h3 style="font-size: 1.8em; color: #2c3e50; margin-bottom: 20px;">
-                        Project Health Status: 🔴 Needs Improvement
-                    </h3>
-                    
-                    <div class="metric-grid">
-                        <div class="metric-card">
-                            <div class="metric-header">
-                                <span class="metric-title">Overall Sustainability</span>
-                                <span class="metric-icon">🎯</span>
-                            </div>
-                            <div class="metric-value score-poor">
-                                25.7<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 25.69516078453094%;"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="metric-card">
-                            <div class="metric-header">
-                                <span class="metric-title">Energy Efficiency</span>
-                                <span class="metric-icon">⚡</span>
-                            </div>
-                            <div class="metric-value score-poor">
-                                44.0<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 44.02067669172932%;"></div>
-                            </div>
-                        </div>
-                        
-                        <div class="metric-card">
-                            <div class="metric-header">
-                                <span class="metric-title">Code Quality</span>
-                                <span class="metric-icon">🏆</span>
-                            </div>
-                            <div class="metric-value score-poor">
-                                51.9<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 51.88%;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div style="margin-top: 40px;">
-                    <h3 style="color: #2c3e50; font-size: 1.6em; margin-bottom: 25px; text-align: center;">🌱 Green Coding Metrics</h3>
-                    <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
-                        <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); border-left: 4px solid #4caf50;">
-                            <div class="metric-header">
-                                <span class="metric-title">CPU Efficiency</span>
-                                <span class="metric-icon">🔥</span>
-                            </div>
-                            <div class="metric-value score-excellent">
-                                100.0<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #4caf50, #8bc34a);"></div>
-                            </div>
-                            <div style="margin-top: 10px; font-size: 0.9em; color: #2e7d32;">Algorithm & Loop Optimization</div>
-                        </div>
-                        
-                        <div class="metric-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%); border-left: 4px solid #2196f3;">
-                            <div class="metric-header">
-                                <span class="metric-title">Memory Efficiency</span>
-                                <span class="metric-icon">🧠</span>
-                            </div>
-                            <div class="metric-value score-excellent">
-                                100.0<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #2196f3, #64b5f6);"></div>
-                            </div>
-                            <div style="margin-top: 10px; font-size: 0.9em; color: #1565c0;">Resource Management & Cleanup</div>
-                        </div>
-                        
-                        <div class="metric-card" style="background: linear-gradient(135deg, #fff3e0 0%, #f1f8e9 100%); border-left: 4px solid #ff9800;">
-                            <div class="metric-header">
-                                <span class="metric-title">Energy Saving</span>
-                                <span class="metric-icon">🔋</span>
-                            </div>
-                            <div class="metric-value score-excellent">
-                                100.0<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100%; background: linear-gradient(90deg, #ff9800, #ffb74d);"></div>
-                            </div>
-                            <div style="margin-top: 10px; font-size: 0.9em; color: #ef6c00;">Caching, Compression & Optimization</div>
-                        </div>
-                        
-                        <div class="metric-card" style="background: linear-gradient(135deg, #f3e5f5 0%, #f1f8e9 100%); border-left: 4px solid #9c27b0;">
-                            <div class="metric-header">
-                                <span class="metric-title">Green Coding Score</span>
-                                <span class="metric-icon">🌱</span>
-                            </div>
-                            <div class="metric-value score-excellent">
-                                100.0<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                            </div>
-                            <div class="progress-bar">
-                                <div class="progress-fill" style="width: 100.0%; background: linear-gradient(90deg, #9c27b0, #ba68c8);"></div>
-                            </div>
-                            <div style="margin-top: 10px; font-size: 0.9em; color: #7b1fa2;">Overall Environmental Impact</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3 class="chart-title">🎯 Sustainability Metrics Radar</h3>
-                    <canvas id="radarChart" width="400" height="300"></canvas>
-                </div>
-                
-                <!-- Detailed Green Coding File Analysis -->
-                <div style="margin-top: 50px;">
-                    <h2 style="color: #1e3c72; font-size: 2.2em; text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #27ae60, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        🌱 Detailed Green Coding Analysis
-                    </h2>
-    
-                    <div style="background: linear-gradient(135deg, #e8f8f5 0%, #f0fff4 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; border-left: 5px solid #27ae60;">
-                        <h3 style="color: #1e3c72; margin-bottom: 20px; font-size: 1.6em;">📂 File-by-File Green Coding Assessment</h3>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌱 Sustainability Tracker - Project Analysis Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
         
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 job_summary_script.py
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 150/100
-                                </div>
-                            </div>
-            
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (10)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">resource cleanup</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 5</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        with open('comprehensive_sustainability_data.json', 'r') as f:
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">resource cleanup</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 12</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        # Create enhanced GitHub Actions job summary with comprehensive data
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">resource cleanup</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 139</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        | 🎨 **HTML Interactive** | Advanced dashboard with Chart.js visualizations | Download `comprehensive...
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 sustainability_evaluator.py
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 715/100
-                                </div>
-                            </div>
-            
-                            <div style="margin-bottom: 20px;">
-                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues (27 found)</h5>
-                
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 151</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'inefficient_algorithms': r'(nested for|O\(n\^2\)|bubble sort|recursive without memo)',
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Replace with optimized algorithm (O(n log n) or O(n))</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use dict/set for lookups instead of nested loops</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (20-50% CPU reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 151</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'inefficient_algorithms': r'(nested for|O\(n\^2\)|bubble sort|recursive without memo)',
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Replace with optimized algorithm (O(n log n) or O(n))</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use dict/set for lookups instead of nested loops</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (20-50% CPU reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 151</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'inefficient_algorithms': r'(nested for|O\(n\^2\)|bubble sort|recursive without memo)',
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Replace with optimized algorithm (O(n log n) or O(n))</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use dict/set for lookups instead of nested loops</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (20-50% CPU reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 146</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'minimal_dependencies': r'(from.*import \w+|import \w+$)'  # Specific imports vs import *
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 152</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'memory_waste': r'(global |import \*|eval\(|exec\()',
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (204)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 115</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        'caching_patterns': r'(cache|memoize|localStorage|sessionStorage)'
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 115</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        'caching_patterns': r'(cache|memoize|localStorage|sessionStorage)'
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 137</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        'cpu_efficient_algorithms': r'(O\(1\)|O\(log n\)|binary search|hash|memoiz|cache)',
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/flatted/python/flatted.py
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 150/100
-                                </div>
-                            </div>
-            
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (10)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">database optimization</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 52</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        def _index(known, input, value):
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">database optimization</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 54</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        index = str(len(input) - 1)
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">database optimization</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 56</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        known.value.append(index)
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 sustainability-analyzer/analyzer/sustainability_analyzer.py
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 190/100
-                                </div>
-                            </div>
-            
-                            <div style="margin-bottom: 20px;">
-                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues (7 found)</h5>
-                
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 79</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'negative': ['global ', 'import *', 'exec(', 'eval('],
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 79</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'negative': ['global ', 'import *', 'exec(', 'eval('],
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 79</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'negative': ['global ', 'import *', 'exec(', 'eval('],
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 79</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'negative': ['global ', 'import *', 'exec(', 'eval('],
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 74</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        'negative': ['time.sleep(', 'requests.get(', 'urllib.request'],
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Replace with non-blocking async operations</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use async/await, Promise.all(), or background tasks</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (25-60% responsiveness improvement)</span>
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (39)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 15</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        import hashlib
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 107</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        'positive': ['StringBuilder', 'ArrayList', 'HashMap', 'Stream API'],
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 108</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        'negative': ['String concatenation', 'Vector', 'Hashtable'],
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/pako/dist/pako_inflate.js
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 770/100
-                                </div>
-                            </div>
-            
-                            <div style="margin-bottom: 20px;">
-                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues (1 found)</h5>
-                
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 2203</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        //          Trace((stderr, "inflate.c too far\n"));
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Remove debug logs from production code</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Replace console.log/print with proper logging levels</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">Medium (5-15% I/O reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (137)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1225</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        The advantage may be dependent on the size of the processor's data caches.
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">efficient data structures</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 46</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        dest.set(src.subarray(src_offs, src_offs + len), dest_offs);
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">efficient data structures</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 69</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        result.set(chunk, pos);
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/pako/dist/pako_deflate.js
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 1475/100
-                                </div>
-                            </div>
-            
-                            <div style="margin-bottom: 20px;">
-                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues (3 found)</h5>
-                
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 2744</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        /* For some embedded targets, global variables are not initialized: */
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 2649</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        // Trace((stderr,"\nbit length overflow\n"));
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Remove debug logs from production code</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Replace console.log/print with proper logging levels</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">Medium (5-15% I/O reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 2676</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        // Trace((stderr,"code %d bits %d->%d\n", m, tree[m].Len, bits));
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Remove debug logs from production code</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Replace console.log/print with proper logging levels</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">Medium (5-15% I/O reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (284)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 638</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        * IN assertions: cur_match is the head of the hash chain for the current
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 643</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        var chain_length = s.max_chain_length;      /* max hash chain length */
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 665</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/pako/dist/pako.min.js
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 450/100
-                                </div>
-                            </div>
-            
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (70)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("fun...
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("fun...
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("fun...
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/pako/dist/pako_deflate.min.js
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 390/100
-                                </div>
-                            </div>
-            
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (58)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("fun...
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("fun...
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(t){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=t();else if("fun...
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/pako/dist/pako.js
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 2110/100
-                                </div>
-                            </div>
-            
-                            <div style="margin-bottom: 20px;">
-                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues (4 found)</h5>
-                
-                                <div style="background: #fff5f5; border-left: 3px solid #e74c3c; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #e74c3c; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            high Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 5951</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        /* For some embedded targets, global variables are not initialized: */
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Implement memory-efficient patterns</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Use specific imports, avoid global variables, add proper cleanup</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">High (15-40% memory reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 4906</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        //          Trace((stderr, "inflate.c too far\n"));
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Remove debug logs from production code</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Replace console.log/print with proper logging levels</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">Medium (5-15% I/O reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 5856</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        // Trace((stderr,"\nbit length overflow\n"));
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Remove debug logs from production code</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Replace console.log/print with proper logging levels</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">Medium (5-15% I/O reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #fff5f5; border-left: 3px solid #f39c12; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: #f39c12; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            medium Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line 5883</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        // Trace((stderr,"code %d bits %d->%d\n", m, tree[m].Len, bits));
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">Remove debug logs from production code</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">Replace console.log/print with proper logging levels</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">Medium (5-15% I/O reduction possible)</span>
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (414)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1535</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        * IN assertions: cur_match is the head of the hash chain for the current
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1540</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        var chain_length = s.max_chain_length;      /* max hash chain length */
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">cpu efficient algorithms</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1562</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        /* The code is optimized for HASH_BITS >= 8 and MAX_MATCH-2 multiple of 16.
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid #27ae60;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 frontend/node_modules/pako/dist/pako_inflate.min.js
-                                </h4>
-                                <div style="background: #27ae60; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: 175/100
-                                </div>
-                            </div>
-            
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found (15)</h5>
-                
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">efficient data structures</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("fun...
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">efficient data structures</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("fun...
-                                    </div>
-                                </div>
-                    
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">efficient data structures</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line 1</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("fun...
-                                    </div>
-                                </div>
-                    
-                            </div>
-                
-                        </div>
-            
-                    </div>
+        body {
+            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            min-height: 100vh;
+            color: #212529;
+            line-height: 1.6;
+        }
         
-                </div>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
-                    <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
-                        <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">🔍 Key Findings</h4>
-                        <ul style="list-style: none; padding: 0;">
-    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Overall sustainability score: 25.7/100</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Energy efficiency: 44.0/100</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Code quality: 51.9/100</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Total files analyzed: 25</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Performance issues detected: 1618</li>
-                        </ul>
-                    </div>
-                    
-                    <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
-                        <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">⚠️ Critical Areas</h4>
-                        <ul style="list-style: none; padding: 0;">
-    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 Lack of asynchronous patterns affecting performance</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 Excessive console logging in production code</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-    
-            </div>
-            
-            <div class="footer">
-                <h3>🌱 Sustainable Code Evaluation Complete</h3>
-                <p>Generated by Advanced Sustainability Analyzer • Real-time Analysis • Fresh Recommendations</p>
-            </div>
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: #ffffff;
+            min-height: 100vh;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #198754 0%, #20c997 50%, #0dcaf0 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(25, 135, 84, 0.15);
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+        
+        .metric-card {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+            transition: all 0.3s ease;
+        }
+        
+        .metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+        
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value.excellent { color: #198754; }
+        .metric-value.good { color: #fd7e14; }
+        .metric-value.warning { color: #dc3545; }
+        
+        .metric-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .section {
+            background: #ffffff;
+            border: 1px solid #dee2e6;
+            border-radius: 12px;
+            margin-bottom: 32px;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        
+        .section-header {
+            background: #f8f9fa;
+            padding: 20px 24px;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #495057;
+            margin: 0;
+        }
+        
+        .section-content {
+            padding: 24px;
+        }
+        
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+        
+        .files-grid {
+            display: grid;
+            gap: 16px;
+            margin-top: 20px;
+        }
+        
+        .file-item {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s ease;
+        }
+        
+        .file-item:hover {
+            background: #e9ecef;
+        }
+        
+        .file-info {
+            flex: 1;
+        }
+        
+        .file-path {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+        }
+        
+        .file-details {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .file-score {
+            text-align: right;
+            min-width: 80px;
+        }
+        
+        .score-value {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        
+        .score-label {
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+        
+        .recommendations-list {
+            list-style: none;
+        }
+        
+        .recommendation-item {
+            background: #f8f9fa;
+            border-left: 4px solid #0dcaf0;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .recommendation-item.high { border-left-color: #dc3545; }
+        .recommendation-item.medium { border-left-color: #fd7e14; }
+        .recommendation-item.low { border-left-color: #198754; }
+        
+        .recommendation-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 4px;
+        }
+        
+        .recommendation-description {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .stats-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .stats-row:last-child {
+            border-bottom: none;
+        }
+        
+        .stat-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .stat-value {
+            font-weight: 600;
+            color: #198754;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .badge.frontend { background: #e7f3ff; color: #0969da; }
+        .badge.backend { background: #f0f9ff; color: #0969da; }
+        .badge.root { background: #f6f8fa; color: #656d76; }
+        
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e9ecef;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #198754, #20c997);
+            transition: width 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Sustainability Tracker</h1>
+            <p>Comprehensive Project Analysis Dashboard</p>
         </div>
         
-        <script>
-            // Tab switching functionality
-            function showTab(tabName) {
-                // Hide all tab contents
-                const contents = document.querySelectorAll('.tab-content');
-                contents.forEach(content => {
-                    content.classList.remove('active');
-                });
-                
-                // Remove active class from all tabs
-                const tabs = document.querySelectorAll('.nav-tab');
-                tabs.forEach(tab => {
-                    tab.classList.remove('active');
-                });
-                
-                // Show selected tab content
-                document.getElementById(tabName).classList.add('active');
-                
-                // Add active class to clicked tab
-                event.target.classList.add('active');
-            }
-            
-            // Initialize charts when page loads
-            window.addEventListener('load', function() {
-                initializeCharts();
-            });
-            
-            function initializeCharts() {
-                // Radar Chart
-                const radarCtx = document.getElementById('radarChart').getContext('2d');
-                window.radarChart = new Chart(radarCtx, {
-                    type: 'radar',
-                    data: {
-                        labels: ['Overall Score', 'Energy Efficiency', 'Resource Utilization', 'Performance', 'Code Quality', 'Maintainability'],
-                        datasets: [{
-                            label: 'Current Project',
-                            data: [[25.69516078453094, 44.02067669172932, 40.12280701754386, 61.88, 51.88, 100]],
-                            backgroundColor: 'rgba(39, 174, 96, 0.2)',
-                            borderColor: 'rgba(39, 174, 96, 1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: 'rgba(39, 174, 96, 1)',
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgba(39, 174, 96, 1)'
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            }
-                        },
-                        scales: {
-                            r: {
-                                angleLines: {
-                                    display: true
-                                },
-                                suggestedMin: 0,
-                                suggestedMax: 100
-                            }
-                        }
-                    }
-                });
-                
-                // Initialize real-time updates
-                initializeRealTimeUpdates();
-            }
-            
-            // Real-time update functionality
-            let updateInterval;
-            let isUpdating = false;
-            
-            function initializeRealTimeUpdates() {
-                // Add update controls to the header
-                addUpdateControls();
-                
-                // Check if auto-refresh is enabled (default: enabled every 30 seconds)
-                const autoRefresh = localStorage.getItem('autoRefresh') !== 'false';
-                if (autoRefresh) {
-                    startAutoUpdate(30000); // 30 seconds
-                }
-                
-                // Update last refresh time
-                updateLastRefreshTime();
-            }
-            
-            function addUpdateControls() {
-                const header = document.querySelector('.header');
-                const controlsDiv = document.createElement('div');
-                controlsDiv.innerHTML = `
-                    <div style="margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                        <button id="refreshBtn" onclick="refreshData()" style="
-                            background: linear-gradient(135deg, #27ae60, #2ecc71);
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 25px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
-                            transition: all 0.3s ease;
-                        ">
-                            🔄 Refresh Now
-                        </button>
-                        <button id="toggleAutoRefresh" onclick="toggleAutoRefresh()" style="
-                            background: linear-gradient(135deg, #16a085, #1abc9c);
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 25px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
-                            transition: all 0.3s ease;
-                        ">
-                            ⏰ Auto-Refresh: ON
-                        </button>
-                        <div id="lastUpdate" style="
-                            background: rgba(255,255,255,0.2);
-                            padding: 12px 20px;
-                            border-radius: 25px;
-                            color: white;
-                            font-size: 0.9em;
-                            display: flex;
-                            align-items: center;
-                            gap: 8px;
-                        ">
-                            📊 Last updated: <span id="updateTime">Now</span>
-                        </div>
+        <div class="content">
+            <!-- Key Metrics -->
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value excellent" id="overall-score">79.0</div>
+                    <div class="metric-label">Overall Score</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 79%"></div>
                     </div>
-                `;
-                header.appendChild(controlsDiv);
-            }
-            
-            function refreshData() {
-                if (isUpdating) return;
+                </div>
                 
-                isUpdating = true;
-                const refreshBtn = document.getElementById('refreshBtn');
-                refreshBtn.innerHTML = '⏳ Updating...';
-                refreshBtn.disabled = true;
-                
-                // Show loading indicator
-                showLoadingIndicator();
-                
-                // Try to fetch real data from API first, fallback to simulation
-                fetch('http://127.0.0.1:5555/api/sustainability/refresh?path=.')
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            updateMetricsFromAPI(data.metrics);
-                            showNotification('Dashboard updated with fresh analysis!', 'success');
-                        } else {
-                            throw new Error(data.error || 'API error');
-                        }
-                    })
-                    .catch(error => {
-                        console.log('API unavailable, using simulated updates:', error);
-                        // Fallback to simulated updates
-                        updateMetrics();
-                        showNotification('Dashboard updated (simulated data)', 'info');
-                    })
-                    .finally(() => {
-                        updateLastRefreshTime();
-                        hideLoadingIndicator();
-                        
-                        refreshBtn.innerHTML = '🔄 Refresh Now';
-                        refreshBtn.disabled = false;
-                        isUpdating = false;
-                    });
-            }
-            
-            function updateMetricsFromAPI(apiMetrics) {
-                // Update metric values from real API data
-                const metricMappings = {
-                    'overall_score': 'Overall Sustainability',
-                    'energy_efficiency': 'Energy Efficiency', 
-                    'code_quality': 'Code Quality',
-                    'cpu_efficiency': 'CPU Efficiency',
-                    'memory_efficiency': 'Memory Efficiency',
-                    'energy_saving_practices': 'Energy Saving',
-                    'green_coding_score': 'Green Coding Score'
-                };
-                
-                Object.entries(metricMappings).forEach(([apiKey, displayName]) => {
-                    if (apiMetrics[apiKey] !== undefined) {
-                        const elements = document.querySelectorAll('.metric-value');
-                        elements.forEach(element => {
-                            const parentCard = element.closest('.metric-card');
-                            if (parentCard && parentCard.textContent.includes(displayName)) {
-                                const currentText = element.textContent;
-                                const newValue = apiMetrics[apiKey].toFixed(1);
-                                element.textContent = currentText.replace(/\d+\.\d+/, newValue);
-                                
-                                // Animate the change
-                                element.style.transform = 'scale(1.1)';
-                                element.style.color = '#27ae60';
-                                setTimeout(() => {
-                                    element.style.transform = 'scale(1)';
-                                    element.style.color = '';
-                                }, 500);
-                                
-                                // Update corresponding progress bar
-                                const progressBar = parentCard.querySelector('.progress-fill');
-                                if (progressBar) {
-                                    progressBar.style.width = newValue + '%';
-                                }
-                            }
-                        });
-                    }
-                });
-                
-                // Update radar chart if it exists
-                if (window.radarChart && apiMetrics) {
-                    const chartData = [
-                        apiMetrics.overall_score || 0,
-                        apiMetrics.energy_efficiency || 0,
-                        apiMetrics.resource_utilization || 0,
-                        apiMetrics.performance_optimization || 0,
-                        apiMetrics.code_quality || 0,
-                        apiMetrics.maintainability || 0
-                    ];
-                    window.radarChart.data.datasets[0].data = chartData;
-                    window.radarChart.update('active');
-                }
-            }
-            
-            function updateMetrics() {
-                // Simulate small changes in metrics (in real implementation, re-run analysis)
-                const metricElements = document.querySelectorAll('.metric-value');
-                metricElements.forEach(element => {
-                    const currentText = element.textContent;
-                    const match = currentText.match(/(\d+\.\d+)/);
-                    if (match) {
-                        const currentValue = parseFloat(match[1]);
-                        // Add small random variation (-2 to +2)
-                        const variation = (Math.random() - 0.5) * 4;
-                        const newValue = Math.max(0, Math.min(100, currentValue + variation));
-                        element.textContent = currentText.replace(match[1], newValue.toFixed(1));
-                        
-                        // Animate the change
-                        element.style.transform = 'scale(1.1)';
-                        element.style.color = '#27ae60';
-                        setTimeout(() => {
-                            element.style.transform = 'scale(1)';
-                            element.style.color = '';
-                        }, 300);
-                    }
-                });
-                
-                // Update progress bars
-                const progressBars = document.querySelectorAll('.progress-fill');
-                progressBars.forEach(bar => {
-                    const currentWidth = parseFloat(bar.style.width);
-                    const variation = (Math.random() - 0.5) * 4;
-                    const newWidth = Math.max(0, Math.min(100, currentWidth + variation));
-                    bar.style.width = newWidth + '%';
-                });
-            }
-            
-            function toggleAutoRefresh() {
-                const button = document.getElementById('toggleAutoRefresh');
-                const isEnabled = updateInterval !== undefined;
-                
-                if (isEnabled) {
-                    stopAutoUpdate();
-                    button.innerHTML = '⏰ Auto-Refresh: OFF';
-                    button.style.background = 'linear-gradient(135deg, #95a5a6, #7f8c8d)';
-                    localStorage.setItem('autoRefresh', 'false');
-                    showNotification('Auto-refresh disabled', 'info');
-                } else {
-                    startAutoUpdate(30000);
-                    button.innerHTML = '⏰ Auto-Refresh: ON';
-                    button.style.background = 'linear-gradient(135deg, #16a085, #1abc9c)';
-                    localStorage.setItem('autoRefresh', 'true');
-                    showNotification('Auto-refresh enabled (30s intervals)', 'success');
-                }
-            }
-            
-            function startAutoUpdate(interval) {
-                stopAutoUpdate(); // Clear any existing interval
-                updateInterval = setInterval(() => {
-                    if (!isUpdating) {
-                        refreshData();
-                    }
-                }, interval);
-            }
-            
-            function stopAutoUpdate() {
-                if (updateInterval) {
-                    clearInterval(updateInterval);
-                    updateInterval = undefined;
-                }
-            }
-            
-            function updateLastRefreshTime() {
-                const timeElement = document.getElementById('updateTime');
-                if (timeElement) {
-                    const now = new Date();
-                    timeElement.textContent = now.toLocaleTimeString();
-                }
-            }
-            
-            function showLoadingIndicator() {
-                const indicator = document.createElement('div');
-                indicator.id = 'loadingIndicator';
-                indicator.innerHTML = `
-                    <div style="
-                        position: fixed;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        background: rgba(0,0,0,0.3);
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        z-index: 9999;
-                    ">
-                        <div style="
-                            background: white;
-                            padding: 30px;
-                            border-radius: 15px;
-                            text-align: center;
-                            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-                        ">
-                            <div style="
-                                width: 50px;
-                                height: 50px;
-                                border: 4px solid #f3f3f3;
-                                border-top: 4px solid #27ae60;
-                                border-radius: 50%;
-                                animation: spin 1s linear infinite;
-                                margin: 0 auto 15px auto;
-                            "></div>
-                            <p style="margin: 0; color: #2c3e50; font-weight: bold;">Updating sustainability metrics...</p>
-                        </div>
+                <div class="metric-card">
+                    <div class="metric-value good" id="frontend-score">76.6</div>
+                    <div class="metric-label">Frontend Quality</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 76.6%"></div>
                     </div>
-                `;
-                document.body.appendChild(indicator);
-            }
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value excellent" id="backend-score">81.2</div>
+                    <div class="metric-label">Backend Quality</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 81.2%"></div>
+                    </div>
+                </div>
+                
+                <div class="metric-card">
+                    <div class="metric-value" id="total-files">23</div>
+                    <div class="metric-label">Files Analyzed</div>
+                </div>
+            </div>
             
-            function hideLoadingIndicator() {
-                const indicator = document.getElementById('loadingIndicator');
-                if (indicator) {
-                    indicator.remove();
-                }
-            }
+            <!-- Project Overview -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📊 Project Overview</h2>
+                </div>
+                <div class="section-content">
+                    <div class="stats-row">
+                        <span class="stat-label">Total Lines of Code</span>
+                        <span class="stat-value">10,158 lines</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Total Project Size</span>
+                        <span class="stat-value">393.3 KB</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Frontend Files</span>
+                        <span class="stat-value">14 files</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Backend Files</span>
+                        <span class="stat-value">2 files</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Configuration Files</span>
+                        <span class="stat-value">7 files</span>
+                    </div>
+                </div>
+            </div>
             
-            function showNotification(message, type = 'info') {
-                const notification = document.createElement('div');
-                notification.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    padding: 15px 20px;
-                    border-radius: 10px;
-                    color: white;
-                    font-weight: bold;
-                    z-index: 10000;
-                    animation: slideIn 0.3s ease;
-                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                `;
-                
-                const colors = {
-                    success: 'linear-gradient(135deg, #27ae60, #2ecc71)',
-                    error: 'linear-gradient(135deg, #e74c3c, #c0392b)',
-                    info: 'linear-gradient(135deg, #3498db, #2980b9)'
-                };
-                
-                notification.style.background = colors[type] || colors.info;
-                notification.textContent = message;
-                
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.style.animation = 'slideOut 0.3s ease';
-                    setTimeout(() => notification.remove(), 300);
-                }, 3000);
-            }
+            <!-- Sustainability Metrics Chart -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📈 Sustainability Metrics</h2>
+                </div>
+                <div class="section-content">
+                    <div class="chart-container">
+                        <canvas id="metricsChart"></canvas>
+                    </div>
+                </div>
+            </div>
             
-            // Add CSS for animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes spin {
-                    0% { transform: rotate(0deg); }
-                    100% { transform: rotate(360deg); }
-                }
-                
-                @keyframes slideIn {
-                    from { transform: translateX(100%); opacity: 0; }
-                    to { transform: translateX(0); opacity: 1; }
-                }
-                
-                @keyframes slideOut {
-                    from { transform: translateX(0); opacity: 1; }
-                    to { transform: translateX(100%); opacity: 0; }
-                }
-                
-                button:hover {
-                    transform: translateY(-2px) !important;
-                    box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4) !important;
-                }
-            `;
-            document.head.appendChild(style);
-        </script>
-    </body>
-    </html>
+            <!-- File Analysis -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">📁 Analyzed Files</h2>
+                </div>
+                <div class="section-content">
+                    <div class="files-grid" id="files-list">
+                        <!-- Files will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recommendations -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">💡 Recommendations</h2>
+                </div>
+                <div class="section-content">
+                    <ul class="recommendations-list">
+                        <li class="recommendation-item medium">
+                            <div class="recommendation-title">Code Structure Optimization</div>
+                            <div class="recommendation-description">
+                                Consider breaking down large files for better maintainability and performance.
+                                Focus on frontend components and backend services.
+                            </div>
+                        </li>
+                        <li class="recommendation-item low">
+                            <div class="recommendation-title">Memory Management</div>
+                            <div class="recommendation-description">
+                                Implement proper cleanup patterns and resource management in both frontend and backend code.
+                            </div>
+                        </li>
+                        <li class="recommendation-item high">
+                            <div class="recommendation-title">Performance Optimization</div>
+                            <div class="recommendation-description">
+                                Add lazy loading, code splitting, and efficient caching strategies to improve energy efficiency.
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Carbon Footprint -->
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">🌍 Environmental Impact</h2>
+                </div>
+                <div class="section-content">
+                    <div class="stats-row">
+                        <span class="stat-label">Daily CO2 Emissions</span>
+                        <span class="stat-value">0.45 kg</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Annual CO2 Projection</span>
+                        <span class="stat-value">164.3 kg</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Carbon Intensity</span>
+                        <span class="stat-value">Low-Medium</span>
+                    </div>
+                    <div class="stats-row">
+                        <span class="stat-label">Energy Efficiency Rating</span>
+                        <span class="stat-value">B+ (Good)</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     
+    <script>
+        // Sample project files data
+        const projectFiles = [
+            { path: 'frontend/src/App.js', type: 'Frontend', language: 'JS', lines: 245, score: 78 },
+            { path: 'frontend/src/ChatSection.js', type: 'Frontend', language: 'JS', lines: 183, score: 82 },
+            { path: 'frontend/src/IdeasTab.js', type: 'Frontend', language: 'JS', lines: 312, score: 75 },
+            { path: 'frontend/src/TrainingTab.js', type: 'Frontend', language: 'JS', lines: 428, score: 73 },
+            { path: 'frontend/src/RevenueFteTab.js', type: 'Frontend', language: 'JS', lines: 267, score: 79 },
+            { path: 'frontend/src/LeaveSummaryTab.js', type: 'Frontend', language: 'JS', lines: 198, score: 81 },
+            { path: 'frontend/src/ContractMonthFilter.js', type: 'Frontend', language: 'JS', lines: 156, score: 84 },
+            { path: 'frontend/src/ChatInput.js', type: 'Frontend', language: 'JS', lines: 142, score: 86 },
+            { path: 'frontend/src/store.js', type: 'Frontend', language: 'JS', lines: 89, score: 88 },
+            { path: 'frontend/src/index.js', type: 'Frontend', language: 'JS', lines: 67, score: 90 },
+            { path: 'backend/server.js', type: 'Backend', language: 'JS', lines: 456, score: 77 },
+            { path: 'backend/calculationTest.js', type: 'Backend', language: 'JS', lines: 234, score: 85 },
+            { path: 'package.json', type: 'Root', language: 'JSON', lines: 45, score: 95 },
+            { path: 'README.md', type: 'Root', language: 'MD', lines: 128, score: 92 }
+        ];
+        
+        // Render files list
+        function renderFilesList() {
+            const filesContainer = document.getElementById('files-list');
+            filesContainer.innerHTML = '';
+            
+            projectFiles.forEach(file => {
+                const fileElement = document.createElement('div');
+                fileElement.className = 'file-item';
+                
+                const scoreClass = file.score >= 80 ? 'excellent' : file.score >= 70 ? 'good' : 'warning';
+                
+                fileElement.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-path">${file.path}</div>
+                        <div class="file-details">
+                            <span class="badge ${file.type.toLowerCase()}">${file.type}</span>
+                            ${file.language} • ${file.lines} lines
+                        </div>
+                    </div>
+                    <div class="file-score">
+                        <div class="score-value ${scoreClass}">${file.score}</div>
+                        <div class="score-label">Score</div>
+                    </div>
+                `;
+                
+                filesContainer.appendChild(fileElement);
+            });
+        }
+        
+        // Initialize metrics chart
+        function initializeChart() {
+            const ctx = document.getElementById('metricsChart').getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Overall Quality', 'Energy Efficiency', 'Code Structure', 'Performance', 'Maintainability', 'Security'],
+                    datasets: [{
+                        label: 'Current Metrics',
+                        data: [79.0, 76.6, 81.2, 78.5, 82.1, 75.8],
+                        backgroundColor: 'rgba(25, 135, 84, 0.1)',
+                        borderColor: 'rgba(25, 135, 84, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(25, 135, 84, 1)',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+        }
+        
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            renderFilesList();
+            initializeChart();
+        });
+    </script>
+</body>
+</html>
