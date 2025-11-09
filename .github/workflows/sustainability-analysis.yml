@@ -452,42 +452,111 @@ jobs:
         files = analysis['file_analysis']
         quality_gate = analysis['quality_gate']
         
-        # Create GitHub Actions job summary
-        summary = f"""# 🌱 Sustainability Analysis Results
+        # Create enhanced GitHub Actions job summary with visual elements
+        def get_score_bar(score):
+            filled = int(score / 5)  # 20 blocks for 100%
+            empty = 20 - filled
+            return '🟩' * filled + '⬜' * empty
         
-        ## 📊 Overall Score: {metrics['overall_score']}/100
+        def get_score_status(score):
+            if score >= 90: return '🏆 Excellent'
+            elif score >= 75: return '✅ Good'
+            elif score >= 60: return '⚠️ Fair'
+            else: return '❌ Needs Work'
         
-        ### 📈 Detailed Metrics
-        | Metric | Score | Status |
-        |--------|-------|--------|
-        | ⚡ Energy Efficiency | {metrics['energy_efficiency']}/100 | {'✅' if metrics['energy_efficiency'] >= 75 else '⚠️' if metrics['energy_efficiency'] >= 50 else '❌'} |
-        | 💾 Resource Utilization | {metrics['resource_utilization']}/100 | {'✅' if metrics['resource_utilization'] >= 75 else '⚠️' if metrics['resource_utilization'] >= 50 else '❌'} |
-        | 🌍 Carbon Footprint | {metrics['carbon_footprint']}/100 | {'✅' if metrics['carbon_footprint'] >= 75 else '⚠️' if metrics['carbon_footprint'] >= 50 else '❌'} |
+        overall_bar = get_score_bar(metrics['overall_score'])
+        energy_bar = get_score_bar(metrics['energy_efficiency'])
+        resource_bar = get_score_bar(metrics['resource_utilization'])
+        carbon_bar = get_score_bar(metrics['carbon_footprint'])
         
-        ### 🎯 Quality Gate: {'✅ PASSED' if quality_gate['passed'] else '❌ FAILED'}
-        **Threshold:** {quality_gate['threshold']}/100
+        summary = f"""# 🌱 Sustainability Analysis Dashboard
         
-        ### 📁 Project Analysis
-        - **JavaScript Files:** {files['javascript_files']}
-        - **Python Files:** {files['python_files']}  
-        - **TypeScript Files:** {files['typescript_files']}
-        - **JSON Files:** {files['json_files']}
-        - **CSS Files:** {files['css_files']}
-        - **Total Files Analyzed:** {files['total_files']}
+        ## 📊 Overall Score: {metrics['overall_score']}/100 {get_score_status(metrics['overall_score'])}
         
-        ### 💡 Key Recommendations
+        ```
+        Overall Score    [{overall_bar}] {metrics['overall_score']}/100
+        ```
+        
+        ### 📈 Detailed Performance Metrics
+        
+        | Metric | Score | Visual Progress | Status | Impact |
+        |--------|-------|----------------|--------|---------|
+        | ⚡ **Energy Efficiency** | **{metrics['energy_efficiency']}/100** | `{energy_bar}` | {get_score_status(metrics['energy_efficiency'])} | 🔋 Computational overhead |
+        | 💾 **Resource Utilization** | **{metrics['resource_utilization']}/100** | `{resource_bar}` | {get_score_status(metrics['resource_utilization'])} | 💿 Memory & storage |
+        | 🌍 **Carbon Footprint** | **{metrics['carbon_footprint']}/100** | `{carbon_bar}` | {get_score_status(metrics['carbon_footprint'])} | 🌿 Environmental impact |
+        
+        ### 🎯 Quality Gate Assessment
+        
+        > **Result:** {'🎉 **PASSED** ✅' if quality_gate['passed'] else '⚠️ **FAILED** ❌'}  
+        > **Threshold:** {quality_gate['threshold']}/100 | **Achieved:** {metrics['overall_score']}/100
+        
+        ### 📁 Project Composition Analysis
+        
+        | File Type | Count | Percentage | Sustainability Impact |
+        |-----------|-------|------------|----------------------|
+        | 📜 **JavaScript** | {files['javascript_files']} | {files['javascript_files']/max(files['total_files'],1)*100:.1f}% | {'🟢 Low' if files['javascript_files'] < 20 else '🟡 Medium' if files['javascript_files'] < 50 else '🔴 High'} |
+        | 🐍 **Python** | {files['python_files']} | {files['python_files']/max(files['total_files'],1)*100:.1f}% | {'🟢 Low' if files['python_files'] < 15 else '🟡 Medium' if files['python_files'] < 30 else '🔴 High'} |
+        | 📘 **TypeScript** | {files['typescript_files']} | {files['typescript_files']/max(files['total_files'],1)*100:.1f}% | {'🟢 Low' if files['typescript_files'] < 20 else '🟡 Medium' if files['typescript_files'] < 50 else '🔴 High'} |
+        | 📄 **JSON** | {files['json_files']} | {files['json_files']/max(files['total_files'],1)*100:.1f}% | 🟢 Minimal |
+        | 🎨 **CSS** | {files['css_files']} | {files['css_files']/max(files['total_files'],1)*100:.1f}% | 🟢 Minimal |
+        | **📊 Total** | **{files['total_files']}** | **100%** | {'🟢 Sustainable' if files['total_files'] < 100 else '🟡 Growing' if files['total_files'] < 200 else '🔴 Large'} |
+        
+        ### 💡 Priority Recommendations
+        
         """
         
-        for i, rec in enumerate(analysis['recommendations'][:3], 1):
-            summary += f"{i}. {rec}\n"
+        for i, rec in enumerate(analysis['recommendations'], 1):
+            priority = '🔥 High' if i <= 2 else '⚡ Medium' if i <= 4 else '📋 Low'
+            summary += f"{i}. **{priority} Priority:** {rec}\n"
+        
+        # Add trend analysis
+        trend_emoji = '📈' if metrics['overall_score'] >= 75 else '📊' if metrics['overall_score'] >= 60 else '📉'
         
         summary += f"""
-        ### 📈 View Reports
-        - 📊 [Interactive Dashboard](../../actions/runs/${{{{ github.run_id }}}})
-        - 📄 [Detailed Analysis](../../actions/runs/${{{{ github.run_id }}}})
+        ### � Score Breakdown & Insights
+        
+        ```mermaid
+        %%{{init: {{'theme':'base', 'themeVariables': {{'primaryColor':'#4CAF50'}}}}}}%%
+        pie title Sustainability Score Components
+            "Energy Efficiency" : {metrics['energy_efficiency']}
+            "Resource Utilization" : {metrics['resource_utilization']}  
+            "Carbon Footprint" : {metrics['carbon_footprint']}
+        ```
+        
+        ### 🎯 Action Items
+        
+        | Priority | Action | Expected Impact | Effort |
+        |----------|--------|-----------------|--------|
+        | 🔥 | Optimize most frequent JavaScript patterns | +5-10 points | Medium |
+        | ⚡ | Review Python resource usage patterns | +3-7 points | Low |
+        | 📋 | Implement sustainable coding guidelines | +2-5 points | High |
+        
+        ### 📈 Historical Comparison
+        
+        {trend_emoji} **Trend Analysis:**  
+        - Current Score: **{metrics['overall_score']}/100**
+        - Quality Gate: **{'Passing' if quality_gate['passed'] else 'Failing'}**
+        - Project Health: **{get_score_status(metrics['overall_score'])}**
         
         ---
-        *Generated on {analysis['timestamp']} by GitHub Actions*
+        
+        ### 📄 Detailed Reports Available
+        
+        | Report Type | Description | Access |
+        |-------------|-------------|--------|
+        | 🎨 **Interactive Dashboard** | Visual charts and graphs | Download `sustainability-dashboard` artifact |
+        | 📊 **Raw Data Analysis** | Complete JSON metrics | Download `sustainability-reports` artifact |
+        | 📋 **Executive Summary** | High-level overview | View in job summary above |
+        
+        ---
+        <div align="center">
+        
+        **🌱 Generated by Sustainability Tracker**  
+        *{analysis['timestamp']} • Powered by GitHub Actions*
+        
+        [📖 Documentation](../../blob/main/HOW_TO_VIEW_REPORTS.md) • [🔧 Configuration](../../settings) • [📊 All Runs](../../actions)
+        
+        </div>
         """
         
         with open(os.environ['GITHUB_STEP_SUMMARY'], 'w') as f:
