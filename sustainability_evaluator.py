@@ -1583,7 +1583,7 @@ def generate_comprehensive_html_report(report_data):
         <div class="container">
             <div class="header">
                 <h1>🌱 Comprehensive Sustainable Code Evaluation</h1>
-                <p class="subtitle">Advanced Analysis with Visualizations & Actionable Recommendations</p>
+                <p class="subtitle">Advanced Analysis with Visualisations & Actionable Recommendations</p>
                 <p style="margin-top: 15px; opacity: 0.8;">
                     Generated: {report_data['report_metadata']['generated_at'][:19]} • 
                     Analysis Time: {report_data['report_metadata']['analysis_time']:.3f}s
