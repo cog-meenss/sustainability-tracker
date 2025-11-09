@@ -43,15 +43,15 @@ jobs:
         echo "Generating comprehensive sustainability evaluation with advanced visualizations..."
         
         # Make comprehensive evaluator executable
-        chmod +x comprehensive_sustainability_evaluator.py
+        chmod +x sustainability_evaluator.py
         chmod +x sustainability-analyzer/analyzer/sustainability_analyzer.py
         
         # Generate comprehensive report in multiple formats
         echo "Generating comprehensive JSON report..."
-        python3 comprehensive_sustainability_evaluator.py --path . --format json --output comprehensive_sustainability_data.json
+        python3 sustainability_evaluator.py --path . --format json --output comprehensive_sustainability_data.json
         
         echo "Generating comprehensive HTML report with charts and visualizations..."
-        python3 comprehensive_sustainability_evaluator.py --path . --format html --output comprehensive_sustainability_report.html
+        python3 sustainability_evaluator.py --path . --format html --output comprehensive_sustainability_report.html
         
         echo "Comprehensive evaluation completed successfully"
         ls -la comprehensive_sustainability_*

@@ -35,6 +35,14 @@ dist/
 *.test.js
 test-*.js
 
+# Python virtual environments
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
 # OS generated files
 .DS_Store
 .DS_Store?

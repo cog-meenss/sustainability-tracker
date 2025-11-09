@@ -112,7 +112,7 @@ The comprehensive HTML report includes interactive charts showing:
 - Trend projections with improvement scenarios
 
 ### 📈 **File Complexity Distribution**
-- **Largest File:** comprehensive_sustainability_evaluator.py (1,388 lines)
+- **Largest File:** sustainability_evaluator.py (1,388 lines)
 - **Average Complexity:** 20.2/100 (needs improvement)
 - **Function Density:** 44+ functions requiring optimization
 
@@ -227,7 +227,7 @@ The comprehensive HTML report includes interactive charts showing:
 - **Use:** Automated processing, CI/CD integration
 
 ### 🔄 Runtime Analysis
-- **Command:** `python3 comprehensive_sustainability_evaluator.py --path . --format html`
+- **Command:** `python3 sustainability_evaluator.py --path . --format html`
 - **Update Frequency:** On-demand, real-time generation
 
 ---
