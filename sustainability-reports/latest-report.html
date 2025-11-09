@@ -276,20 +276,32 @@
             flex-shrink: 0;
             border: none;
             outline: none;
-            font-family: 'Material Icons', sans-serif;
+        }
+        
+        .info-icon .material-icons {
+            font-family: 'Material Icons', 'Material Icons Outlined', sans-serif;
             font-size: 18px;
             font-weight: normal;
             text-rendering: optimizeLegibility;
             -webkit-font-feature-settings: 'liga';
             font-feature-settings: 'liga';
             -webkit-font-smoothing: antialiased;
+            user-select: none;
+            line-height: 1;
+            display: inline-block;
+        }
+        
+        /* Fallback for when Material Icons don't load */
+        .info-icon .material-icons:not([data-loaded])::before {
+            content: 'ⓘ';
+            font-family: Arial, sans-serif;
         }
         
         .info-icon:hover {
             background: rgba(25, 135, 84, 0.12);
             color: #157347;
             transform: scale(1.1);
-            z-index: 1000;
+            z-index: 1;
         }
         
         .info-icon:focus {
@@ -316,7 +328,7 @@
             opacity: 0;
             visibility: hidden;
             transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            z-index: 1500;
+            z-index: 1;
             box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.12), 0px 4px 4px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.20);
             max-width: 300px;
             min-width: 240px;
@@ -339,6 +351,7 @@
             opacity: 1;
             visibility: visible;
             transform: translateX(-50%) translateY(-12px);
+            z-index: 1;
         }
         
         /* Prevent icon overlap with content - Material Design spacing */
@@ -423,7 +436,7 @@
                     <div class="metric-value excellent" id="overall-score">79.0</div>
                     <div class="metric-label">Overall Score
                         <div class="info-icon" tabindex="0" role="button" aria-label="Overall Score Information">
-                            info_outline
+                            <span class="material-icons">info_outline</span>
                             <div class="tooltip">
                                 Composite sustainability score based on energy efficiency, resource optimization, and green coding practices. Higher scores indicate better environmental performance and optimized resource usage.
                             </div>
@@ -438,7 +451,7 @@
                     <div class="metric-value good" id="frontend-score">76.6</div>
                     <div class="metric-label">Frontend Quality
                         <div class="info-icon" tabindex="0" role="button" aria-label="Frontend Quality Information">
-                            info_outline
+                            <span class="material-icons">info_outline</span>
                             <div class="tooltip">
                                 Frontend sustainability score based on bundle size, rendering efficiency, and user experience optimization. Focus on lazy loading and code splitting to improve energy efficiency.
                             </div>
@@ -453,7 +466,7 @@
                     <div class="metric-value excellent" id="backend-score">81.2</div>
                     <div class="metric-label">Backend Quality
                         <div class="info-icon" tabindex="0" role="button" aria-label="Backend Quality Information">
-                            info_outline
+                            <span class="material-icons">info_outline</span>
                             <div class="tooltip">
                                 Backend sustainability score evaluating server efficiency, database optimization, and resource management. Higher scores indicate better energy efficiency per request and reduced carbon footprint.
                             </div>
@@ -516,7 +529,7 @@
                 <div class="section-header">
                     <h2 class="section-title">📁 Analyzed Files 
                         <div class="info-icon" tabindex="0" role="button" aria-label="Analyzed Files Information">
-                            info_outline
+                            <span class="material-icons">info_outline</span>
                             <div class="tooltip">
                                 <strong>File Sustainability Analysis:</strong> Each file is evaluated for energy-efficient coding patterns, complexity, and resource usage. Higher scores indicate better environmental performance through optimized algorithms and reduced computational overhead.
                             </div>
@@ -542,7 +555,7 @@
                                 <div class="recommendation-title">Code Structure Optimization</div>
                                 <span class="env-impact-badge medium-impact">Medium Impact</span>
                                 <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                    info_outline
+                                    <span class="material-icons">info_outline</span>
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Large files consume more CPU cycles during parsing and compilation, increasing energy usage by ~15-25%. Breaking down files reduces memory pressure and enables better caching, lowering carbon footprint per user session.
                                     </div>
@@ -558,7 +571,7 @@
                                 <div class="recommendation-title">Memory Management</div>
                                 <span class="env-impact-badge high-impact">High Impact</span>
                                 <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                    info_outline
+                                    <span class="material-icons">info_outline</span>
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Memory leaks force garbage collection cycles and increase RAM usage. Proper cleanup reduces server memory consumption by 20-40%, directly lowering data center energy costs and extending hardware lifespan.
                                     </div>
@@ -574,7 +587,7 @@
                                 <div class="recommendation-title">Performance Optimization</div>
                                 <span class="env-impact-badge high-impact">High Impact</span>
                                 <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                    info_outline
+                                    <span class="material-icons">info_outline</span>
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Lazy loading and code splitting reduce initial bundle size by 30-60%, decreasing network transfer and CPU processing. Efficient caching reduces redundant server requests, cutting energy usage across the entire infrastructure chain.
                                     </div>
@@ -590,7 +603,7 @@
                                 <div class="recommendation-title">Database Query Optimization</div>
                                 <span class="env-impact-badge medium-impact">Medium Impact</span>
                                 <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                    info_outline
+                                    <span class="material-icons">info_outline</span>
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Inefficient queries can increase database CPU usage by 2-5x. Optimized queries with proper indexing reduce server processing time and energy consumption, especially important for high-traffic applications.
                                     </div>
@@ -606,7 +619,7 @@
                                 <div class="recommendation-title">Asset Optimization</div>
                                 <span class="env-impact-badge low-impact">Low Impact</span>
                                 <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                    info_outline
+                                    <span class="material-icons">info_outline</span>
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Compressed images and optimized assets reduce bandwidth usage by 40-70%. This directly decreases network energy consumption and improves load times, especially beneficial for users on slower connections.
                                     </div>
@@ -630,7 +643,7 @@
                     <div class="stats-row">
                         <span class="stat-label">Daily CO2 Emissions
                             <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                info_outline
+                                <span class="material-icons">info_outline</span>
                                 <div class="tooltip">
                                     Based on server processing, data transfer, and user device energy consumption. Calculated using average data center PUE of 1.58 and regional electricity carbon intensity.
                                 </div>
@@ -641,7 +654,7 @@
                     <div class="stats-row">
                         <span class="stat-label">Annual CO2 Projection
                             <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                info_outline
+                                <span class="material-icons">info_outline</span>
                                 <div class="tooltip">
                                     Projected annual carbon footprint assuming current usage patterns. Equivalent to driving ~420 km in an average car or charging 20,000+ smartphones.
                                 </div>
@@ -652,7 +665,7 @@
                     <div class="stats-row">
                         <span class="stat-label">Carbon Intensity
                             <div class="info-icon" tabindex="0" role="button" aria-label="Information">
-                                info_outline
+                                <span class="material-icons">info_outline</span>
                                 <div class="tooltip">
                                     Measures CO2 emissions per unit of computation. Low-Medium indicates good efficiency with room for optimization through better algorithms and resource management.
                                 </div>
@@ -663,7 +676,7 @@
                     <div class="stats-row">
                         <span class="stat-label">Energy Efficiency Rating
                             <div class="info-icon" tabindex="0" role="button" aria-label="Energy Efficiency Information">
-                                info_outline
+                                <span class="material-icons">info_outline</span>
                                 <div class="tooltip">
                                     Overall energy efficiency rating based on code patterns, resource usage, and optimization practices. Higher ratings indicate lower energy consumption and reduced environmental impact through better coding practices.
                                 </div>
