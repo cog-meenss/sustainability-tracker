@@ -49,6 +49,7 @@ class ComprehensiveSustainabilityEvaluator:
             
             # Perform additional comprehensive analysis
             self._analyze_code_patterns()
+            self._analyze_green_coding_metrics()
             self._analyze_file_complexity()
             self._analyze_dependencies()
             self._analyze_performance_patterns()
@@ -126,7 +127,113 @@ class ComprehensiveSustainabilityEvaluator:
                     self.code_patterns[pattern_name] += matches
             except Exception:
                 continue
-    
+
+    def _analyze_green_coding_metrics(self):
+        """Analyze green coding patterns and CPU-efficient practices"""
+        print("🌱 Analyzing green coding metrics...")
+        
+        # Green coding patterns that indicate energy efficiency
+        green_patterns = {
+            'cpu_efficient_algorithms': r'(O\(1\)|O\(log n\)|binary search|hash|memoiz|cache)',
+            'memory_optimization': r'(del |gc\.collect|__slots__|generator|yield)',
+            'efficient_data_structures': r'(deque|set\(|frozenset|numpy\.array|pandas)',
+            'lazy_loading': r'(lazy|defer|import\(\)|dynamic import|generator)',
+            'database_optimization': r'(index|LIMIT|batch|pagination|connection pool)',
+            'resource_cleanup': r'(with |finally:|close\(\)|dispose\(\)|cleanup)',
+            'parallel_processing': r'(multiprocess|threading|async|concurrent\.futures|worker)',
+            'compression_usage': r'(gzip|compress|minify|bundle)',
+            'efficient_loops': r'(list comprehension|\[.*for.*in|\(.*for.*in)',
+            'minimal_dependencies': r'(from.*import \w+|import \w+$)'  # Specific imports vs import *
+        }
+        
+        # Anti-patterns that waste energy/resources
+        wasteful_patterns = {
+            'inefficient_algorithms': r'(nested for|O\(n\^2\)|bubble sort|recursive without memo)',
+            'memory_waste': r'(global |import \*|eval\(|exec\()',
+            'excessive_logging': r'(debug\(|verbose|trace\()',
+            'blocking_operations': r'(sleep\(|time\.sleep|setTimeout|setInterval)',
+            'redundant_computation': r'(repeated calculation|duplicate logic)',
+            'large_file_operations': r'(read\(\)$|readlines\(\)|load entire)'
+        }
+        
+        files = list(self.project_path.rglob("*.py")) + list(self.project_path.rglob("*.js")) + list(self.project_path.rglob("*.ts"))
+        
+        self.green_coding_metrics = {
+            'green_patterns': defaultdict(int),
+            'wasteful_patterns': defaultdict(int),
+            'cpu_efficiency_score': 0,
+            'memory_efficiency_score': 0,
+            'energy_saving_score': 0
+        }
+        
+        for file_path in files[:50]:  # Limit to avoid long processing
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    
+                # Analyze green patterns
+                for pattern_name, pattern in green_patterns.items():
+                    matches = len(re.findall(pattern, content, re.IGNORECASE))
+                    self.green_coding_metrics['green_patterns'][pattern_name] += matches
+                
+                # Analyze wasteful patterns
+                for pattern_name, pattern in wasteful_patterns.items():
+                    matches = len(re.findall(pattern, content, re.IGNORECASE))
+                    self.green_coding_metrics['wasteful_patterns'][pattern_name] += matches
+                    
+            except Exception:
+                continue
+        
+        # Calculate efficiency scores
+        total_green = sum(self.green_coding_metrics['green_patterns'].values())
+        total_wasteful = sum(self.green_coding_metrics['wasteful_patterns'].values())
+        total_files = len([f for f in files[:50]])
+        
+        # CPU Efficiency Score (0-100)
+        cpu_efficient_patterns = (
+            self.green_coding_metrics['green_patterns']['cpu_efficient_algorithms'] +
+            self.green_coding_metrics['green_patterns']['efficient_data_structures'] +
+            self.green_coding_metrics['green_patterns']['efficient_loops']
+        )
+        cpu_waste_patterns = (
+            self.green_coding_metrics['wasteful_patterns']['inefficient_algorithms'] +
+            self.green_coding_metrics['wasteful_patterns']['blocking_operations']
+        )
+        
+        self.green_coding_metrics['cpu_efficiency_score'] = min(100, max(0, 
+            50 + (cpu_efficient_patterns * 5) - (cpu_waste_patterns * 10)
+        ))
+        
+        # Memory Efficiency Score (0-100)
+        memory_efficient_patterns = (
+            self.green_coding_metrics['green_patterns']['memory_optimization'] +
+            self.green_coding_metrics['green_patterns']['resource_cleanup'] +
+            self.green_coding_metrics['green_patterns']['lazy_loading']
+        )
+        memory_waste_patterns = (
+            self.green_coding_metrics['wasteful_patterns']['memory_waste'] +
+            self.green_coding_metrics['wasteful_patterns']['large_file_operations']
+        )
+        
+        self.green_coding_metrics['memory_efficiency_score'] = min(100, max(0,
+            50 + (memory_efficient_patterns * 5) - (memory_waste_patterns * 8)
+        ))
+        
+        # Overall Energy Saving Score (0-100)
+        energy_saving_patterns = (
+            self.green_coding_metrics['green_patterns']['parallel_processing'] +
+            self.green_coding_metrics['green_patterns']['compression_usage'] +
+            self.green_coding_metrics['green_patterns']['database_optimization']
+        )
+        energy_waste_patterns = (
+            self.green_coding_metrics['wasteful_patterns']['excessive_logging'] +
+            self.green_coding_metrics['wasteful_patterns']['redundant_computation']
+        )
+        
+        self.green_coding_metrics['energy_saving_score'] = min(100, max(0,
+            60 + (energy_saving_patterns * 8) - (energy_waste_patterns * 12)
+        ))
+
     def _analyze_file_complexity(self):
         """Analyze file complexity metrics"""
         print("📊 Analyzing file complexity...")
@@ -255,16 +362,42 @@ class ComprehensiveSustainabilityEvaluator:
         energy_penalty = min(20, self.performance_issues['missing_async'] * 2)
         resource_penalty = min(15, (self.performance_issues['potential_memory_leaks'] + self.performance_issues['console_logs']) * 1.5)
         
+        # Green coding metrics integration
+        green_metrics = getattr(self, 'green_coding_metrics', {})
+        cpu_efficiency = green_metrics.get('cpu_efficiency_score', 50)
+        memory_efficiency = green_metrics.get('memory_efficiency_score', 50)
+        energy_saving = green_metrics.get('energy_saving_score', 50)
+        
+        # Enhanced energy efficiency with green coding considerations
+        enhanced_energy_efficiency = (
+            (base_metrics.get('energy_efficiency', 50) * 0.4) +
+            (cpu_efficiency * 0.3) +
+            (energy_saving * 0.3)
+        ) - energy_penalty
+        
+        # Enhanced resource utilization with memory efficiency
+        enhanced_resource_utilization = (
+            (base_metrics.get('resource_utilization', 50) * 0.5) +
+            (memory_efficiency * 0.5)
+        ) - resource_penalty
+        
+        # Calculate overall green coding score
+        green_coding_score = (cpu_efficiency + memory_efficiency + energy_saving) / 3
+        
         self.enhanced_metrics = {
             'overall_score': base_metrics.get('overall_score', 50),
-            'energy_efficiency': max(0, base_metrics.get('energy_efficiency', 50) - energy_penalty),
-            'resource_utilization': max(0, base_metrics.get('resource_utilization', 50) - resource_penalty),
-            'carbon_footprint': base_metrics.get('carbon_footprint', 50),
+            'energy_efficiency': max(0, enhanced_energy_efficiency),
+            'resource_utilization': max(0, enhanced_resource_utilization),
+            'carbon_footprint': max(0, 100 - ((100 - green_coding_score) * 0.8)),  # Green coding reduces carbon footprint
             'performance_optimization': min(100, avg_complexity + 10),
             'sustainable_practices': max(0, 100 - (self.performance_issues['console_logs'] * 2)),
             'code_quality': avg_complexity,
             'dependency_efficiency': max(0, 100 - self.dependencies['package_json']['total_dependencies'] * 2),
-            'maintainability': min(100, (self.code_patterns['error_handling'] * 10) + (self.code_patterns['caching_patterns'] * 5))
+            'maintainability': min(100, (self.code_patterns['error_handling'] * 10) + (self.code_patterns['caching_patterns'] * 5)),
+            'green_coding_score': green_coding_score,
+            'cpu_efficiency': cpu_efficiency,
+            'memory_efficiency': memory_efficiency,
+            'energy_saving_practices': energy_saving
         }
     
     def _compile_comprehensive_report(self, execution_time):
@@ -286,6 +419,7 @@ class ComprehensiveSustainabilityEvaluator:
             'sustainability_metrics': self.enhanced_metrics,
             'detailed_analysis': {
                 'code_patterns': dict(self.code_patterns),
+                'green_coding_analysis': getattr(self, 'green_coding_metrics', {}),
                 'file_complexity': self.file_metrics,
                 'performance_analysis': self.performance_issues,
                 'dependency_analysis': self.dependencies
@@ -499,6 +633,137 @@ function processUser(userData) {
                     'Implement code splitting and lazy loading'
                 ],
                 'estimated_improvement': '+5-10 points in dependency efficiency'
+            })
+
+        # Green Coding specific recommendations
+        green_metrics = getattr(self, 'green_coding_metrics', {})
+        if green_metrics.get('cpu_efficiency_score', 50) < 70:
+            recommendations.append({
+                'category': 'Green Coding - CPU Efficiency',
+                'priority': 'High',
+                'title': 'Optimize Algorithm Efficiency for Lower CPU Usage',
+                'description': 'Replace inefficient algorithms with optimized alternatives to reduce energy consumption',
+                'impact': 'High - Can reduce CPU usage by 20-50%, directly lowering power consumption',
+                'effort': 'Medium',
+                'implementation': [
+                    'Replace O(n²) algorithms with O(n log n) or O(n) alternatives',
+                    'Use binary search instead of linear search for sorted data',
+                    'Implement memoization for recursive functions',
+                    'Use efficient data structures (Sets, Maps, Trees)',
+                    'Avoid nested loops where possible'
+                ],
+                'code_example': '''
+# Before (O(n²) - high CPU usage)
+def find_duplicates_slow(items):
+    duplicates = []
+    for i in range(len(items)):
+        for j in range(i+1, len(items)):
+            if items[i] == items[j]:
+                duplicates.append(items[i])
+    return duplicates
+
+# After (O(n) - low CPU usage)  
+def find_duplicates_fast(items):
+    seen = set()
+    duplicates = set()
+    for item in items:
+        if item in seen:
+            duplicates.add(item)
+        else:
+            seen.add(item)
+    return list(duplicates)''',
+                'estimated_improvement': '+15-25 points in CPU efficiency, reduced power consumption'
+            })
+
+        if green_metrics.get('memory_efficiency_score', 50) < 70:
+            recommendations.append({
+                'category': 'Green Coding - Memory Optimization',
+                'priority': 'High',
+                'title': 'Implement Memory-Efficient Patterns',
+                'description': 'Reduce memory allocation and implement proper cleanup to lower energy overhead',
+                'impact': 'High - Reduces memory usage by 15-40%, decreasing energy for memory management',
+                'effort': 'Medium',
+                'implementation': [
+                    'Use generators instead of loading entire datasets',
+                    'Implement object pooling for frequently created objects',
+                    'Add proper resource cleanup with context managers',
+                    'Use __slots__ in Python classes to reduce memory overhead',
+                    'Avoid global variables and memory leaks'
+                ],
+                'code_example': '''
+# Before (memory intensive)
+def process_large_file(filename):
+    with open(filename) as f:
+        all_lines = f.readlines()  # Loads entire file
+        return [line.strip().upper() for line in all_lines]
+
+# After (memory efficient)
+def process_large_file_efficient(filename):
+    def line_generator():
+        with open(filename) as f:
+            for line in f:  # Process one line at a time
+                yield line.strip().upper()
+    return line_generator()
+
+# Using __slots__ for memory optimization
+class EfficientClass:
+    __slots__ = ['name', 'value']  # Reduces memory overhead
+    def __init__(self, name, value):
+        self.name = name
+        self.value = value''',
+                'estimated_improvement': '+10-20 points in memory efficiency'
+            })
+
+        if green_metrics.get('energy_saving_score', 50) < 70:
+            recommendations.append({
+                'category': 'Green Coding - Energy Conservation',
+                'priority': 'Medium',
+                'title': 'Implement Energy-Saving Programming Practices',
+                'description': 'Adopt coding patterns that minimize energy consumption across the application lifecycle',
+                'impact': 'Medium - Overall energy reduction of 10-25% through optimized practices',
+                'effort': 'Low to Medium',
+                'implementation': [
+                    'Use lazy loading and on-demand resource loading',
+                    'Implement compression for data transmission',
+                    'Add database query optimization and connection pooling',
+                    'Use efficient serialization formats (e.g., Protocol Buffers vs JSON)',
+                    'Implement proper caching strategies',
+                    'Remove excessive logging and debug statements from production'
+                ],
+                'code_example': '''
+# Energy-efficient database operations
+class EnergyEfficientDB:
+    def __init__(self):
+        self.connection_pool = create_pool(max_connections=10)
+        self.cache = {}
+    
+    async def get_user_data(self, user_id):
+        # Check cache first (avoids DB query)
+        if user_id in self.cache:
+            return self.cache[user_id]
+        
+        # Use connection pooling (reduces connection overhead)
+        async with self.connection_pool.acquire() as conn:
+            # Optimized query with specific fields only
+            query = "SELECT id, name, email FROM users WHERE id = $1"
+            result = await conn.fetchrow(query, user_id)
+            
+            # Cache result for future use
+            self.cache[user_id] = result
+            return result
+
+# Lazy loading example
+class LazyImageLoader:
+    def __init__(self, image_urls):
+        self.image_urls = image_urls
+        self.loaded_images = {}
+    
+    def get_image(self, index):
+        # Load image only when needed (saves memory and CPU)
+        if index not in self.loaded_images:
+            self.loaded_images[index] = load_image(self.image_urls[index])
+        return self.loaded_images[index]''',
+                'estimated_improvement': '+8-15 points in energy saving practices'
             })
         
         return recommendations
@@ -1196,6 +1461,67 @@ def generate_comprehensive_html_report(report_data):
                             <div class="progress-bar">
                                 <div class="progress-fill" style="width: {report_data['sustainability_metrics']['code_quality']}%;"></div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px;">
+                    <h3 style="color: #2c3e50; font-size: 1.6em; margin-bottom: 25px; text-align: center;">🌱 Green Coding Metrics</h3>
+                    <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                        <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%); border-left: 4px solid #4caf50;">
+                            <div class="metric-header">
+                                <span class="metric-title">CPU Efficiency</span>
+                                <span class="metric-icon">🔥</span>
+                            </div>
+                            <div class="metric-value score-{'excellent' if report_data['sustainability_metrics'].get('cpu_efficiency', 50) >= 80 else 'good' if report_data['sustainability_metrics'].get('cpu_efficiency', 50) >= 60 else 'poor'}">
+                                {report_data['sustainability_metrics'].get('cpu_efficiency', 50):.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {report_data['sustainability_metrics'].get('cpu_efficiency', 50)}%; background: linear-gradient(90deg, #4caf50, #8bc34a);"></div>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: #2e7d32;">Algorithm & Loop Optimization</div>
+                        </div>
+                        
+                        <div class="metric-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%); border-left: 4px solid #2196f3;">
+                            <div class="metric-header">
+                                <span class="metric-title">Memory Efficiency</span>
+                                <span class="metric-icon">🧠</span>
+                            </div>
+                            <div class="metric-value score-{'excellent' if report_data['sustainability_metrics'].get('memory_efficiency', 50) >= 80 else 'good' if report_data['sustainability_metrics'].get('memory_efficiency', 50) >= 60 else 'poor'}">
+                                {report_data['sustainability_metrics'].get('memory_efficiency', 50):.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {report_data['sustainability_metrics'].get('memory_efficiency', 50)}%; background: linear-gradient(90deg, #2196f3, #64b5f6);"></div>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: #1565c0;">Resource Management & Cleanup</div>
+                        </div>
+                        
+                        <div class="metric-card" style="background: linear-gradient(135deg, #fff3e0 0%, #f1f8e9 100%); border-left: 4px solid #ff9800;">
+                            <div class="metric-header">
+                                <span class="metric-title">Energy Saving</span>
+                                <span class="metric-icon">🔋</span>
+                            </div>
+                            <div class="metric-value score-{'excellent' if report_data['sustainability_metrics'].get('energy_saving_practices', 50) >= 80 else 'good' if report_data['sustainability_metrics'].get('energy_saving_practices', 50) >= 60 else 'poor'}">
+                                {report_data['sustainability_metrics'].get('energy_saving_practices', 50):.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {report_data['sustainability_metrics'].get('energy_saving_practices', 50)}%; background: linear-gradient(90deg, #ff9800, #ffb74d);"></div>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: #ef6c00;">Caching, Compression & Optimization</div>
+                        </div>
+                        
+                        <div class="metric-card" style="background: linear-gradient(135deg, #f3e5f5 0%, #f1f8e9 100%); border-left: 4px solid #9c27b0;">
+                            <div class="metric-header">
+                                <span class="metric-title">Green Coding Score</span>
+                                <span class="metric-icon">🌱</span>
+                            </div>
+                            <div class="metric-value score-{'excellent' if report_data['sustainability_metrics'].get('green_coding_score', 50) >= 80 else 'good' if report_data['sustainability_metrics'].get('green_coding_score', 50) >= 60 else 'poor'}">
+                                {report_data['sustainability_metrics'].get('green_coding_score', 50):.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {report_data['sustainability_metrics'].get('green_coding_score', 50)}%; background: linear-gradient(90deg, #9c27b0, #ba68c8);"></div>
+                            </div>
+                            <div style="margin-top: 10px; font-size: 0.9em; color: #7b1fa2;">Overall Environmental Impact</div>
                         </div>
                     </div>
                 </div>
