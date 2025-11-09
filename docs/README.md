@@ -18,16 +18,16 @@ Welcome to the Tracker Application documentation. This folder contains guides an
 
 ```
 Tracker/
-├── docs/                           # Documentation (you are here)
-│   ├── README.md                  # This file
-│   └── AI-Idea-Ranking-Guide.md   # AI evaluation system docs
-├── frontend/                       # React application
-├── backend/                        # Express.js server
-├── carbon-dashboard/               # Environmental impact dashboard
-└── .github/                        # GitHub/development configs
+├── docs/ # Documentation (you are here)
+│ ├── README.md # This file
+│ └── AI-Idea-Ranking-Guide.md # AI evaluation system docs
+├── frontend/ # React application
+├── backend/ # Express.js server
+├── carbon-dashboard/ # Environmental impact dashboard
+└── .github/ # GitHub/development configs
 ```
 
-## 🚀 Quick Start Guides
+## Quick Start Guides
 
 ### For Users
 1. **Training Tab** - Upload and analyze training records
@@ -39,7 +39,7 @@ Tracker/
 2. See **[AI Idea Ranking Guide](./AI-Idea-Ranking-Guide.md)** for AI integration examples
 3. Check **[Carbon Dashboard](../carbon-dashboard/)** for visualization techniques
 
-## 📊 Features Overview
+## Features Overview
 
 ### Core Functionality
 - **Excel File Processing** - Upload and process various Excel formats
@@ -58,14 +58,14 @@ Tracker/
 - **AI Integration**: OpenAI API for intelligent analysis
 - **Visualization**: Chart.js and MUI Data Grid
 
-## 🔧 Configuration
+## Configuration
 
 ### Environment Setup
 ```bash
 # Backend
 cd backend && npm install && npm start
 
-# Frontend  
+# Frontend 
 cd frontend && npm install && npm start
 ```
 
@@ -73,7 +73,7 @@ cd frontend && npm install && npm start
 - OpenAI API key for AI idea evaluation (optional)
 - UK Holidays API for working days calculation
 
-## 📈 Future Documentation
+## Future Documentation
 
 As the project grows, this documentation will expand to include:
 - API Reference

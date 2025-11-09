@@ -1,12 +1,12 @@
-# ⚠️ NOTICE: Azure DevOps Pipeline Deprecatedtrigger:
+# NOTICE: Azure DevOps Pipeline Deprecatedtrigger:
 
 # This pipeline requires hosted parallelism grants which need approval.- main
 
 # 
 
-# ✅ RECOMMENDED: Use GitHub Actions instead!pool:
+# RECOMMENDED: Use GitHub Actions instead!pool:
 
-#   vmImage: ubuntu-latest
+# vmImage: ubuntu-latest
 
 # GitHub Actions provides:
 
@@ -14,95 +14,95 @@
 
 # - 2000+ free minutes monthly- script: |
 
-# - Rich integration and reporting    echo "🌱 Starting Sustainability Analysis..."
+# - Rich integration and reporting echo "Starting Sustainability Analysis..."
 
-# - Interactive dashboards    echo "Build ID: $(Build.BuildId)"
+# - Interactive dashboards echo "Build ID: $(Build.BuildId)"
 
-#     echo "Repository: $(Build.Repository.Name)"
+# echo "Repository: $(Build.Repository.Name)"
 
-# See: .github/workflows/sustainability-analysis.yml  displayName: 'Initialize Analysis'
+# See: .github/workflows/sustainability-analysis.yml displayName: 'Initialize Analysis'
 
 # Setup Guide: GITHUB_ACTIONS_SETUP.md
 
 - script: |
 
-trigger:    echo "📂 Project Structure:"
+trigger: echo "📂 Project Structure:"
 
-- main    ls -la
+- main ls -la
 
-    echo "📊 File Count:"
+ echo "File Count:"
 
-pool:    find . -type f | wc -l
+pool: find . -type f | wc -l
 
-  vmImage: ubuntu-latest  displayName: 'Project Overview'
+ vmImage: ubuntu-latest displayName: 'Project Overview'
 
 
 
 steps:- script: |
 
-- script: |    echo "🐍 Environment Check:"
+- script: | echo "Environment Check:"
 
-    echo "⚠️ NOTICE: This Azure DevOps pipeline is deprecated"    python3 --version
+ echo "NOTICE: This Azure DevOps pipeline is deprecated" python3 --version
 
-    echo ""    echo "📦 Available tools:"
+ echo "" echo "Available tools:"
 
-    echo "🚀 Please use GitHub Actions instead:"    which git python3 pip3
+ echo "Please use GitHub Actions instead:" which git python3 pip3
 
-    echo "   - No parallelism grants required"  displayName: 'Environment Info'
+ echo " - No parallelism grants required" displayName: 'Environment Info'
 
-    echo "   - 2000+ free minutes monthly" 
+ echo " - 2000+ free minutes monthly" 
 
-    echo "   - Rich integration and reporting"- script: |
+ echo " - Rich integration and reporting"- script: |
 
-    echo ""    echo "📊 Basic Sustainability Analysis:"
+ echo "" echo "Basic Sustainability Analysis:"
 
-    echo "📋 Setup Steps:"    echo "Analyzing project files..."
+ echo "📋 Setup Steps:" echo "Analyzing project files..."
 
-    echo "   1. Create GitHub repository"    
+ echo " 1. Create GitHub repository" 
 
-    echo "   2. Push code with .github/workflows/ folder"    # Count different file types
+ echo " 2. Push code with .github/workflows/ folder" # Count different file types
 
-    echo "   3. Enable GitHub Actions"    JS_FILES=$(find . -name "*.js" | wc -l)
+ echo " 3. Enable GitHub Actions" JS_FILES=$(find . -name "*.js" | wc -l)
 
-    echo "   4. Enjoy unlimited sustainability analysis!"    PY_FILES=$(find . -name "*.py" | wc -l) 
+ echo " 4. Enjoy unlimited sustainability analysis!" PY_FILES=$(find . -name "*.py" | wc -l) 
 
-    echo ""    JSON_FILES=$(find . -name "*.json" | wc -l)
+ echo "" JSON_FILES=$(find . -name "*.json" | wc -l)
 
-    echo "📖 See: GITHUB_ACTIONS_SETUP.md for detailed instructions"    
+ echo "📖 See: GITHUB_ACTIONS_SETUP.md for detailed instructions" 
 
-    echo ""    echo "JavaScript files: $JS_FILES"
+ echo "" echo "JavaScript files: $JS_FILES"
 
-    echo "✅ This pipeline will still run for compatibility,"    echo "Python files: $PY_FILES"
+ echo "This pipeline will still run for compatibility," echo "Python files: $PY_FILES"
 
-    echo "   but GitHub Actions provides much better features."    echo "JSON files: $JSON_FILES"
+ echo " but GitHub Actions provides much better features." echo "JSON files: $JSON_FILES"
 
-  displayName: 'Migration Notice'    
+ displayName: 'Migration Notice' 
 
-    # Simple sustainability score calculation
+ # Simple sustainability score calculation
 
-- script: |    TOTAL_FILES=$((JS_FILES + PY_FILES + JSON_FILES))
+- script: | TOTAL_FILES=$((JS_FILES + PY_FILES + JSON_FILES))
 
-    echo "📊 Basic file count (for compatibility):"    echo "Total analyzed files: $TOTAL_FILES"
+ echo "Basic file count (for compatibility):" echo "Total analyzed files: $TOTAL_FILES"
 
-    find . -name "*.js" | wc -l | xargs echo "JavaScript files:"    
+ find . -name "*.js" | wc -l | xargs echo "JavaScript files:" 
 
-    find . -name "*.py" | wc -l | xargs echo "Python files:"    if [ $TOTAL_FILES -gt 0 ]; then
+ find . -name "*.py" | wc -l | xargs echo "Python files:" if [ $TOTAL_FILES -gt 0 ]; then
 
-    echo "📖 For full analysis, use GitHub Actions!"        echo "✅ Project contains analyzable files"
+ echo "📖 For full analysis, use GitHub Actions!" echo "Project contains analyzable files"
 
-  displayName: 'Basic Analysis (Limited)'        echo "📊 Sustainability Score: 75/100"
-    else
-        echo "⚠️ No files found for analysis"
-        echo "� Sustainability Score: 50/100"
-    fi
-  displayName: 'Run Analysis'
+ displayName: 'Basic Analysis (Limited)' echo "Sustainability Score: 75/100"
+ else
+ echo "No files found for analysis"
+ echo "� Sustainability Score: 50/100"
+ fi
+ displayName: 'Run Analysis'
 
 - script: |
-    echo "📈 Analysis Summary:"
-    echo "==================================="
-    echo "🌱 Sustainability Analysis Complete"
-    echo "📅 Date: $(date)"
-    echo "🔍 Repository: $(Build.Repository.Name)"
-    echo "🌿 Status: ✅ SUCCESS"
-    echo "==================================="
-  displayName: 'Summary'
+ echo "Analysis Summary:"
+ echo "==================================="
+ echo "Sustainability Analysis Complete"
+ echo "📅 Date: $(date)"
+ echo "Repository: $(Build.Repository.Name)"
+ echo "Status: SUCCESS"
+ echo "==================================="
+ displayName: 'Summary'
