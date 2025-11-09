@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🌱 Sustainability Tracker - Project Analysis Dashboard</title>
+    <!-- Material UI Icons and Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         * { 
@@ -254,54 +257,71 @@
             transition: width 0.3s ease;
         }
         
-        /* Info icon and tooltip styles */
+        /* Material UI inspired info icon styles */
         .info-icon {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 22px;
-            height: 22px;
-            background: #198754;
-            color: white;
+            width: 24px;
+            height: 24px;
+            background: rgba(25, 135, 84, 0.08);
+            color: #198754;
             border-radius: 50%;
-            font-size: 13px;
-            font-weight: bold;
             cursor: pointer;
-            margin-left: 12px;
+            margin-left: 16px;
             position: relative;
-            transition: all 0.3s ease;
-            z-index: 100;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
             vertical-align: middle;
             flex-shrink: 0;
+            border: none;
+            outline: none;
+            font-family: 'Material Icons', sans-serif;
+            font-size: 18px;
+            font-weight: normal;
+            text-rendering: optimizeLegibility;
+            -webkit-font-feature-settings: 'liga';
+            font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
         }
         
         .info-icon:hover {
-            background: #157347;
-            transform: scale(1.15);
-            z-index: 2000;
+            background: rgba(25, 135, 84, 0.12);
+            color: #157347;
+            transform: scale(1.1);
+            z-index: 1000;
+        }
+        
+        .info-icon:focus {
+            background: rgba(25, 135, 84, 0.16);
+            outline: 2px solid rgba(25, 135, 84, 0.5);
+            outline-offset: 2px;
         }
         
         .tooltip {
             position: absolute;
-            bottom: 35px;
+            bottom: 100%;
             left: 50%;
-            transform: translateX(-50%);
-            background: #212529;
-            color: white;
-            padding: 14px 18px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: normal;
+            transform: translateX(-50%) translateY(-8px);
+            background: #424242;
+            color: #ffffff;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-family: 'Roboto', sans-serif;
+            font-size: 0.875rem;
+            font-weight: 400;
+            line-height: 1.43;
+            letter-spacing: 0.01071em;
             white-space: normal;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 2001;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-            max-width: 320px;
-            min-width: 280px;
-            line-height: 1.5;
-            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1500;
+            box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.12), 0px 4px 4px 0px rgba(0,0,0,0.14), 0px 1px 10px 0px rgba(0,0,0,0.20);
+            max-width: 300px;
+            min-width: 240px;
+            word-wrap: break-word;
+            pointer-events: none;
         }
         
         .tooltip::before {
@@ -310,24 +330,25 @@
             top: 100%;
             left: 50%;
             transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #212529;
+            border: 5px solid transparent;
+            border-top-color: #424242;
         }
         
-        .info-icon:hover .tooltip {
+        .info-icon:hover .tooltip,
+        .info-icon:focus .tooltip {
             opacity: 1;
             visibility: visible;
-            transform: translateX(-50%) translateY(-5px);
+            transform: translateX(-50%) translateY(-12px);
         }
         
-        /* Prevent icon overlap with content */
-        .metrics-container .metric-card h3 {
+        /* Prevent icon overlap with content - Material Design spacing */
+        .metric-label {
             display: flex;
             align-items: center;
             justify-content: flex-start;
             flex-wrap: nowrap;
-            min-height: 40px;
-            padding-right: 40px;
+            min-height: 32px;
+            gap: 8px;
         }
         
         .section-title {
@@ -335,12 +356,26 @@
             align-items: center;
             justify-content: flex-start;
             flex-wrap: nowrap;
-            margin-bottom: 20px;
-            padding-right: 40px;
+            margin-bottom: 24px;
+            gap: 12px;
         }
         
         .recommendation-header {
-            padding-right: 40px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        /* Ensure tooltips don't get clipped */
+        .metric-card {
+            overflow: visible;
+            position: relative;
+        }
+        
+        .metrics-grid {
+            gap: 32px;
+            margin: 32px 0;
         }
         
         .recommendation-header {
@@ -387,10 +422,10 @@
                 <div class="metric-card">
                     <div class="metric-value excellent" id="overall-score">79.0</div>
                     <div class="metric-label">Overall Score
-                        <div class="info-icon">
-                            i
+                        <div class="info-icon" tabindex="0" role="button" aria-label="Overall Score Information">
+                            info_outline
                             <div class="tooltip">
-                                Composite sustainability score based on energy efficiency, resource optimization, and green coding practices. 79/100 indicates good environmental performance with room for optimization.
+                                Composite sustainability score based on energy efficiency, resource optimization, and green coding practices. Higher scores indicate better environmental performance and optimized resource usage.
                             </div>
                         </div>
                     </div>
@@ -402,10 +437,10 @@
                 <div class="metric-card">
                     <div class="metric-value good" id="frontend-score">76.6</div>
                     <div class="metric-label">Frontend Quality
-                        <div class="info-icon">
-                            i
+                        <div class="info-icon" tabindex="0" role="button" aria-label="Frontend Quality Information">
+                            info_outline
                             <div class="tooltip">
-                                Frontend sustainability score based on bundle size, rendering efficiency, and user experience optimization. Focus on lazy loading and code splitting to improve.
+                                Frontend sustainability score based on bundle size, rendering efficiency, and user experience optimization. Focus on lazy loading and code splitting to improve energy efficiency.
                             </div>
                         </div>
                     </div>
@@ -417,10 +452,10 @@
                 <div class="metric-card">
                     <div class="metric-value excellent" id="backend-score">81.2</div>
                     <div class="metric-label">Backend Quality
-                        <div class="info-icon">
-                            i
+                        <div class="info-icon" tabindex="0" role="button" aria-label="Backend Quality Information">
+                            info_outline
                             <div class="tooltip">
-                                Backend sustainability score evaluating server efficiency, database optimization, and resource management. Higher score indicates better energy efficiency per request.
+                                Backend sustainability score evaluating server efficiency, database optimization, and resource management. Higher scores indicate better energy efficiency per request and reduced carbon footprint.
                             </div>
                         </div>
                     </div>
@@ -480,10 +515,10 @@
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">📁 Analyzed Files 
-                        <div class="info-icon">
-                            i
+                        <div class="info-icon" tabindex="0" role="button" aria-label="Analyzed Files Information">
+                            info_outline
                             <div class="tooltip">
-                                <strong>File Sustainability Scores:</strong> Each file is scored based on energy-efficient coding patterns, complexity, and resource usage. Higher scores indicate better environmental performance through optimized algorithms and reduced computational overhead.
+                                <strong>File Sustainability Analysis:</strong> Each file is evaluated for energy-efficient coding patterns, complexity, and resource usage. Higher scores indicate better environmental performance through optimized algorithms and reduced computational overhead.
                             </div>
                         </div>
                     </h2>
@@ -506,8 +541,8 @@
                             <div class="recommendation-header">
                                 <div class="recommendation-title">Code Structure Optimization</div>
                                 <span class="env-impact-badge medium-impact">Medium Impact</span>
-                                <div class="info-icon">
-                                    i
+                                <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                    info_outline
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Large files consume more CPU cycles during parsing and compilation, increasing energy usage by ~15-25%. Breaking down files reduces memory pressure and enables better caching, lowering carbon footprint per user session.
                                     </div>
@@ -522,8 +557,8 @@
                             <div class="recommendation-header">
                                 <div class="recommendation-title">Memory Management</div>
                                 <span class="env-impact-badge high-impact">High Impact</span>
-                                <div class="info-icon">
-                                    i
+                                <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                    info_outline
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Memory leaks force garbage collection cycles and increase RAM usage. Proper cleanup reduces server memory consumption by 20-40%, directly lowering data center energy costs and extending hardware lifespan.
                                     </div>
@@ -538,8 +573,8 @@
                             <div class="recommendation-header">
                                 <div class="recommendation-title">Performance Optimization</div>
                                 <span class="env-impact-badge high-impact">High Impact</span>
-                                <div class="info-icon">
-                                    i
+                                <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                    info_outline
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Lazy loading and code splitting reduce initial bundle size by 30-60%, decreasing network transfer and CPU processing. Efficient caching reduces redundant server requests, cutting energy usage across the entire infrastructure chain.
                                     </div>
@@ -554,8 +589,8 @@
                             <div class="recommendation-header">
                                 <div class="recommendation-title">Database Query Optimization</div>
                                 <span class="env-impact-badge medium-impact">Medium Impact</span>
-                                <div class="info-icon">
-                                    i
+                                <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                    info_outline
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Inefficient queries can increase database CPU usage by 2-5x. Optimized queries with proper indexing reduce server processing time and energy consumption, especially important for high-traffic applications.
                                     </div>
@@ -570,8 +605,8 @@
                             <div class="recommendation-header">
                                 <div class="recommendation-title">Asset Optimization</div>
                                 <span class="env-impact-badge low-impact">Low Impact</span>
-                                <div class="info-icon">
-                                    i
+                                <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                    info_outline
                                     <div class="tooltip">
                                         <strong>Environmental Impact:</strong> Compressed images and optimized assets reduce bandwidth usage by 40-70%. This directly decreases network energy consumption and improves load times, especially beneficial for users on slower connections.
                                     </div>
@@ -594,8 +629,8 @@
                 <div class="section-content">
                     <div class="stats-row">
                         <span class="stat-label">Daily CO2 Emissions
-                            <div class="info-icon">
-                                i
+                            <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                info_outline
                                 <div class="tooltip">
                                     Based on server processing, data transfer, and user device energy consumption. Calculated using average data center PUE of 1.58 and regional electricity carbon intensity.
                                 </div>
@@ -605,8 +640,8 @@
                     </div>
                     <div class="stats-row">
                         <span class="stat-label">Annual CO2 Projection
-                            <div class="info-icon">
-                                i
+                            <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                info_outline
                                 <div class="tooltip">
                                     Projected annual carbon footprint assuming current usage patterns. Equivalent to driving ~420 km in an average car or charging 20,000+ smartphones.
                                 </div>
@@ -616,8 +651,8 @@
                     </div>
                     <div class="stats-row">
                         <span class="stat-label">Carbon Intensity
-                            <div class="info-icon">
-                                i
+                            <div class="info-icon" tabindex="0" role="button" aria-label="Information">
+                                info_outline
                                 <div class="tooltip">
                                     Measures CO2 emissions per unit of computation. Low-Medium indicates good efficiency with room for optimization through better algorithms and resource management.
                                 </div>
@@ -627,10 +662,10 @@
                     </div>
                     <div class="stats-row">
                         <span class="stat-label">Energy Efficiency Rating
-                            <div class="info-icon">
-                                i
+                            <div class="info-icon" tabindex="0" role="button" aria-label="Energy Efficiency Information">
+                                info_outline
                                 <div class="tooltip">
-                                    Overall energy efficiency score based on code patterns, resource usage, and optimization practices. B+ indicates good performance with potential for A-level efficiency through recommended optimizations.
+                                    Overall energy efficiency rating based on code patterns, resource usage, and optimization practices. Higher ratings indicate lower energy consumption and reduced environmental impact through better coding practices.
                                 </div>
                             </div>
                         </span>
@@ -729,10 +764,46 @@
             });
         }
         
+        // Add keyboard support for info icons
+        function addInfoIconKeyboardSupport() {
+            const infoIcons = document.querySelectorAll('.info-icon');
+            infoIcons.forEach(icon => {
+                icon.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        // Toggle tooltip visibility on keyboard activation
+                        const tooltip = this.querySelector('.tooltip');
+                        if (tooltip) {
+                            tooltip.style.opacity = tooltip.style.opacity === '1' ? '0' : '1';
+                            tooltip.style.visibility = tooltip.style.visibility === 'visible' ? 'hidden' : 'visible';
+                        }
+                    }
+                    if (e.key === 'Escape') {
+                        // Hide tooltip on escape
+                        const tooltip = this.querySelector('.tooltip');
+                        if (tooltip) {
+                            tooltip.style.opacity = '0';
+                            tooltip.style.visibility = 'hidden';
+                        }
+                    }
+                });
+                
+                // Auto-hide tooltip when focus is lost
+                icon.addEventListener('blur', function() {
+                    const tooltip = this.querySelector('.tooltip');
+                    if (tooltip) {
+                        tooltip.style.opacity = '0';
+                        tooltip.style.visibility = 'hidden';
+                    }
+                });
+            });
+        }
+
         // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
             renderFilesList();
             initializeChart();
+            addInfoIconKeyboardSupport();
         });
     </script>
 </body>

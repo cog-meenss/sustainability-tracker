@@ -1,0 +1,783 @@
+name: 🌱 Consolidated Sustainability Analysis & Reporting
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.py'
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.jsx'
+      - '**/*.tsx'
+      - '**/*.java'
+      - '**/*.cpp'
+      - '**/*.c'
+      - '**/*.cs'
+      - '**/*.go'
+      - '**/*.rs'
+      - '**/*.php'
+      - '**/*.rb'
+      - 'package.json'
+      - 'requirements.txt'
+      - 'Dockerfile'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.py'
+      - '**/*.js'
+      - '**/*.ts'
+      - '**/*.jsx'
+      - '**/*.tsx'
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly analysis on Mondays
+  workflow_dispatch:
+    inputs:
+      analysis_path:
+        description: 'Path to analyze (default: entire repo)'
+        required: false
+        default: '.'
+      output_name:
+        description: 'Custom output filename'
+        required: false
+        default: 'sustainability-report'
+      quality_gate_mode:
+        description: 'Quality gate mode (strict/lenient)'
+        required: false
+        default: 'auto'
+        type: choice
+        options:
+          - auto
+          - strict
+          - lenient
+
+env:
+  PYTHON_VERSION: '3.9'
+  REPORT_PATH: 'sustainability-reports'
+  STRICT_THRESHOLD: 75
+  LENIENT_THRESHOLD: 50
+
+jobs:
+  sustainability-analysis:
+    name: 🌱 Comprehensive Sustainability Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+      actions: read
+      deployments: write
+      pull-requests: write
+    
+    outputs:
+      overall_score: ${{ steps.analysis.outputs.overall_score }}
+      quality_gate_passed: ${{ steps.quality_gate.outputs.passed }}
+      report_url: ${{ steps.deployment.outputs.page_url }}
+      
+    steps:
+    - name: 📥 Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 🐍 Set up Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+        
+    - name: 📦 Install Analysis Dependencies
+      run: |
+        echo "🔧 Installing comprehensive analysis dependencies..."
+        python -m pip install --upgrade pip
+        
+        # Core analysis tools
+        pip install radon xenon bandit safety pylint flake8 mypy
+        
+        # Runtime and API dependencies
+        pip install requests psutil
+        
+        # Optional Flask dependencies for API features
+        pip install flask flask-cors || echo "⚠️ Flask optional dependencies not installed"
+        
+        echo "✅ All dependencies installed successfully"
+        
+    - name: 🔍 Verify Analysis Tools
+      run: |
+        if [ ! -f "sustainability_evaluator.py" ]; then
+          echo "❌ sustainability_evaluator.py not found in repository"
+          exit 1
+        fi
+        
+        echo "✅ Sustainability evaluator found"
+        echo "🔧 Making analysis scripts executable..."
+        chmod +x sustainability_evaluator.py
+        [ -f "sustainability-analyzer/analyzer/sustainability_analyzer.py" ] && chmod +x sustainability-analyzer/analyzer/sustainability_analyzer.py
+        
+    - name: 📊 Create Reports Directory
+      run: |
+        mkdir -p ${{ env.REPORT_PATH }}
+        echo "📁 Created reports directory: ${{ env.REPORT_PATH }}"
+        
+    - name: 🌱 Run Comprehensive Sustainability Analysis
+      id: analysis
+      run: |
+        echo "🚀 Starting comprehensive sustainability analysis..."
+        
+        # Determine analysis configuration
+        ANALYSIS_PATH="${{ github.event.inputs.analysis_path || '.' }}"
+        TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+        COMMIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)
+        
+        # Set output filename
+        if [ "${{ github.event.inputs.output_name }}" != "" ]; then
+          OUTPUT_BASE="${{ github.event.inputs.output_name }}-${COMMIT_SHA}-${TIMESTAMP}"
+        else
+          OUTPUT_BASE="sustainability-report-${COMMIT_SHA}-${TIMESTAMP}"
+        fi
+        
+        # Set latest report name for GitHub Pages
+        LATEST_OUTPUT_BASE="latest-report"
+        
+        echo "📋 Analysis Configuration:"
+        echo "  Path: ${ANALYSIS_PATH}"
+        echo "  Output Base: ${OUTPUT_BASE}"
+        echo "  Commit: ${COMMIT_SHA}"
+        
+        # Generate comprehensive reports
+        echo "📊 Generating comprehensive JSON report..."
+        python3 sustainability_evaluator.py \
+          --path "${ANALYSIS_PATH}" \
+          --format json \
+          --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json"
+        
+        echo "🎯 Generating interactive HTML dashboard..."
+        python3 sustainability_evaluator.py \
+          --path "${ANALYSIS_PATH}" \
+          --format html \
+          --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html"
+        
+        # Create latest report copies for GitHub Pages
+        cp "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" "${{ env.REPORT_PATH }}/${LATEST_OUTPUT_BASE}.html"
+        cp "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" "${{ env.REPORT_PATH }}/${LATEST_OUTPUT_BASE}.json"
+        
+        # Verify outputs
+        HTML_OUTPUT="${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html"
+        JSON_OUTPUT="${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json"
+        
+        if [ -f "$HTML_OUTPUT" ]; then
+          echo "✅ HTML dashboard generated: $HTML_OUTPUT"
+        else
+          echo "❌ HTML dashboard generation failed"
+          exit 1
+        fi
+        
+        if [ -f "$JSON_OUTPUT" ]; then
+          echo "✅ JSON report generated: $JSON_OUTPUT"
+        else
+          echo "❌ JSON report generation failed"
+          exit 1
+        fi
+        
+        # Extract comprehensive metrics for outputs
+        echo "📈 Extracting analysis metrics..."
+        
+        OVERALL_SCORE=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(f\"{data['sustainability_metrics']['overall_score']:.1f}\")
+except Exception as e:
+    print('N/A', file=sys.stderr)
+    print('0')
+        ")
+        
+        ENERGY_EFFICIENCY=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(f\"{data['sustainability_metrics']['energy_efficiency']:.1f}\")
+except Exception as e:
+    print('N/A', file=sys.stderr)  
+    print('0')
+        ")
+        
+        CARBON_FOOTPRINT=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(f\"{data['sustainability_metrics']['carbon_footprint']:.1f}\")
+except Exception as e:
+    print('N/A', file=sys.stderr)
+    print('0')
+        ")
+        
+        CODE_QUALITY=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(f\"{data['sustainability_metrics']['code_quality']:.1f}\")
+except Exception as e:
+    print('N/A', file=sys.stderr)
+    print('0')
+        ")
+        
+        MAINTAINABILITY=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(f\"{data['sustainability_metrics']['maintainability']:.1f}\")
+except Exception as e:
+    print('N/A', file=sys.stderr)
+    print('0')
+        ")
+        
+        RECOMMENDATIONS_COUNT=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(len(data.get('recommendations', [])))
+except Exception as e:
+    print('0', file=sys.stderr)
+    print('0')
+        ")
+        
+        PERFORMANCE_ISSUES=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    issues = 0
+    if 'detailed_analysis' in data and 'code_patterns' in data['detailed_analysis']:
+        patterns = data['detailed_analysis']['code_patterns']
+        issues += patterns.get('async_patterns', 0)
+        issues += patterns.get('loop_optimizations', 0)  
+        issues += patterns.get('memory_leaks', 0)
+        issues += patterns.get('console_logs', 0)
+    print(issues)
+except Exception as e:
+    print('0', file=sys.stderr)
+    print('0')
+        ")
+        
+        GENERATION_TIME=$(python3 -c "
+import json, sys
+try:
+    with open('$JSON_OUTPUT') as f:
+        data = json.load(f)
+    print(f\"{data['report_metadata']['analysis_time']:.3f}\")
+except Exception as e:
+    print('N/A', file=sys.stderr)
+    print('0')
+        ")
+        
+        # Set outputs for subsequent steps
+        echo "overall_score=$OVERALL_SCORE" >> $GITHUB_OUTPUT
+        echo "energy_efficiency=$ENERGY_EFFICIENCY" >> $GITHUB_OUTPUT
+        echo "carbon_footprint=$CARBON_FOOTPRINT" >> $GITHUB_OUTPUT
+        echo "code_quality=$CODE_QUALITY" >> $GITHUB_OUTPUT
+        echo "maintainability=$MAINTAINABILITY" >> $GITHUB_OUTPUT
+        echo "recommendations_count=$RECOMMENDATIONS_COUNT" >> $GITHUB_OUTPUT
+        echo "performance_issues=$PERFORMANCE_ISSUES" >> $GITHUB_OUTPUT
+        echo "generation_time=$GENERATION_TIME" >> $GITHUB_OUTPUT
+        echo "output_base=$OUTPUT_BASE" >> $GITHUB_OUTPUT
+        echo "html_report=$HTML_OUTPUT" >> $GITHUB_OUTPUT
+        echo "json_report=$JSON_OUTPUT" >> $GITHUB_OUTPUT
+        
+        echo "📋 Analysis Summary:"
+        echo "  Overall Score: $OVERALL_SCORE/100"
+        echo "  Energy Efficiency: $ENERGY_EFFICIENCY/100"
+        echo "  Performance Issues: $PERFORMANCE_ISSUES"
+        echo "  Recommendations: $RECOMMENDATIONS_COUNT"
+        echo "  Analysis Time: ${GENERATION_TIME}s"
+        
+    - name: 🎯 Determine Quality Gate Strategy
+      id: quality_gate_config
+      run: |
+        echo "🔍 Determining quality gate configuration..."
+        
+        # Determine quality gate mode
+        if [ "${{ github.event.inputs.quality_gate_mode }}" = "strict" ]; then
+          MODE="strict"
+          THRESHOLD=${{ env.STRICT_THRESHOLD }}
+        elif [ "${{ github.event.inputs.quality_gate_mode }}" = "lenient" ]; then
+          MODE="lenient"  
+          THRESHOLD=${{ env.LENIENT_THRESHOLD }}
+        else
+          # Auto mode: strict for main branch, lenient for others
+          if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+            MODE="strict"
+            THRESHOLD=${{ env.STRICT_THRESHOLD }}
+          else
+            MODE="lenient"
+            THRESHOLD=${{ env.LENIENT_THRESHOLD }}
+          fi
+        fi
+        
+        echo "quality_gate_mode=$MODE" >> $GITHUB_OUTPUT
+        echo "quality_gate_threshold=$THRESHOLD" >> $GITHUB_OUTPUT
+        
+        echo "🎯 Quality Gate Configuration:"
+        echo "  Mode: $MODE"
+        echo "  Threshold: $THRESHOLD"
+        echo "  Branch: ${{ github.ref_name }}"
+        
+    - name: 🛡️ Evaluate Quality Gate
+      id: quality_gate
+      run: |
+        echo "🛡️ Evaluating sustainability quality gate..."
+        
+        OVERALL_SCORE=${{ steps.analysis.outputs.overall_score }}
+        THRESHOLD=${{ steps.quality_gate_config.outputs.quality_gate_threshold }}
+        MODE=${{ steps.quality_gate_config.outputs.quality_gate_mode }}
+        
+        echo "📊 Quality Gate Evaluation:"
+        echo "  Overall Score: $OVERALL_SCORE"
+        echo "  Required Threshold: $THRESHOLD"
+        echo "  Mode: $MODE"
+        
+        # Set environment variables
+        echo "SUSTAINABILITY_SCORE=$OVERALL_SCORE" >> $GITHUB_ENV
+        echo "QUALITY_GATE_THRESHOLD=$THRESHOLD" >> $GITHUB_ENV
+        echo "QUALITY_GATE_MODE=$MODE" >> $GITHUB_ENV
+        
+        # Evaluate quality gate
+        if (( $(echo "$OVERALL_SCORE >= $THRESHOLD" | bc -l) )); then
+          echo "✅ Sustainability quality gate PASSED!"
+          echo "passed=true" >> $GITHUB_OUTPUT
+          echo "status=✅ PASSED" >> $GITHUB_OUTPUT
+          echo "QUALITY_GATE_PASSED=true" >> $GITHUB_ENV
+        else
+          echo "❌ Sustainability quality gate FAILED!"
+          echo "Score ($OVERALL_SCORE) is below $MODE threshold ($THRESHOLD)"
+          echo "passed=false" >> $GITHUB_OUTPUT  
+          echo "status=❌ FAILED" >> $GITHUB_OUTPUT
+          echo "QUALITY_GATE_PASSED=false" >> $GITHUB_ENV
+        fi
+        
+    - name: 📈 Generate Comprehensive Job Summary
+      run: |
+        echo "📊 Creating comprehensive GitHub Actions job summary..."
+        
+        # Use existing job summary script if available, otherwise create inline
+        if [ -f "job_summary_script.py" ]; then
+          python3 job_summary_script.py
+        else
+          # Create inline job summary
+          cat >> $GITHUB_STEP_SUMMARY << EOF
+        # 🌱 Comprehensive Sustainability Analysis Results
+        
+        ## 📊 Overall Assessment
+        
+        | Metric | Score | Status | Threshold |
+        |--------|-------|--------|-----------|
+        | **Overall Sustainability** | **${{ steps.analysis.outputs.overall_score }}/100** | ${{ steps.quality_gate.outputs.status }} | ${{ steps.quality_gate_config.outputs.quality_gate_threshold }} |
+        | Energy Efficiency | ${{ steps.analysis.outputs.energy_efficiency }}/100 | $([ $(echo "${{ steps.analysis.outputs.energy_efficiency }} >= 70" | bc -l) -eq 1 ] && echo "🟢 Excellent" || [ $(echo "${{ steps.analysis.outputs.energy_efficiency }} >= 40" | bc -l) -eq 1 ] && echo "🟡 Good" || echo "🔴 Needs Improvement") | - |
+        | Code Quality | ${{ steps.analysis.outputs.code_quality }}/100 | $([ $(echo "${{ steps.analysis.outputs.code_quality }} >= 70" | bc -l) -eq 1 ] && echo "🟢 Excellent" || [ $(echo "${{ steps.analysis.outputs.code_quality }} >= 40" | bc -l) -eq 1 ] && echo "🟡 Good" || echo "🔴 Needs Improvement") | - |
+        | Maintainability | ${{ steps.analysis.outputs.maintainability }}/100 | $([ $(echo "${{ steps.analysis.outputs.maintainability }} >= 70" | bc -l) -eq 1 ] && echo "🟢 Excellent" || [ $(echo "${{ steps.analysis.outputs.maintainability }} >= 40" | bc -l) -eq 1 ] && echo "🟡 Good" || echo "🔴 Needs Improvement") | - |
+        
+        ## 🌍 Environmental Impact
+        - **Carbon Footprint Score:** ${{ steps.analysis.outputs.carbon_footprint }}/100
+        - **Performance Issues Detected:** ${{ steps.analysis.outputs.performance_issues }}
+        - **Sustainability Recommendations:** ${{ steps.analysis.outputs.recommendations_count }} items
+        
+        ## ⚙️ Analysis Details  
+        - **Quality Gate Mode:** ${{ steps.quality_gate_config.outputs.quality_gate_mode }}
+        - **Analysis Time:** ${{ steps.analysis.outputs.generation_time }}s
+        - **Branch:** \`${{ github.ref_name }}\`
+        - **Commit:** \`${{ github.sha }}\`
+        
+        ## 📁 Generated Reports
+        - 🎯 Interactive Dashboard: [\`${{ steps.analysis.outputs.output_base }}.html\`](${{ steps.analysis.outputs.html_report }})  
+        - 📋 JSON Data: [\`${{ steps.analysis.outputs.output_base }}.json\`](${{ steps.analysis.outputs.json_report }})
+        
+        ---
+        *Comprehensive analysis completed at $(date -u '+%Y-%m-%d %H:%M:%S UTC')*
+        EOF
+        fi
+        
+    - name: 🏗️ Setup GitHub Pages
+      uses: actions/configure-pages@v3
+      if: github.ref == 'refs/heads/main'
+      
+    - name: 🌐 Prepare GitHub Pages Content
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "📄 Preparing comprehensive GitHub Pages content..."
+        
+        # Create pages directory
+        mkdir -p pages
+        
+        # Copy all reports to pages directory
+        cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
+        
+        # Create comprehensive index.html
+        cat > pages/index.html << 'EOF'
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>🌱 Sustainability Dashboard - Professional Green Coding Analysis</title>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+                    min-height: 100vh;
+                    padding: 20px;
+                    color: #212529;
+                }
+                .container {
+                    max-width: 1400px;
+                    margin: 0 auto;
+                    background: #ffffff;
+                    border-radius: 20px;
+                    padding: 40px;
+                    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+                }
+                .header {
+                    background: #198754;
+                    color: white;
+                    text-align: center;
+                    margin: -40px -40px 40px;
+                    padding: 60px 40px;
+                    border-radius: 20px 20px 0 0;
+                }
+                .header h1 {
+                    font-size: 3.5em;
+                    margin-bottom: 15px;
+                    font-weight: 700;
+                }
+                .header p {
+                    font-size: 1.3em;
+                    opacity: 0.9;
+                    max-width: 600px;
+                    margin: 0 auto;
+                    line-height: 1.5;
+                }
+                .metrics-grid {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                    gap: 25px;
+                    margin: 40px 0;
+                }
+                .metric-card {
+                    background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+                    border-radius: 15px;
+                    padding: 30px;
+                    text-align: center;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+                    transition: all 0.3s ease;
+                    border-left: 5px solid #198754;
+                }
+                .metric-card:hover {
+                    transform: translateY(-8px);
+                    box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+                }
+                .metric-value {
+                    font-size: 3em;
+                    font-weight: bold;
+                    color: #198754;
+                    margin-bottom: 10px;
+                }
+                .metric-label {
+                    font-size: 1.1em;
+                    color: #6c757d;
+                    font-weight: 500;
+                }
+                .reports-section {
+                    background: linear-gradient(135deg, #e8f5e8, #f1f8e9);
+                    border-radius: 15px;
+                    padding: 40px;
+                    margin: 40px 0;
+                    border: 1px solid #d4edda;
+                }
+                .reports-section h2 {
+                    color: #198754;
+                    margin-bottom: 30px;
+                    font-size: 2.2em;
+                    text-align: center;
+                }
+                .report-cards {
+                    display: grid;
+                    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+                    gap: 25px;
+                }
+                .report-card {
+                    background: white;
+                    border-radius: 12px;
+                    padding: 30px;
+                    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+                    transition: all 0.3s ease;
+                }
+                .report-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+                }
+                .report-card h3 {
+                    color: #198754;
+                    margin-bottom: 15px;
+                    font-size: 1.4em;
+                }
+                .report-card p {
+                    color: #6c757d;
+                    line-height: 1.6;
+                    margin-bottom: 20px;
+                }
+                .btn {
+                    display: inline-block;
+                    background: #198754;
+                    color: white;
+                    padding: 14px 28px;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    margin-right: 12px;
+                    margin-bottom: 12px;
+                    font-size: 0.95em;
+                }
+                .btn:hover {
+                    background: #157347;
+                    transform: translateY(-2px);
+                    box-shadow: 0 8px 20px rgba(25, 135, 84, 0.3);
+                }
+                .btn.secondary {
+                    background: #6c757d;
+                }
+                .btn.secondary:hover {
+                    background: #5a6268;
+                    box-shadow: 0 8px 20px rgba(108, 117, 125, 0.3);
+                }
+                .status-badge {
+                    display: inline-block;
+                    padding: 8px 16px;
+                    border-radius: 20px;
+                    font-size: 0.85em;
+                    font-weight: 600;
+                    margin-left: 15px;
+                }
+                .status-badge.success { background: #d4edda; color: #155724; }
+                .status-badge.warning { background: #fff3cd; color: #856404; }
+                .status-badge.info { background: #d1ecf1; color: #0c5460; }
+                .footer {
+                    text-align: center;
+                    margin-top: 50px;
+                    padding-top: 30px;
+                    border-top: 2px solid #e9ecef;
+                    color: #6c757d;
+                }
+                .footer strong {
+                    color: #198754;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="container">
+                <div class="header">
+                    <h1>🌱 Sustainability Dashboard</h1>
+                    <p>Professional Green Coding Analysis & Environmental Impact Assessment</p>
+                </div>
+        
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">${{ steps.analysis.outputs.overall_score || 'N/A' }}</div>
+                        <div class="metric-label">Overall Score</div>
+                        <div class="status-badge $([ $(echo "${{ steps.analysis.outputs.overall_score || 0 }} >= 80" | bc -l) -eq 1 ] && echo "success" || [ $(echo "${{ steps.analysis.outputs.overall_score || 0 }} >= 60" | bc -l) -eq 1 ] && echo "warning" || echo "info")">
+                            $([ $(echo "${{ steps.analysis.outputs.overall_score || 0 }} >= 80" | bc -l) -eq 1 ] && echo "Excellent" || [ $(echo "${{ steps.analysis.outputs.overall_score || 0 }} >= 60" | bc -l) -eq 1 ] && echo "Good" || echo "Needs Improvement")
+                        </div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-value">${{ steps.analysis.outputs.energy_efficiency || 'N/A' }}</div>
+                        <div class="metric-label">Energy Efficiency</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-value">${{ steps.analysis.outputs.recommendations_count || '0' }}</div>
+                        <div class="metric-label">Recommendations</div>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-value">$(date +%m/%d)</div>
+                        <div class="metric-label">Last Updated</div>
+                    </div>
+                </div>
+        
+                <div class="reports-section">
+                    <h2>📊 Interactive Reports</h2>
+                    <div class="report-cards">
+                        <div class="report-card">
+                            <h3>🎯 Latest Dashboard</h3>
+                            <p>Comprehensive sustainability analysis with interactive metrics, environmental impact assessments, and file-specific recommendations.</p>
+                            <a href="latest-report.html" class="btn">📊 View Dashboard</a>
+                            <a href="latest-report.json" class="btn secondary">📋 Raw Data</a>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>⚙️ Analysis Workflows</h3>
+                            <p>Automated sustainability analysis runs on every commit with quality gates and professional reporting.</p>
+                            <a href="https://github.com/${{ github.repository }}/actions" class="btn secondary">🔄 View Actions</a>
+                            <a href="https://github.com/${{ github.repository }}" class="btn">📁 Repository</a>
+                        </div>
+                        
+                        <div class="report-card">
+                            <h3>📈 Quality Gate Status</h3>
+                            <p>Current build status: <strong>${{ steps.quality_gate.outputs.status }}</strong> (Threshold: ${{ steps.quality_gate_config.outputs.quality_gate_threshold }})</p>
+                            <a href="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" class="btn">🛡️ View Details</a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="footer">
+                    <p><strong>Consolidated Sustainability Analysis</strong> • Updated $(date -u '+%Y-%m-%d %H:%M:%S UTC')</p>
+                    <p>Quality Gate: <strong>${{ steps.quality_gate_config.outputs.quality_gate_mode }}</strong> mode • Commit: <code>${{ github.sha }}</code></p>
+                </div>
+            </div>
+        </body>
+        </html>
+        EOF
+        
+        echo "✅ Comprehensive GitHub Pages content prepared"
+        
+    - name: 🚀 Deploy to GitHub Pages
+      uses: actions/upload-pages-artifact@v2
+      if: github.ref == 'refs/heads/main'
+      with:
+        path: pages/
+        
+    - name: 🌐 Publish GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+      if: github.ref == 'refs/heads/main'
+      
+    - name: 📤 Upload Comprehensive Reports
+      uses: actions/upload-artifact@v4
+      with:
+        name: sustainability-reports-${{ github.sha }}
+        path: |
+          ${{ env.REPORT_PATH }}/*.html
+          ${{ env.REPORT_PATH }}/*.json
+          ${{ env.REPORT_PATH }}/*.md
+        retention-days: 30
+        
+    - name: 📝 Commit Reports to Repository
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action - Sustainability Bot"
+        
+        # Add generated reports
+        git add ${{ env.REPORT_PATH }}/
+        
+        if git diff --staged --quiet; then
+          echo "📝 No new reports to commit"
+        else
+          git commit -m "🌱 Consolidated sustainability reports - $(date '+%Y-%m-%d %H:%M')
+          
+          📊 Analysis Results:
+          • Overall Score: ${{ steps.analysis.outputs.overall_score }}/100
+          • Energy Efficiency: ${{ steps.analysis.outputs.energy_efficiency }}/100
+          • Code Quality: ${{ steps.analysis.outputs.code_quality }}/100
+          • Quality Gate: ${{ steps.quality_gate.outputs.status }} (${{ steps.quality_gate_config.outputs.quality_gate_mode }} mode)
+          
+          🔍 Details:
+          • Performance Issues: ${{ steps.analysis.outputs.performance_issues }}
+          • Recommendations: ${{ steps.analysis.outputs.recommendations_count }} items
+          • Analysis Time: ${{ steps.analysis.outputs.generation_time }}s
+          
+          Generated from: ${{ github.sha }} (${{ github.ref_name }})"
+          
+          git push
+          echo "✅ Consolidated reports committed and pushed"
+        fi
+        
+    - name: 💬 Comment on Pull Request
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const jsonPath = '${{ steps.analysis.outputs.json_report }}';
+          
+          if (fs.existsSync(jsonPath)) {
+            const analysis = JSON.parse(fs.readFileSync(jsonPath, 'utf8'));
+            const metrics = analysis.sustainability_metrics;
+            const patterns = analysis.detailed_analysis?.code_patterns || {};
+            
+            const getStatusEmoji = (score) => score >= 70 ? '🟢' : score >= 40 ? '🟡' : '🔴';
+            const getStatusText = (score) => score >= 70 ? 'Excellent' : score >= 40 ? 'Good' : 'Needs Improvement';
+            
+            const comment = `## 🌱 Consolidated Sustainability Analysis
+            
+            ### Quality Gate: ${{ steps.quality_gate.outputs.status }}
+            **Mode:** ${{ steps.quality_gate_config.outputs.quality_gate_mode }} | **Threshold:** ${{ steps.quality_gate_config.outputs.quality_gate_threshold }}/100
+            
+            ### 📊 Comprehensive Metrics
+            
+            | Metric | Score | Status | Trend |
+            |--------|-------|--------|--------|
+            | **Overall Sustainability** | **${metrics.overall_score.toFixed(1)}/100** | ${getStatusEmoji(metrics.overall_score)} ${getStatusText(metrics.overall_score)} | - |
+            | Energy Efficiency | ${metrics.energy_efficiency.toFixed(1)}/100 | ${getStatusEmoji(metrics.energy_efficiency)} ${getStatusText(metrics.energy_efficiency)} | - |
+            | Code Quality | ${metrics.code_quality.toFixed(1)}/100 | ${getStatusEmoji(metrics.code_quality)} ${getStatusText(metrics.code_quality)} | - |
+            | Maintainability | ${metrics.maintainability.toFixed(1)}/100 | ${getStatusEmoji(metrics.maintainability)} ${getStatusText(metrics.maintainability)} | - |
+            | Carbon Footprint | ${metrics.carbon_footprint.toFixed(1)}/100 | ${getStatusEmoji(metrics.carbon_footprint)} ${getStatusText(metrics.carbon_footprint)} | - |
+            
+            ### 🌍 Environmental Impact Assessment
+            - **Performance Issues:** ${{ steps.analysis.outputs.performance_issues }} detected
+            - **Sustainability Recommendations:** ${{ steps.analysis.outputs.recommendations_count }} actionable items
+            - **Analysis Completed in:** ${{ steps.analysis.outputs.generation_time }}s
+            
+            ### 🚨 Code Pattern Analysis
+            ${Object.keys(patterns).length > 0 ? Object.entries(patterns).map(([key, value]) => `- **${key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}:** ${value}`).join('\n') : '- No significant patterns detected'}
+            
+            ### 🔗 Resources
+            - [📊 **Interactive Dashboard**](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)
+            - [📥 **Download Reports**](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            - [🔄 **Workflow Details**](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            
+            ---
+            🤖 *Consolidated analysis by Sustainability Bot* • Generated at $(date -u '+%Y-%m-%d %H:%M:%S UTC')`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+          
+    - name: 🚨 Enforce Quality Gate
+      if: steps.quality_gate.outputs.passed == 'false'
+      run: |
+        echo "🚨 QUALITY GATE ENFORCEMENT"
+        echo "=============================="
+        echo ""
+        echo "❌ Build failed due to sustainability quality gate"
+        echo ""
+        echo "📊 Results:"
+        echo "  Current Score: ${{ steps.analysis.outputs.overall_score }}/100"
+        echo "  Required Threshold: ${{ steps.quality_gate_config.outputs.quality_gate_threshold }}/100"
+        echo "  Quality Gate Mode: ${{ steps.quality_gate_config.outputs.quality_gate_mode }}"
+        echo ""
+        echo "📋 Summary:"
+        echo "  Performance Issues: ${{ steps.analysis.outputs.performance_issues }}"
+        echo "  Recommendations: ${{ steps.analysis.outputs.recommendations_count }}"
+        echo ""
+        echo "🔧 Next Steps:"
+        echo "  1. Review the generated sustainability report"
+        echo "  2. Address the highlighted recommendations"  
+        echo "  3. Optimize code for better energy efficiency"
+        echo "  4. Re-run the analysis after improvements"
+        echo ""
+        echo "📊 View detailed report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/"
+        echo ""
+        exit 1
