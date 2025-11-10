@@ -91,24 +91,146 @@ jobs:
         mkdir -p pages
         cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
         
-        echo '<!DOCTYPE html>' > pages/index.html
-        echo '<html>' >> pages/index.html
-        echo '<head>' >> pages/index.html
-        echo '    <title>🌱 Sustainability Dashboard</title>' >> pages/index.html
-        echo '    <style>' >> pages/index.html
-        echo '        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }' >> pages/index.html
-        echo '        .header { background: #198754; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }' >> pages/index.html
-        echo '        .btn { background: #198754; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }' >> pages/index.html
-        echo '    </style>' >> pages/index.html
-        echo '</head>' >> pages/index.html
-        echo '<body>' >> pages/index.html
-        echo '    <div class="header">' >> pages/index.html
-        echo '        <h1>🌱 Sustainability Dashboard</h1>' >> pages/index.html
-        echo '        <p>Green Coding Analysis Reports</p>' >> pages/index.html
-        echo '    </div>' >> pages/index.html
-        echo '    <p><a href="latest-report.html" class="btn">📊 View Latest Report</a></p>' >> pages/index.html
-        echo '</body>' >> pages/index.html
-        echo '</html>' >> pages/index.html
+        # Copy the existing index.html from root if it exists, or create a professional landing page
+        if [ -f "index.html" ]; then
+          cp index.html pages/
+        else
+          cat > pages/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta name="viewport" content="width=device-width, initial-scale=1.0">
+              <title>🌱 Green Coding Academy - Sustainability Dashboard</title>
+              <style>
+                  * {
+                      margin: 0;
+                      padding: 0;
+                      box-sizing: border-box;
+                  }
+                  body {
+                      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+                      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                      min-height: 100vh;
+                      color: white;
+                  }
+                  .container {
+                      max-width: 1200px;
+                      margin: 0 auto;
+                      padding: 2rem;
+                  }
+                  .header {
+                      text-align: center;
+                      margin-bottom: 3rem;
+                      background: rgba(255, 255, 255, 0.1);
+                      backdrop-filter: blur(10px);
+                      border-radius: 20px;
+                      padding: 3rem;
+                      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+                  }
+                  h1 {
+                      font-size: 3.5rem;
+                      margin-bottom: 1rem;
+                      background: linear-gradient(45deg, #fff, #e0e0e0);
+                      -webkit-background-clip: text;
+                      -webkit-text-fill-color: transparent;
+                      background-clip: text;
+                  }
+                  .subtitle {
+                      font-size: 1.3rem;
+                      opacity: 0.9;
+                      margin-bottom: 2rem;
+                  }
+                  .dashboard-btn {
+                      display: inline-block;
+                      background: linear-gradient(45deg, #4CAF50, #45a049);
+                      color: white;
+                      padding: 1.2rem 2.5rem;
+                      text-decoration: none;
+                      border-radius: 50px;
+                      font-weight: 600;
+                      font-size: 1.2rem;
+                      transition: all 0.3s ease;
+                      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.4);
+                      margin: 1rem;
+                  }
+                  .dashboard-btn:hover {
+                      transform: translateY(-2px);
+                      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.6);
+                  }
+                  .features {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+                      gap: 2rem;
+                      margin-top: 3rem;
+                  }
+                  .feature {
+                      background: rgba(255, 255, 255, 0.1);
+                      padding: 2rem;
+                      border-radius: 15px;
+                      text-align: center;
+                      transition: all 0.3s ease;
+                  }
+                  .feature:hover {
+                      transform: translateY(-5px);
+                      background: rgba(255, 255, 255, 0.15);
+                  }
+                  .feature-icon {
+                      font-size: 3rem;
+                      margin-bottom: 1rem;
+                  }
+                  .feature h3 {
+                      font-size: 1.3rem;
+                      margin-bottom: 0.5rem;
+                  }
+                  .updated {
+                      text-align: center;
+                      margin-top: 2rem;
+                      font-size: 0.9rem;
+                      opacity: 0.8;
+                  }
+              </style>
+          </head>
+          <body>
+              <div class="container">
+                  <div class="header">
+                      <h1>🌱 Green Coding Academy</h1>
+                      <p class="subtitle">Advanced Sustainability Analysis & Environmental Impact Dashboard</p>
+                      
+                      <a href="latest-report.html" class="dashboard-btn">
+                          📊 View Sustainability Dashboard
+                      </a>
+                  </div>
+                  
+                  <div class="features">
+                      <div class="feature">
+                          <div class="feature-icon">🌍</div>
+                          <h3>Carbon Footprint Analysis</h3>
+                          <p>Track and visualize CO₂ emissions with detailed environmental impact assessments and reduction opportunities.</p>
+                      </div>
+                      <div class="feature">
+                          <div class="feature-icon">⚡</div>
+                          <h3>Performance Metrics</h3>
+                          <p>Monitor code efficiency, energy consumption, and optimization opportunities with spider web visualizations.</p>
+                      </div>
+                      <div class="feature">
+                          <div class="feature-icon">📊</div>
+                          <h3>Industry Benchmarks</h3>
+                          <p>Compare against industry standards with comprehensive radar charts and performance analytics.</p>
+                      </div>
+                      <div class="feature">
+                          <div class="feature-icon">🚀</div>
+                          <h3>Green Coding Practices</h3>
+                          <p>Discover and implement 96+ sustainable coding patterns for better environmental responsibility.</p>
+                      </div>
+                  </div>
+                  
+                  <p class="updated">🕒 Last updated: $(date)</p>
+              </div>
+          </body>
+          </html>
+          EOF
+        fi
         
     - name: 🚀 Deploy to GitHub Pages
       uses: actions/upload-pages-artifact@v3
