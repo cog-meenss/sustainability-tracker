@@ -3,77 +3,290 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌱 Sustainability Tracker - Live Reports</title>
+    <title>🌱 Green Coding Academy - Sustainable Software Development</title>
+    
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 25%, #dee2e6 50%, #ced4da 100%);
-            min-height: 100vh;
+        * {
+            margin: 0;
             padding: 0;
-            color: #212529;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 0;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            animation: slideInDown 1s ease-out;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            background: linear-gradient(45deg, #fff, #f0f9ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.4rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 30px;
+            font-weight: 300;
+        }
+
+        .header-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+
+        .header-stat {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-stat-number {
+            display: block;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 5px;
+        }
+
+        .header-stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .content {
+            animation: fadeInUp 1s ease-out 0.3s both;
+        }
+
+        .dashboard-section {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-title {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .dashboard-description {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 30px;
+            line-height: 1.7;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 40px;
+            font-weight: 600;
+        }
+
+        .principles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .principle-card {
+            background: linear-gradient(145deg, #ffffff, #f7fafc);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .principle-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .principle-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .principle-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .principle-title {
+            font-size: 1.5rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .principle-description {
+            font-size: 1rem;
+            color: #4a5568;
+            margin-bottom: 25px;
             line-height: 1.6;
         }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: #ffffff;
-            min-height: 100vh;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.06);
+
+        .principle-examples {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            border-left: 4px solid #667eea;
         }
-        .header {
-            background: linear-gradient(135deg, #198754 0%, #20c997 50%, #0dcaf0 100%);
-            padding: 60px 40px;
-            text-align: center;
+
+        .principle-examples h4 {
+            font-size: 1.1rem;
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .principle-examples ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .principle-examples li {
+            font-size: 0.95rem;
+            color: #4a5568;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        .principle-examples li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #48bb78;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            margin-bottom: 0;
-            box-shadow: 0 4px 20px rgba(25, 135, 84, 0.15);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
         }
-        .header h1 {
-            font-size: 3.2rem;
-            font-weight: 700;
-            margin-bottom: 16px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
-        .header p {
-            font-size: 1.3rem;
-            opacity: 0.95;
+
+        .btn.secondary {
+            background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 50px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .footer h3 {
+            font-size: 1.8rem;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer p {
+            font-size: 1.1rem;
+            color: #4a5568;
+            line-height: 1.7;
             max-width: 600px;
             margin: 0 auto;
-            font-weight: 400;
         }
-        .content {
-            padding: 60px 40px;
-        }
-        
-        @media (max-width: 768px) {
-            .header {
-                padding: 40px 24px;
+
+        @keyframes slideInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
             }
-            .header h1 {
-                font-size: 2.5rem;
-            }
-            .header p {
-                font-size: 1.1rem;
-            }
-            .content {
-                padding: 40px 24px;
-            }
-            .reports-grid {
-                grid-template-columns: 1fr;
-                gap: 24px;
+            to {
+                opacity: 1;
+                transform: translateY(0);
             }
         }
-        
-        /* Smooth animations */
-        * {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .report-card {
-            animation: fadeInUp 0.6s ease-out;
-        }
-        
+
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -84,224 +297,190 @@
                 transform: translateY(0);
             }
         }
-        .reports-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
-            gap: 32px;
-            margin-bottom: 48px;
-        }
-        .report-card {
-            background: #ffffff;
-            border: 1px solid #e9ecef;
-            border-radius: 16px;
-            padding: 32px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .report-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: linear-gradient(135deg, #198754, #20c997);
-        }
-        .report-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-            border-color: #198754;
-        }
-        .report-card h3 {
-            color: #495057;
-            margin-bottom: 16px;
-            font-size: 1.4rem;
-            font-weight: 600;
-        }
-        .report-card p {
-            color: #6c757d;
-            margin-bottom: 24px;
-            line-height: 1.7;
-            font-size: 0.95rem;
-        }
-        .btn {
-            display: inline-block;
-            background: linear-gradient(135deg, #198754, #20c997);
-            color: white;
-            padding: 14px 28px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-right: 12px;
-            margin-bottom: 12px;
-            letter-spacing: 0.025em;
-        }
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(25, 135, 84, 0.25);
-            background: linear-gradient(135deg, #157347, #198754);
-        }
-        .btn.secondary {
-            background: linear-gradient(135deg, #0d6efd, #0dcaf0);
-        }
-        .btn.secondary:hover {
-            box-shadow: 0 8px 24px rgba(13, 110, 253, 0.25);
-            background: linear-gradient(135deg, #0b5ed7, #0d6efd);
-        }
-        .stats {
-            background: linear-gradient(135deg, #495057, #6c757d);
-            color: white;
-            border-radius: 20px;
-            padding: 40px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(73, 80, 87, 0.15);
-        }
-        .stats h2 {
-            margin-bottom: 32px;
-            font-size: 2rem;
-            font-weight: 600;
-        }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 24px;
-        }
-        .stat-item {
-            background: rgba(255,255,255,0.08);
-            padding: 24px;
-            border-radius: 16px;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-        .stat-number {
-            font-size: 2.8rem;
-            font-weight: 700;
-            color: #20c997;
-            margin-bottom: 8px;
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-            font-weight: 500;
-        }
-        .info-box {
-            background: #f8f9fa;
-            border: 1px solid #e9ecef;
-            border-left: 4px solid #198754;
-            padding: 24px;
-            border-radius: 12px;
-            margin: 32px 0;
-        }
-        .info-box h3 {
-            color: #495057;
-            margin-bottom: 12px;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        .info-box p {
-            color: #6c757d;
-            line-height: 1.7;
-            margin: 0;
-        }
-        .alert {
-            background: #fff3cd;
-            border: 1px solid #ffeaa7;
-            border-left: 4px solid #fd7e14;
-            padding: 24px;
-            border-radius: 12px;
-            margin: 32px 0;
-        }
-        .alert h3 {
-            color: #495057;
-            margin-bottom: 12px;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-        .alert p {
-            color: #6c757d;
-            line-height: 1.7;
-            margin: 0;
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+            }
+            
+            .header p {
+                font-size: 1.1rem;
+            }
+            
+            .header-stats {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .principles-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .container {
+                padding: 15px;
+            }
+            
+            .section {
+                padding: 30px 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌱 Sustainability Tracker</h1>
-            <p>Professional Sustainability Analysis & Green Coding Excellence</p>
+            <h1>🌱 Green Coding Academy</h1>
+            <p>Master Sustainable Software Development & Environmental Impact Optimization</p>
+            
+            <div class="header-stats">
+                <div class="header-stat">
+                    <span class="header-stat-number">96</span>
+                    <span class="header-stat-label">Best Practices</span>
+                </div>
+                <div class="header-stat">
+                    <span class="header-stat-number">17</span>
+                    <span class="header-stat-label">Files Analyzed</span>
+                </div>
+                <div class="header-stat">
+                    <span class="header-stat-number">80.3kg</span>
+                    <span class="header-stat-label">CO₂ Saved</span>
+                </div>
+            </div>
         </div>
         
         <div class="content">
-            <div class="alert">
-                <h3>🎯 Quick Access to Reports</h3>
-            <p>This GitHub Pages site provides direct access to automatically generated sustainability reports.</p>
-        </div>
-
-        <div class="reports-grid">
-            <div class="report-card">
-                <h3>📊 Interactive Sustainability Dashboard</h3>
-                <p>Professional analysis of 23 project files featuring comprehensive sustainability metrics, energy efficiency ratings, and actionable improvement recommendations. Excludes dependencies and system files for focused insights.</p>
-                <a href="sustainability-reports/latest-report.html" class="btn">🎯 View Dashboard</a>
-                <a href="sustainability-reports/project-analysis.json" class="btn secondary">📋 Raw Data</a>
+            <div class="dashboard-section">
+                <h2 class="dashboard-title">📊 Live Sustainability Dashboard</h2>
+                <p class="dashboard-description">
+                    Experience real-time analysis of your codebase with our comprehensive sustainability metrics, 
+                    energy efficiency ratings, and actionable environmental impact insights.
+                </p>
+                <a href="sustainability-reports/latest-report.html" class="btn">🎯 Launch Dashboard</a>
+                <a href="https://github.com/cog-meenss/sustainability-tracker" class="btn secondary">📁 View Source</a>
             </div>
             
-            <div class="report-card">
-                <h3>📈 Alternative Analysis Tools</h3>
-                <p>Additional sustainability assessment tools and comprehensive project documentation for deeper insights into green coding practices and environmental impact.</p>
-                <a href="dashboard.html" class="btn secondary">📊 Quick Dashboard</a>
-                <a href="docs/index.html" class="btn secondary">📚 Documentation</a>
-            </div>
-        </div>
-
-        <div class="reports-grid">
-            <div class="report-card">
-                <h3>🔄 Automated CI/CD Integration</h3>
-                <p>Enterprise-grade automated reporting pipeline with GitHub Actions. Reports regenerate automatically on code changes, ensuring real-time sustainability monitoring and compliance tracking.</p>
-                <a href="https://github.com/cog-meenss/sustainability-tracker/actions" class="btn secondary">⚙️ View Workflows</a>
-                <a href="https://github.com/cog-meenss/sustainability-tracker" class="btn">📁 Repository</a>
-            </div>
-
-            <div class="report-card">
-                <h3>🛠️ Documentation & Support</h3>
-                <p>Comprehensive setup guides, troubleshooting resources, and technical documentation for implementing sustainability tracking in your development workflow.</p>
-                <a href="README.md" class="btn">� Getting Started</a>
-                <a href="https://github.com/cog-meenss/sustainability-tracker/issues" class="btn secondary">� Support</a>
-            </div>
-        </div>
-        
-                <div class="stats">
-                    <h2>📈 Latest Analysis Results</h2>
-                    <div class="stats-grid">
-                        <div class="stat-item">
-                            <div class="stat-number">79.0</div>
-                            <div class="stat-label">Overall Score</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">23</div>
-                            <div class="stat-label">Files Analyzed</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">10.2K</div>
-                            <div class="stat-label">Lines of Code</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number">11/09</div>
-                            <div class="stat-label">Last Updated</div>
+            <div class="section">
+                <h2 class="section-title">🌿 Green Coding Principles</h2>
+                
+                <div class="principles-grid">
+                    <div class="principle-card">
+                        <span class="principle-icon">⚡</span>
+                        <h3 class="principle-title">Energy Efficient Algorithms</h3>
+                        <p class="principle-description">
+                            Optimize computational complexity and reduce CPU cycles through intelligent algorithm design, 
+                            efficient data structures, and smart caching strategies.
+                        </p>
+                        <div class="principle-examples">
+                            <h4>Implementation Examples</h4>
+                            <ul>
+                                <li>Use Set() and Map() for O(1) lookups instead of array.includes()</li>
+                                <li>Implement memoization for expensive recursive functions</li>
+                                <li>Choose optimal sorting algorithms (QuickSort vs BubbleSort)</li>
+                                <li>Use binary search for large sorted datasets</li>
+                            </ul>
                         </div>
                     </div>
-                </div>        <div class="info-box">
-            <h3>🌍 About Sustainability Tracking</h3>
-            <p>This project demonstrates sustainable software development practices including efficient algorithms, minimal resource consumption, carbon-aware development practices, and automated sustainability monitoring.</p>
+                    
+                    <div class="principle-card">
+                        <span class="principle-icon">🧠</span>
+                        <h3 class="principle-title">Memory Optimization</h3>
+                        <p class="principle-description">
+                            Minimize memory footprint through proper resource management, garbage collection awareness, 
+                            and efficient data structure selection to reduce energy consumption.
+                        </p>
+                        <div class="principle-examples">
+                            <h4>Best Practices</h4>
+                            <ul>
+                                <li>Use WeakMap and WeakSet to prevent memory leaks</li>
+                                <li>Implement object pooling for frequently created objects</li>
+                                <li>Remove event listeners and clear intervals properly</li>
+                                <li>Use lazy loading for large datasets and images</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <span class="principle-icon">🔄</span>
+                        <h3 class="principle-title">Resource Cleanup</h3>
+                        <p class="principle-description">
+                            Ensure proper resource lifecycle management with automatic cleanup patterns, 
+                            connection pooling, and graceful shutdown procedures.
+                        </p>
+                        <div class="principle-examples">
+                            <h4>Code Patterns</h4>
+                            <ul>
+                                <li>Use try-with-resources for file operations</li>
+                                <li>Implement connection pooling for databases</li>
+                                <li>Add cleanup methods to component lifecycle</li>
+                                <li>Use RAII (Resource Acquisition Is Initialization)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <span class="principle-icon">🚀</span>
+                        <h3 class="principle-title">Asynchronous Programming</h3>
+                        <p class="principle-description">
+                            Leverage non-blocking operations and parallel processing to improve responsiveness 
+                            while reducing overall energy consumption and server load.
+                        </p>
+                        <div class="principle-examples">
+                            <h4>Async Techniques</h4>
+                            <ul>
+                                <li>Replace setTimeout with async/await patterns</li>
+                                <li>Use Promise.all() for concurrent operations</li>
+                                <li>Implement worker threads for CPU-intensive tasks</li>
+                                <li>Use streaming for large data processing</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <span class="principle-icon">🗄️</span>
+                        <h3 class="principle-title">Database Optimization</h3>
+                        <p class="principle-description">
+                            Optimize database queries, implement proper indexing, and use efficient data retrieval 
+                            patterns to minimize server energy consumption and improve performance.
+                        </p>
+                        <div class="principle-examples">
+                            <h4>Optimization Strategies</h4>
+                            <ul>
+                                <li>Use database indexes for frequently queried columns</li>
+                                <li>Implement query result caching and pagination</li>
+                                <li>Avoid N+1 query problems with eager loading</li>
+                                <li>Use connection pooling and prepared statements</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <span class="principle-icon">🌍</span>
+                        <h3 class="principle-title">Carbon-Aware Development</h3>
+                        <p class="principle-description">
+                            Design applications with environmental impact in mind, considering server location, 
+                            renewable energy usage, and carbon footprint optimization.
+                        </p>
+                        <div class="principle-examples">
+                            <h4>Green Strategies</h4>
+                            <ul>
+                                <li>Choose green hosting providers with renewable energy</li>
+                                <li>Implement CDN for global content distribution</li>
+                                <li>Use image optimization and compression techniques</li>
+                                <li>Design for mobile-first to reduce data transfer</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-            <div style="text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid #e9ecef; color: #6c757d;">
-                <p style="margin-bottom: 8px; font-size: 0.9rem;">Generated by <strong>Automated Sustainability Analysis</strong> • Updated November 9, 2025</p>
-                <p style="margin: 0; font-size: 0.85rem; opacity: 0.8;">🌱 Built with sustainability in mind • Automated analysis • Continuous improvement</p>
-            </div>
+        <div class="footer">
+            <h3>🌱 Building a Sustainable Future Through Code</h3>
+            <p>
+                Every line of code has an environmental impact. By adopting green coding principles, 
+                we can significantly reduce energy consumption, lower carbon emissions, and create 
+                more efficient, sustainable software solutions for the future.
+            </p>
         </div>
     </div>
 </body>
