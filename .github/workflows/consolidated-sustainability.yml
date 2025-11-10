@@ -60,15 +60,15 @@ jobs:
           
           if [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" ]; then
             cp "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" "${{ env.REPORT_PATH }}/latest-report.json"
-            SCORE=$(python3 -c "import json; print(json.load(open('${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json'))['sustainability_metrics']['overall_score'])" 2>/dev/null || echo "75")
+            SCORE=$(python3 -c "import json; data=json.load(open('${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json')); print(data.get('overall_score', 75))" 2>/dev/null || echo "75")
           else
             SCORE="75"
           fi
           
           echo "overall_score=$SCORE" >> $GITHUB_OUTPUT
-          echo "✅ Analysis completed - Score: $SCORE/100"
+          echo "Analysis completed - Score: $SCORE/100"
         else
-          echo "❌ sustainability_evaluator.py not found"
+          echo "sustainability_evaluator.py not found"
           exit 1
         fi
         
@@ -76,32 +76,30 @@ jobs:
       uses: actions/configure-pages@v3
       if: github.ref == 'refs/heads/main'
       
-    - name: 🌐 Prepare Pages Content
+    - name: 🌐 Create Dashboard
       if: github.ref == 'refs/heads/main'
       run: |
         mkdir -p pages
         cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
         
-        cat > pages/index.html << 'HTMLEOF'
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>🌱 Sustainability Dashboard</title>
-            <style>
-                body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-                .header { background: #198754; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }
-                .btn { background: #198754; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1>🌱 Sustainability Dashboard</h1>
-                <p>Green Coding Analysis Reports</p>
-            </div>
-            <p><a href="latest-report.html" class="btn">📊 View Latest Report</a></p>
-        </body>
-        </html>
-HTMLEOF
+        echo '<!DOCTYPE html>' > pages/index.html
+        echo '<html>' >> pages/index.html
+        echo '<head>' >> pages/index.html
+        echo '    <title>🌱 Sustainability Dashboard</title>' >> pages/index.html
+        echo '    <style>' >> pages/index.html
+        echo '        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }' >> pages/index.html
+        echo '        .header { background: #198754; color: white; padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 20px; }' >> pages/index.html
+        echo '        .btn { background: #198754; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block; }' >> pages/index.html
+        echo '    </style>' >> pages/index.html
+        echo '</head>' >> pages/index.html
+        echo '<body>' >> pages/index.html
+        echo '    <div class="header">' >> pages/index.html
+        echo '        <h1>🌱 Sustainability Dashboard</h1>' >> pages/index.html
+        echo '        <p>Green Coding Analysis Reports</p>' >> pages/index.html
+        echo '    </div>' >> pages/index.html
+        echo '    <p><a href="latest-report.html" class="btn">📊 View Latest Report</a></p>' >> pages/index.html
+        echo '</body>' >> pages/index.html
+        echo '</html>' >> pages/index.html
         
     - name: 🚀 Deploy to GitHub Pages
       uses: actions/upload-pages-artifact@v2
@@ -128,18 +126,21 @@ HTMLEOF
         git add ${{ env.REPORT_PATH }}/
         
         if ! git diff --staged --quiet; then
-          git commit -m "🌱 Auto-generated sustainability reports (Score: ${{ steps.analysis.outputs.overall_score }}/100)"
+          git commit -m "Auto-generated sustainability reports"
           git push
         fi
         
     - name: 💬 PR Comment
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v7
+      env:
+        SCORE: ${{ steps.analysis.outputs.overall_score }}
       with:
         script: |
+          const score = process.env.SCORE || '75';
           github.rest.issues.createComment({
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: '🌱 **Sustainability Analysis Complete** - Score: ${{ steps.analysis.outputs.overall_score }}/100'
+            body: `🌱 **Sustainability Analysis Complete** - Score: ${score}/100`
           });
