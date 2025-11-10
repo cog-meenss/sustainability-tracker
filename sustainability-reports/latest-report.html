@@ -450,39 +450,7 @@
                 color: #856404;
             }
             
-            .action-plan {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-                gap: 25px;
-                margin: 30px 0;
-            }
-            
-            .action-phase {
-                background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-                border-radius: 15px;
-                padding: 25px;
-                box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-                border-top: 4px solid #17a2b8;
-            }
-            
-            .phase-title {
-                font-size: 1.4em;
-                font-weight: 600;
-                color: #2c3e50;
-                margin-bottom: 15px;
-            }
-            
-            .phase-timeframe {
-                background: #e3f2fd;
-                color: #1565c0;
-                padding: 5px 12px;
-                border-radius: 20px;
-                font-size: 0.9em;
-                font-weight: 600;
-                display: inline-block;
-                margin-bottom: 15px;
-            }
-            
+
             .carbon-impact {
                 background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
                 border-radius: 20px;
@@ -565,8 +533,8 @@
                 <h1>🌱 Comprehensive Sustainable Code Evaluation</h1>
                 <p class="subtitle">Advanced Analysis with Visualisations & Actionable Recommendations</p>
                 <p style="margin-top: 15px; opacity: 0.8;">
-                    Generated: 2025-11-10T12:48:10 • 
-                    Analysis Time: 27.032s
+                    Generated: 2025-11-10T13:12:35 • 
+                    Analysis Time: 25.823s
                 </p>
             </div>
             
@@ -575,7 +543,6 @@
                 <button class="nav-tab" onclick="showTab('metrics')">📈 Detailed Metrics</button>
                 <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
                 <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
-                <button class="nav-tab" onclick="showTab('action-plan')">🎯 Action Plan</button>
                 <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
                 <button class="nav-tab" onclick="showTab('carbon')">🌍 Carbon Impact</button>
             </div>
@@ -697,7 +664,7 @@
                 
                 <div class="chart-container">
                     <h3 class="chart-title">🎯 Sustainability Metrics Radar</h3>
-                    <canvas id="radarChart" width="400" height="300"></canvas>
+                    <canvas id="radarChart" style="max-width: 700px; max-height: 600px; margin: 0 auto; display: block;"></canvas>
                 </div>
                 
                 <!-- Detailed Green Coding File Analysis -->
@@ -1153,29 +1120,11 @@
                 <div class="metric-grid">
                     <div class="metric-card">
                         <div class="metric-header">
-                            <span class="metric-title">Lines of Code</span>
-                            <span class="metric-icon">📄</span>
+                            <span class="metric-title">Overall Score</span>
+                            <span class="metric-icon">�</span>
                         </div>
-                        <div class="metric-value score-good">0</div>
-                        <p style="text-align: center; color: #666;">Total files analyzed</p>
-                    </div>
-                    
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="metric-title">Performance Issues</span>
-                            <span class="metric-icon">⚠️</span>
-                        </div>
-                        <div class="metric-value score-poor">0</div>
-                        <p style="text-align: center; color: #666;">Issues detected</p>
-                    </div>
-                    
-                    <div class="metric-card">
-                        <div class="metric-header">
-                            <span class="metric-title">Green Practices</span>
-                            <span class="metric-icon">✅</span>
-                        </div>
-                        <div class="metric-value score-excellent">0</div>
-                        <p style="text-align: center; color: #666;">Best practices found</p>
+                        <div class="metric-value score-poor">25.7</div>
+                        <p style="text-align: center; color: #666;">Sustainability rating</p>
                     </div>
                     
                     <div class="metric-card">
@@ -1184,7 +1133,43 @@
                             <span class="metric-icon">⚡</span>
                         </div>
                         <div class="metric-value score-poor">44.0</div>
-                        <p style="text-align: center; color: #666;">Out of 100</p>
+                        <p style="text-align: center; color: #666;">Power optimization</p>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Performance Score</span>
+                            <span class="metric-icon">🚀</span>
+                        </div>
+                        <div class="metric-value score-average">59.9</div>
+                        <p style="text-align: center; color: #666;">Execution efficiency</p>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Code Quality</span>
+                            <span class="metric-icon">🏆</span>
+                        </div>
+                        <div class="metric-value score-poor">49.9</div>
+                        <p style="text-align: center; color: #666;">Quality assessment</p>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Resource Usage</span>
+                            <span class="metric-icon">💾</span>
+                        </div>
+                        <div class="metric-value score-poor">40.1</div>
+                        <p style="text-align: center; color: #666;">Memory & CPU</p>
+                    </div>
+                    
+                    <div class="metric-card">
+                        <div class="metric-header">
+                            <span class="metric-title">Maintainability</span>
+                            <span class="metric-icon">🔧</span>
+                        </div>
+                        <div class="metric-value score-excellent">100.0</div>
+                        <p style="text-align: center; color: #666;">Code structure</p>
                     </div>
                 </div>
                 
@@ -1208,24 +1193,26 @@
                 <div class="recommendations-grid">
                     <div class="recommendation-card priority-high">
                         <div class="recommendation-header">
-                            <span class="recommendation-title">⚠️ Critical Performance Issues</span>
-                            <span class="priority-badge">High Priority</span>
+                            <span class="recommendation-title">⚠️ Performance Analysis</span>
+                            <span class="priority-badge">Current Status</span>
                         </div>
-                        <p>Found 0 critical issues that need immediate attention.</p>
+                        <p>Overall Sustainability Score: <strong>25.7/100</strong> - Below Industry Average (45.0)</p>
                         <div class="code-example">
-                            Performance bottlenecks detected:<br>
-                            <strong>Impact:</strong> Reduced responsiveness and increased energy consumption
+                            Key Areas for Improvement:<br>
+                            <strong>Energy Efficiency:</strong> 44.0/100 (vs Industry 52.0)<br>
+                            <strong>Code Quality:</strong> 49.9/100 (vs Industry 58.0)
                         </div>
                     </div>
                     
                     <div class="recommendation-card priority-medium">
                         <div class="recommendation-header">
-                            <span class="recommendation-title">📈 Optimization Opportunities</span>
-                            <span class="priority-badge">Medium Priority</span>
+                            <span class="recommendation-title">📈 Strong Performance Areas</span>
+                            <span class="priority-badge">Excellent</span>
                         </div>
-                        <p>0 green coding practices found across the codebase:</p>
+                        <p>Areas where your project excels:</p>
                         <ul class="implementation-list">
-                            <li>Efficient data structures (Set, Map usage)</li>
+                            <li>Maintainability Score: 100.0/100 (Excellent structure)</li>
+                            <li>Performance Score: 59.9/100 (Above baseline)</li>
                             <li>Resource cleanup with proper file handling</li>
                             <li>Memory optimization techniques</li>
                             <li>Database query optimization</li>
@@ -1295,59 +1282,6 @@
                 </div>
             </div>
             
-            <!-- Action Plan Tab -->
-            <div id="action-plan" class="tab-content">
-                <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    🎯 Sustainability Action Plan
-                </h2>
-                
-                <div class="action-plan">
-                    <div class="action-phase">
-                        <div class="phase-title">Phase 1: Quick Wins</div>
-                        <div class="phase-timeframe">1-2 weeks</div>
-                        <ul class="implementation-list">
-                            <li>Address critical performance issues</li>
-                            <li>Implement basic caching strategies</li>
-                            <li>Optimize data structure usage</li>
-                            <li>Add compression for static assets</li>
-                        </ul>
-                        <p style="margin-top: 15px; font-weight: 600; color: #27ae60;">
-                            Expected Impact: 20-35% performance improvement
-                        </p>
-                    </div>
-                    
-                    <div class="action-phase">
-                        <div class="phase-title">Phase 2: Infrastructure Optimization</div>
-                        <div class="phase-timeframe">3-4 weeks</div>
-                        <ul class="implementation-list">
-                            <li>Implement advanced caching layer</li>
-                            <li>Add database query optimization</li>
-                            <li>Set up CDN for static assets</li>
-                            <li>Implement API response compression</li>
-                            <li>Add monitoring and alerting</li>
-                        </ul>
-                        <p style="margin-top: 15px; font-weight: 600; color: #27ae60;">
-                            Expected Impact: 30-50% server load reduction
-                        </p>
-                    </div>
-                    
-                    <div class="action-phase">
-                        <div class="phase-title">Phase 3: Advanced Optimizations</div>
-                        <div class="phase-timeframe">1-2 months</div>
-                        <ul class="implementation-list">
-                            <li>Implement virtual scrolling for large datasets</li>
-                            <li>Add service workers for offline functionality</li>
-                            <li>Implement code splitting and dynamic imports</li>
-                            <li>Add performance budgets and automated testing</li>
-                            <li>Implement green hosting solutions</li>
-                        </ul>
-                        <p style="margin-top: 15px; font-weight: 600; color: #27ae60;">
-                            Expected Impact: 40-70% overall efficiency improvement
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
             <!-- Benchmarks Tab -->
             <div id="benchmarks" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
@@ -1363,35 +1297,47 @@
                     <thead>
                         <tr>
                             <th>Metric</th>
+                            <th>Current Project</th>
                             <th>Industry Average</th>
                             <th>Best Practice</th>
-                            <th>Status (Current Score)</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>Overall Sustainability</td>
+                            <td><strong style="color: #e74c3c;">25.7/100</strong></td>
                             <td>45.0/100</td>
                             <td>75.0/100</td>
-                            <td><strong style="color: #e74c3c;">25.7/100</strong> - Below Average</td>
+                            <td><span class="status-badge status-fail">Below Average</span></td>
                         </tr>
                         <tr>
                             <td>Energy Efficiency</td>
+                            <td><strong style="color: #e74c3c;">44.0/100</strong></td>
                             <td>52.0/100</td>
                             <td>80.0/100</td>
-                            <td><strong style="color: #e74c3c;">44.0/100</strong> - Below Average</td>
+                            <td><span class="status-badge status-fail">Below Average</span></td>
                         </tr>
                         <tr>
                             <td>Code Quality</td>
+                            <td><strong style="color: #e74c3c;">49.9/100</strong></td>
                             <td>58.0/100</td>
                             <td>85.0/100</td>
-                            <td><strong style="color: #e74c3c;">49.9/100</strong> - Below Average</td>
+                            <td><span class="status-badge status-fail">Below Average</span></td>
                         </tr>
                         <tr>
-                            <td>Green Practices</td>
-                            <td>45 average</td>
-                            <td>100+ target</td>
-                            <td><strong style="color: #27ae60;">85 found</strong> - Excellent</td>
+                            <td>Performance Score</td>
+                            <td><strong style="color: #f39c12;">59.9/100</strong></td>
+                            <td>55.0/100</td>
+                            <td>85.0/100</td>
+                            <td><span class="status-badge status-pass">Above Average</span></td>
+                        </tr>
+                        <tr>
+                            <td>Maintainability</td>
+                            <td><strong style="color: #27ae60;">100.0/100</strong></td>
+                            <td>62.0/100</td>
+                            <td>90.0/100</td>
+                            <td><span class="status-badge status-pass">Excellent</span></td>
                         </tr>
                     </tbody>
                 </table>
@@ -1521,14 +1467,16 @@
             
             function initializeCharts() {
                 // Radar Chart
-                const radarCtx = document.getElementById('radarChart').getContext('2d');
-                window.radarChart = new Chart(radarCtx, {
+                const radarCtx = document.getElementById('radarChart');
+                if (radarCtx) {
+                    console.log('Initializing radar chart...');
+                    window.radarChart = new Chart(radarCtx.getContext('2d'), {
                     type: 'radar',
                     data: {
                         labels: ['Overall Score', 'Energy Efficiency', 'Resource Utilization', 'Performance', 'Code Quality', 'Maintainability'],
                         datasets: [{
                             label: 'Current Project',
-                            data: [[25.729832896474235, 44.02067669172932, 40.12280701754386, 59.94117647058823, 49.94117647058823, 100]],
+                            data: [25.73, 44.02, 40.12, 59.94, 49.94, 100],
                             backgroundColor: 'rgba(39, 174, 96, 0.2)',
                             borderColor: 'rgba(39, 174, 96, 1)',
                             borderWidth: 3,
@@ -1536,6 +1484,26 @@
                             pointBorderColor: '#fff',
                             pointHoverBackgroundColor: '#fff',
                             pointHoverBorderColor: 'rgba(39, 174, 96, 1)'
+                        }, {
+                            label: 'Industry Average',
+                            data: [45, 52, 48, 55, 58, 62],
+                            backgroundColor: 'rgba(52, 152, 219, 0.15)',
+                            borderColor: 'rgba(52, 152, 219, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(52, 152, 219, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(52, 152, 219, 1)'
+                        }, {
+                            label: 'Best Practice',
+                            data: [75, 80, 78, 85, 85, 90],
+                            backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                            borderColor: 'rgba(231, 76, 60, 1)',
+                            borderWidth: 2,
+                            pointBackgroundColor: 'rgba(231, 76, 60, 1)',
+                            pointBorderColor: '#fff',
+                            pointHoverBackgroundColor: '#fff',
+                            pointHoverBorderColor: 'rgba(231, 76, 60, 1)'
                         }]
                     },
                     options: {
@@ -1555,7 +1523,8 @@
                             }
                         }
                     }
-                });
+                    });
+                }
                 
                 // Performance Chart (for metrics tab)
                 const performanceCtx = document.getElementById('performanceChart');
