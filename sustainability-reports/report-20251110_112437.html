@@ -570,10 +570,14 @@
                 </p>
             </div>
             
-            <!-- Navigation tabs removed - single overview dashboard -->
-            <div style="text-align: center; padding: 20px; background: rgba(25, 135, 84, 0.1); border-radius: 8px; margin-bottom: 20px;">
-                <h2 style="color: #198754; margin: 0; font-size: 1.5em;">� Comprehensive Sustainability Dashboard</h2>
-                <p style="margin: 10px 0 0 0; color: #6c757d;">Complete analysis with metrics, recommendations, and environmental impact</p>
+            <div class="nav-tabs">
+                <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
+                <button class="nav-tab" onclick="showTab('metrics')">📈 Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
+                <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
+                <button class="nav-tab" onclick="showTab('action-plan')">🎯 Action Plan</button>
+                <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
+                <button class="nav-tab" onclick="showTab('carbon')">🌍 Carbon Impact</button>
             </div>
     
             <div id="overview" class="tab-content active">
@@ -1385,7 +1389,26 @@
         </div>
         
         <script>
-            // Single dashboard - no tab switching needed
+            // Tab switching functionality
+            function showTab(tabName) {
+                // Hide all tab contents
+                const contents = document.querySelectorAll('.tab-content');
+                contents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Remove active class from all tabs
+                const tabs = document.querySelectorAll('.nav-tab');
+                tabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Show selected tab content
+                document.getElementById(tabName).classList.add('active');
+                
+                // Add active class to clicked tab
+                event.target.classList.add('active');
+            }
             
             // Initialize charts when page loads
             window.addEventListener('load', function() {
