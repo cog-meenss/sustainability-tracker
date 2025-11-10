@@ -132,7 +132,7 @@ class ComprehensiveSustainabilityEvaluator:
                 'overall_score': overall_score,
                 'energy_efficiency': max(5, overall_score - 20),
                 'resource_utilization': max(10, overall_score - 15),
-                'carbon_footprint': min(80, 100 - overall_score),
+
                 'performance_optimization': max(50, overall_score + 10),
                 'sustainable_practices': max(5, overall_score - 25)
             },
@@ -518,7 +518,7 @@ class ComprehensiveSustainabilityEvaluator:
             'overall_score': base_metrics.get('overall_score', 50),
             'energy_efficiency': max(0, enhanced_energy_efficiency),
             'resource_utilization': max(0, enhanced_resource_utilization),
-            'carbon_footprint': max(0, 100 - ((100 - green_coding_score) * 0.8)),  # Green coding reduces carbon footprint
+
             'performance_optimization': min(100, avg_complexity + 10),
             'sustainable_practices': max(0, 100 - (self.performance_issues['console_logs'] * 2)),
             'code_quality': avg_complexity,
@@ -558,7 +558,7 @@ class ComprehensiveSustainabilityEvaluator:
             'recommendations': recommendations,
             'benchmarking': self._generate_benchmarks(),
             'trends_analysis': self._generate_trends_analysis(),
-            'carbon_impact': self._calculate_carbon_impact(),
+
             'quality_gates': self._evaluate_quality_gates()
         }
         
@@ -981,22 +981,7 @@ class LazyImageLoader:
         
         return risks if risks else ["Low: No major sustainability risks identified"]
     
-    def _calculate_carbon_impact(self):
-        """Calculate estimated carbon footprint"""
-        base_emission = 0.5  # kg CO2 per day baseline
-        efficiency_factor = self.enhanced_metrics['energy_efficiency'] / 100
-        
-        daily_emission = base_emission * (2 - efficiency_factor)
-        
-        return {
-            'daily_co2_kg': round(daily_emission, 3),
-            'monthly_co2_kg': round(daily_emission * 30, 2),
-            'annual_co2_kg': round(daily_emission * 365, 1),
-            'improvement_potential': {
-                'daily_savings': round((base_emission * 2 - daily_emission), 3),
-                'annual_savings': round((base_emission * 2 - daily_emission) * 365, 1)
-            }
-        }
+
     
     def _evaluate_quality_gates(self):
         """Evaluate quality gates"""
@@ -1491,47 +1476,7 @@ def generate_comprehensive_html_report(report_data):
                 margin-bottom: 15px;
             }}
             
-            .carbon-impact {{
-                background: linear-gradient(135deg, #e8f5e8 0%, #f1f8e9 100%);
-                border-radius: 20px;
-                padding: 30px;
-                margin: 30px 0;
-                border: 2px solid #c8e6c9;
-            }}
-            
-            .carbon-title {{
-                font-size: 1.6em;
-                color: #2e7d32;
-                font-weight: 600;
-                margin-bottom: 20px;
-                text-align: center;
-            }}
-            
-            .carbon-metrics {{
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-                gap: 20px;
-            }}
-            
-            .carbon-metric {{
-                background: white;
-                border-radius: 12px;
-                padding: 20px;
-                text-align: center;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            }}
-            
-            .carbon-value {{
-                font-size: 2em;
-                font-weight: bold;
-                color: #2e7d32;
-            }}
-            
-            .carbon-label {{
-                color: #4caf50;
-                font-weight: 600;
-                margin-top: 5px;
-            }}
+
             
             .footer {{
                 background: #2c3e50;
@@ -1584,7 +1529,6 @@ def generate_comprehensive_html_report(report_data):
                 <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
                 <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
                 <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
-                <button class="nav-tab" onclick="showTab('carbon')">🌍 Carbon Impact</button>
             </div>
     """
     
@@ -2748,90 +2692,9 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
             </div>
-            
-            <!-- Carbon Impact Tab -->
-            <div id="carbon" class="tab-content">
-                <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    🌍 Carbon Footprint Analysis
-                </h2>
-                
-                <div class="carbon-impact">
-                    <div class="carbon-title">🌱 Environmental Impact Assessment</div>
-                    <div class="carbon-metrics">
-    """
-    
-    carbon_data = report_data.get('carbon_impact', {})
-    html += f"""
-                        <div class="carbon-metric">
-                            <div class="carbon-value">{carbon_data.get('daily_co2_kg', 2.4)} kg</div>
-                            <div class="carbon-label">CO₂ per day</div>
-                        </div>
-                        <div class="carbon-metric">
-                            <div class="carbon-value">{carbon_data.get('monthly_co2_kg', 72)} kg</div>
-                            <div class="carbon-label">CO₂ per month</div>
-                        </div>
-                        <div class="carbon-metric">
-                            <div class="carbon-value">{carbon_data.get('annual_co2_kg', 876)} kg</div>
-                            <div class="carbon-label">CO₂ per year</div>
-                        </div>
-                        <div class="carbon-metric">
-                            <div class="carbon-value">{carbon_data.get('improvement_potential', {}).get('annual_savings', 262)} kg</div>
-                            <div class="carbon-label">Potential savings</div>
-                        </div>
     """
     
     html += """
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <h3 class="chart-title">📉 Carbon Reduction Opportunities</h3>
-                    <canvas id="carbonChart" width="400" height="300"></canvas>
-                </div>
-                
-                <!-- Comprehensive Carbon Reduction Analysis -->
-                <div style="margin-top: 40px;">
-                    <h3 style="color: #2c3e50; font-size: 1.8em; text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #27ae60, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        🌿 Comprehensive Carbon Reduction Strategy
-                    </h3>
-                    
-                    <!-- Environmental Impact Targets -->
-                    <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; border-left: 5px solid #27ae60;">
-                        <h4 style="color: #2e7d32; margin-bottom: 25px; font-size: 1.4em;">🎯 2024 Carbon Reduction Targets</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
-                            <div style="text-align: center; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                                <div style="font-size: 2.2em; margin-bottom: 10px; color: #e74c3c;">🎯</div>
-                                <div style="font-size: 1.6em; font-weight: 700; color: #e74c3c; margin-bottom: 5px;">-35%</div>
-                                <div style="font-size: 0.9em; color: #666;">Annual CO₂ Reduction</div>
-                                <div style="font-size: 0.8em; margin-top: 10px; color: #27ae60;">Target: 306kg → 199kg</div>
-                            </div>
-                            
-                            <div style="text-align: center; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                                <div style="font-size: 2.2em; margin-bottom: 10px; color: #f39c12;">⚡</div>
-                                <div style="font-size: 1.6em; font-weight: 700; color: #f39c12; margin-bottom: 5px;">-28%</div>
-                                <div style="font-size: 0.9em; color: #666;">Energy Consumption</div>
-                                <div style="font-size: 0.8em; margin-top: 10px; color: #27ae60;">Target: 442kWh → 318kWh</div>
-                            </div>
-                            
-                            <div style="text-align: center; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                                <div style="font-size: 2.2em; margin-bottom: 10px; color: #3498db;">🌱</div>
-                                <div style="font-size: 1.6em; font-weight: 700; color: #3498db; margin-bottom: 5px;">+45%</div>
-                                <div style="font-size: 0.9em; color: #666;">Green Practices</div>
-                                <div style="font-size: 0.8em; margin-top: 10px; color: #27ae60;">Target: 116 → 168 practices</div>
-                            </div>
-                            
-                            <div style="text-align: center; background: white; border-radius: 15px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
-                                <div style="font-size: 2.2em; margin-bottom: 10px; color: #9b59b6;">💰</div>
-                                <div style="font-size: 1.6em; font-weight: 700; color: #9b59b6; margin-bottom: 5px;">$2,340</div>
-                                <div style="font-size: 0.9em; color: #666;">Annual Cost Savings</div>
-                                <div style="font-size: 0.8em; margin-top: 10px; color: #27ae60;">Energy + Infrastructure</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Detailed Implementation Roadmap -->
-                    <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                        <h4 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.4em;">🗺️ 12-Month Implementation Roadmap</h4>
                         <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
                             <div style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 15px; padding: 20px; color: #2d3436;">
                                 <h5 style="color: #d63031; margin-bottom: 15px; font-size: 1.2em;">� Phase 1: Quick Wins (Months 1-3)</h5>
@@ -2839,222 +2702,6 @@ def generate_comprehensive_html_report(report_data):
                                     <div style="font-weight: 600; margin-bottom: 8px;">🔧 Code Optimization</div>
                                     <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
                                         • Replace 7 O(n²) loops with hash maps<br>
-                                        • Implement 25 missing resource cleanups<br>
-                                        • Add compression to 12 large files
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.85em;">
-                                        <span><strong>Impact:</strong> -23kg CO₂/year</span>
-                                        <span><strong>Cost:</strong> $0</span>
-                                    </div>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.9); border-radius: 10px; padding: 15px;">
-                                    <div style="font-weight: 600; margin-bottom: 8px;">⚡ Performance Tuning</div>
-                                    <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                                        • Database query optimization<br>
-                                        • Implement request caching<br>
-                                        • Optimize bundle splitting
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.85em;">
-                                        <span><strong>Impact:</strong> -31kg CO₂/year</span>
-                                        <span><strong>Cost:</strong> $150</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); border-radius: 15px; padding: 20px; color: #2d3436;">
-                                <h5 style="color: #00b894; margin-bottom: 15px; font-size: 1.2em;">🚀 Phase 2: Infrastructure (Months 4-8)</h5>
-                                <div style="background: rgba(255,255,255,0.9); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                                    <div style="font-weight: 600; margin-bottom: 8px;">🌐 Green Hosting Migration</div>
-                                    <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                                        • Switch to renewable energy provider<br>
-                                        • Implement auto-scaling policies<br>
-                                        • Add CDN for global distribution
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.85em;">
-                                        <span><strong>Impact:</strong> -89kg CO₂/year</span>
-                                        <span><strong>Cost:</strong> $680/month</span>
-                                    </div>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.9); border-radius: 10px; padding: 15px;">
-                                    <div style="font-weight: 600; margin-bottom: 8px;">🗄️ Database Optimization</div>
-                                    <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                                        • Add missing indexes (3 tables)<br>
-                                        • Implement connection pooling<br>
-                                        • Set up read replicas
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.85em;">
-                                        <span><strong>Impact:</strong> -42kg CO₂/year</span>
-                                        <span><strong>Cost:</strong> $340/month</span>
-                                    </div>
-                                </div>
-                            </div>
-                            
-                            <div style="background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); border-radius: 15px; padding: 20px; color: #2d3436;">
-                                <h5 style="color: #6c5ce7; margin-bottom: 15px; font-size: 1.2em;">🎯 Phase 3: Advanced (Months 9-12)</h5>
-                                <div style="background: rgba(255,255,255,0.9); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                                    <div style="font-weight: 600; margin-bottom: 8px;">🤖 AI-Powered Optimization</div>
-                                    <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                                        • Implement smart resource scaling<br>
-                                        • Add predictive caching<br>
-                                        • Deploy edge computing nodes
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.85em;">
-                                        <span><strong>Impact:</strong> -67kg CO₂/year</span>
-                                        <span><strong>Cost:</strong> $1,240/month</span>
-                                    </div>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.9); border-radius: 10px; padding: 15px;">
-                                    <div style="font-weight: 600; margin-bottom: 8px;">🌱 Carbon Monitoring</div>
-                                    <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                                        • Real-time carbon tracking<br>
-                                        • Automated optimization alerts<br>
-                                        • Green metrics dashboard
-                                    </div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 0.85em;">
-                                        <span><strong>Impact:</strong> -25kg CO₂/year</span>
-                                        <span><strong>Cost:</strong> $290/month</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- ROI and Environmental Impact Analysis -->
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px; padding: 25px; color: white;">
-                            <h4 style="margin-bottom: 20px; font-size: 1.3em;">💰 Return on Investment Analysis</h4>
-                            <div style="display: grid; gap: 15px;">
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">
-                                    <span>Total Investment (Year 1)</span>
-                                    <strong>$18,560</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">
-                                    <span>Annual Energy Savings</span>
-                                    <strong>$2,340</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">
-                                    <span>Performance Improvement Value</span>
-                                    <strong>$4,670</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.2);">
-                                    <span>Carbon Credit Revenue</span>
-                                    <strong>$890</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between; padding: 12px 0; font-size: 1.1em;">
-                                    <span><strong>ROI Timeline</strong></span>
-                                    <strong style="color: #ffd700;">2.3 years</strong>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 15px; padding: 25px; color: #2d3436;">
-                            <h4 style="color: #d63031; margin-bottom: 20px; font-size: 1.3em;">� Environmental Impact Projection</h4>
-                            <div style="display: grid; gap: 15px;">
-                                <div style="background: rgba(255,255,255,0.9); padding: 12px; border-radius: 8px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span>CO₂ Reduction (3 years)</span>
-                                        <strong style="color: #27ae60;">-321kg</strong>
-                                    </div>
-                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">Equivalent to 78 trees planted</div>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.9); padding: 12px; border-radius: 8px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span>Energy Saved (3 years)</span>
-                                        <strong style="color: #3498db;">954kWh</strong>
-                                    </div>
-                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">Powers 2.1 homes for 1 month</div>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.9); padding: 12px; border-radius: 8px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span>Water Footprint Reduction</span>
-                                        <strong style="color: #16a085;">1,240L</strong>
-                                    </div>
-                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">Clean water saved annually</div>
-                                </div>
-                                <div style="background: rgba(255,255,255,0.9); padding: 12px; border-radius: 8px;">
-                                    <div style="display: flex; justify-content: space-between;">
-                                        <span><strong>Sustainability Score Target</strong></span>
-                                        <strong style="color: #e74c3c; font-size: 1.1em;">85/100</strong>
-                                    </div>
-                                    <div style="font-size: 0.85em; color: #666; margin-top: 5px;">Industry-leading performance</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Implementation Tracker -->
-                    <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-                        <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4em;">📊 Implementation Progress Tracker</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                            <div style="border: 1px solid #e9ecef; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #27ae60; margin-bottom: 15px;">✅ Completed Optimizations</h5>
-                                <ul style="list-style: none; padding: 0; font-size: 0.9em;">
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #27ae60;">✓</span> Resource cleanup implementation (38 instances)
-                                    </li>
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #27ae60;">✓</span> Efficient data structures (25 instances)
-                                    </li>
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #27ae60;">✓</span> Memory optimization (18 instances)
-                                    </li>
-                                    <li style="padding: 8px 0;">
-                                        <span style="color: #27ae60;">✓</span> Database query batching (15 instances)
-                                    </li>
-                                </ul>
-                                <div style="margin-top: 15px; padding: 10px; background: #e8f5e8; border-radius: 6px; text-align: center;">
-                                    <strong style="color: #27ae60;">Current Impact: -54kg CO₂/year</strong>
-                                </div>
-                            </div>
-                            
-                            <div style="border: 1px solid #e9ecef; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #f39c12; margin-bottom: 15px;">🔄 In Progress</h5>
-                                <ul style="list-style: none; padding: 0; font-size: 0.9em;">
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #f39c12;">⏳</span> Loop optimization (7 nested loops) - 65% complete
-                                    </li>
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #f39c12;">⏳</span> Memory leak fixes (12 instances) - 40% complete
-                                    </li>
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #f39c12;">⏳</span> Async I/O implementation - 25% complete
-                                    </li>
-                                    <li style="padding: 8px 0;">
-                                        <span style="color: #f39c12;">⏳</span> CDN setup and configuration - 80% complete
-                                    </li>
-                                </ul>
-                                <div style="margin-top: 15px; padding: 10px; background: #fff3e0; border-radius: 6px; text-align: center;">
-                                    <strong style="color: #f39c12;">Projected Impact: -38kg CO₂/year</strong>
-                                </div>
-                            </div>
-                            
-                            <div style="border: 1px solid #e9ecef; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #3498db; margin-bottom: 15px;">📋 Planned Initiatives</h5>
-                                <ul style="list-style: none; padding: 0; font-size: 0.9em;">
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #3498db;">📅</span> Green hosting migration (Q2 2024)
-                                    </li>
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #3498db;">📅</span> AI-powered optimization (Q3 2024)
-                                    </li>
-                                    <li style="padding: 8px 0; border-bottom: 1px solid #f8f9fa;">
-                                        <span style="color: #3498db;">📅</span> Edge computing deployment (Q4 2024)
-                                    </li>
-                                    <li style="padding: 8px 0;">
-                                        <span style="color: #3498db;">📅</span> Carbon monitoring dashboard (Q1 2025)
-                                    </li>
-                                </ul>
-                                <div style="margin-top: 15px; padding: 10px; background: #e3f2fd; border-radius: 6px; text-align: center;">
-                                    <strong style="color: #3498db;">Expected Impact: -185kg CO₂/year</strong>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-    """
-    
-    html += """
             </div>
             
             <div class="footer">
@@ -3098,9 +2745,7 @@ def generate_comprehensive_html_report(report_data):
                     if (window.benchmarkChart && tabName === 'benchmarks') {
                         window.benchmarkChart.resize();
                     }
-                    if (window.carbonChart && tabName === 'carbon') {
-                        window.carbonChart.resize();
-                    }
+
                     if (window.radarChart && tabName === 'overview') {
                         window.radarChart.resize();
                     }
@@ -3278,46 +2923,7 @@ def generate_comprehensive_html_report(report_data):
                     });
                 }
                 
-                // Carbon Chart (for carbon tab)  
-                const carbonCtx = document.getElementById('carbonChart');
-                if (carbonCtx) {
-                    window.carbonChart = new Chart(carbonCtx.getContext('2d'), {
-                        type: 'bar',
-                        data: {
-                            labels: ['Current Footprint', 'After Quick Wins', 'After Infrastructure', 'After Advanced Optimization'],
-                            datasets: [{
-                                label: 'CO₂ per Year (kg)',
-                                data: [""" + str(report_data.get('carbon_impact', {}).get('annual_co2_kg', 876)) + """, 672, 394, 262],
-                                backgroundColor: [
-                                    'rgba(231, 76, 60, 0.8)',
-                                    'rgba(241, 196, 15, 0.8)',
-                                    'rgba(52, 152, 219, 0.8)',
-                                    'rgba(46, 204, 113, 0.8)'
-                                ],
-                                borderColor: [
-                                    'rgba(231, 76, 60, 1)',
-                                    'rgba(241, 196, 15, 1)',
-                                    'rgba(52, 152, 219, 1)',
-                                    'rgba(46, 204, 113, 1)'
-                                ],
-                                borderWidth: 2
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            plugins: {
-                                legend: {
-                                    position: 'top',
-                                }
-                            },
-                            scales: {
-                                y: {
-                                    beginAtZero: true
-                                }
-                            }
-                        }
-                    });
-                }
+
                 
                 // Initialize real-time updates
                 initializeRealTimeUpdates();
@@ -3718,7 +3324,7 @@ def create_api_endpoint():
                         'energy_saving_practices': report_data['sustainability_metrics'].get('energy_saving_practices', 50),
                         'green_coding_score': report_data['sustainability_metrics'].get('green_coding_score', 50)
                     },
-                    'carbon_metrics': report_data.get('carbon_metrics', {}),
+
                     'recommendations_count': len(report_data.get('recommendations', []))
                 })
             except Exception as e:
@@ -3823,7 +3429,7 @@ def main():
         print(f"   • 💡 Actionable suggestions: {len(report.get('recommendations', []))} improvements identified")
         print(f"   • 🔄 Auto-refresh controls for runtime updates")
         print(f"   • 📈 Interactive charts and progress indicators")
-        print(f"   • ⚡ Performance metrics and carbon footprint analysis")
+        print(f"   • ⚡ Performance metrics and sustainability analysis")
         
     else:
         # Manual output handling (legacy mode)
@@ -3894,10 +3500,7 @@ def main():
 
 📈 QUALITY GATES: {report['quality_gates']['overall_assessment']['overall_status']}
 
-🌍 CARBON FOOTPRINT:
-   • Daily CO2 Emissions: {report['carbon_impact']['daily_co2_kg']} kg
-   • Annual CO2 Projection: {report['carbon_impact']['annual_co2_kg']} kg
-   • Carbon Intensity: {report['carbon_impact'].get('carbon_intensity', 'Medium')}
+
 
 � RUNTIME DASHBOARD FEATURES:
    • Real-time metric updates every 30 seconds
