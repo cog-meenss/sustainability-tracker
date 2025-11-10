@@ -24,6 +24,46 @@ class ComprehensiveSustainabilityEvaluator:
         self.code_patterns = defaultdict(int)
         self.file_metrics = []
         
+    def _filter_project_files(self, file_patterns):
+        """Filter project files excluding node_modules, build artifacts, and evaluator files"""
+        exclude_dirs = {
+            'node_modules', '.git', '.vscode', '__pycache__', '.pytest_cache',
+            'build', 'dist', '.next', '.nuxt', 'coverage', '.nyc_output',
+            'target', 'bin', 'obj', '.gradle', '.idea', '.DS_Store',
+            'sustainability-reports', 'reports', 'logs', 'temp', 'tmp'
+        }
+        
+        exclude_files = {
+            'sustainability_evaluator.py', 'enhanced_sustainability_analyzer.py',
+            '.gitignore', '.env', '.env.local', '.env.production', 
+            'package-lock.json', 'yarn.lock', '.eslintrc', '.prettierrc'
+        }
+        
+        all_files = []
+        
+        for pattern in file_patterns:
+            files = self.project_path.rglob(pattern)
+            filtered_files = []
+            
+            for file in files:
+                # Skip if file is in excluded directories
+                if any(excluded_dir in file.parts for excluded_dir in exclude_dirs):
+                    continue
+                    
+                # Skip if filename is in excluded files
+                if file.name in exclude_files:
+                    continue
+                    
+                # Skip if file contains 'sustainability' in path (avoid self-analysis)
+                if 'sustainability' in str(file.relative_to(self.project_path)).lower():
+                    continue
+                    
+                filtered_files.append(file)
+            
+            all_files.extend(filtered_files)
+        
+        return all_files
+        
     def analyze_project_comprehensively(self):
         """Perform comprehensive project analysis"""
         print("🔍 Starting comprehensive sustainable code evaluation...")
@@ -68,8 +108,7 @@ class ComprehensiveSustainabilityEvaluator:
     
     def _generate_fallback_analysis(self):
         """Generate basic analysis if core analyzer fails"""
-        files = list(self.project_path.rglob("*"))
-        code_files = [f for f in files if f.is_file() and f.suffix in ['.py', '.js', '.ts', '.jsx', '.tsx']]
+        code_files = self._filter_project_files(['*.py', '*.js', '*.ts', '*.jsx', '*.tsx'])
         
         language_breakdown = Counter()
         for file in code_files:
@@ -115,7 +154,7 @@ class ComprehensiveSustainabilityEvaluator:
             'caching_patterns': r'(cache|memoize|localStorage|sessionStorage)'
         }
         
-        files = list(self.project_path.rglob("*.py")) + list(self.project_path.rglob("*.js")) + list(self.project_path.rglob("*.ts"))
+        files = self._filter_project_files(['*.py', '*.js', '*.ts'])
         
         for file_path in files[:50]:  # Limit to avoid long processing
             try:
@@ -156,7 +195,7 @@ class ComprehensiveSustainabilityEvaluator:
             'large_file_operations': r'(read\(\)$|readlines\(\)|load entire)'
         }
         
-        files = list(self.project_path.rglob("*.py")) + list(self.project_path.rglob("*.js")) + list(self.project_path.rglob("*.ts"))
+        files = self._filter_project_files(['*.py', '*.js', '*.ts'])
         
         self.green_coding_metrics = {
             'green_patterns': defaultdict(int),
@@ -324,7 +363,7 @@ class ComprehensiveSustainabilityEvaluator:
         """Analyze file complexity metrics"""
         print("📊 Analyzing file complexity...")
         
-        files = list(self.project_path.rglob("*.py")) + list(self.project_path.rglob("*.js")) + list(self.project_path.rglob("*.ts"))
+        files = self._filter_project_files(['*.py', '*.js', '*.ts'])
         
         for file_path in files[:30]:  # Limit analysis
             try:
@@ -405,7 +444,7 @@ class ComprehensiveSustainabilityEvaluator:
         """Analyze import patterns"""
         import_patterns = defaultdict(int)
         
-        files = list(self.project_path.rglob("*.py")) + list(self.project_path.rglob("*.js"))
+        files = self._filter_project_files(['*.py', '*.js'])
         
         for file_path in files[:20]:
             try:
