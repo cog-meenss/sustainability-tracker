@@ -1047,24 +1047,17 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .header {{
-                background: linear-gradient(135deg, #0f5132 0%, #198754 25%, #20c997 50%, #0dcaf0 75%, #6f42c1 100%);
-                background-size: 400% 400%;
-                animation: headerGradient 8s ease infinite;
+                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
                 color: white;
-                padding: 60px 40px;
+                padding: 50px 40px;
                 text-align: center;
                 position: relative;
                 overflow: hidden;
-                box-shadow: 0 12px 40px rgba(39, 174, 96, 0.25);
+                box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                border-bottom: 1px solid #ecf0f1;
             }}
             
-            @keyframes headerGradient {{
-                0% {{ background-position: 0% 50%; }}
-                25% {{ background-position: 100% 50%; }}
-                50% {{ background-position: 100% 100%; }}
-                75% {{ background-position: 0% 100%; }}
-                100% {{ background-position: 0% 50%; }}
-            }}
+
             
             .header::before {{
                 content: '';
@@ -1073,37 +1066,32 @@ def generate_comprehensive_html_report(report_data):
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="80" r="2" fill="rgba(255,255,255,0.1)"/></svg>');
-                opacity: 0.1;
+                background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
+                opacity: 1;
             }}
             
             .header h1 {{
-                font-size: 3.5em;
-                margin-bottom: 15px;
-                text-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
+                font-size: 2.8em;
+                margin-bottom: 12px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.2);
                 position: relative;
                 z-index: 1;
-                font-weight: 900;
-                letter-spacing: -1px;
-                animation: titleGlow 3s ease-in-out infinite alternate;
+                font-weight: 600;
+                letter-spacing: -0.5px;
+                font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+                color: #ffffff;
             }}
             
-            @keyframes titleGlow {{
-                0% {{ 
-                    text-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 30px rgba(255,255,255,0.1);
-                    transform: scale(1);
-                }}
-                100% {{ 
-                    text-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 40px rgba(255,255,255,0.2);
-                    transform: scale(1.02);
-                }}
-            }}
+
             
             .header .subtitle {{
-                font-size: 1.2em;
-                opacity: 0.9;
+                font-size: 1.1em;
+                opacity: 0.85;
                 position: relative;
                 z-index: 1;
+                font-weight: 400;
+                color: #ecf0f1;
+                font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
             }}
             
             .nav-tabs {{
@@ -2144,9 +2132,11 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
-                <div class="chart-container">
-                    <h3 class="chart-title">🌱 Green Coding Metrics Distribution</h3>
-                    <canvas id="greenCodingChart" width="400" height="200"></canvas>
+                <div class="chart-container" style="padding: 20px; margin: 20px 0; max-width: 600px; margin-left: auto; margin-right: auto;">
+                    <h3 class="chart-title" style="font-size: 1.4em; margin-bottom: 15px;">🌱 Green Coding Metrics Distribution</h3>
+                    <div style="position: relative; height: 250px; width: 100%;">
+                        <canvas id="greenCodingChart" style="width: 100%; height: 100%;"></canvas>
+                    </div>
                 </div>
                 
                 <!-- Comprehensive Green Coding Breakdown -->
@@ -2651,21 +2641,6 @@ def generate_comprehensive_html_report(report_data):
     """
     
     html += """
-                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
-                            <div style="background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); border-radius: 15px; padding: 20px; color: #2d3436;">
-                                <h5 style="color: #d63031; margin-bottom: 15px; font-size: 1.2em;">� Phase 1: Quick Wins (Months 1-3)</h5>
-                                <div style="background: rgba(255,255,255,0.9); border-radius: 10px; padding: 15px; margin-bottom: 15px;">
-                                    <div style="font-weight: 600; margin-bottom: 8px;">🔧 Code Optimization</div>
-                                    <div style="font-size: 0.9em; color: #666; margin-bottom: 10px;">
-                                        • Replace 7 O(n²) loops with hash maps<br>
-            </div>
-            
-            <div class="footer">
-                <h3>🌱 Sustainable Code Evaluation Complete</h3>
-                <p>Generated by Advanced Sustainability Analyzer • Real-time Analysis • Fresh Recommendations</p>
-            </div>
-        </div>
-        
         <script>
             // Tab switching functionality
             function showTab(tabName) {
