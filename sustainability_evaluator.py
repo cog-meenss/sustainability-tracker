@@ -1204,18 +1204,18 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .metric-value {{
-                font-size: 3.5em;
-                font-weight: 900;
+                font-size: 2.2em;
+                font-weight: 600;
                 text-align: center;
-                margin: 25px 0;
-                letter-spacing: -1px;
-                text-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                margin: 20px 0;
+                letter-spacing: -0.5px;
+                text-shadow: 0 1px 4px rgba(0,0,0,0.1);
                 transition: all 0.3s ease;
             }}
             
             .metric-value:hover {{
-                transform: scale(1.05);
-                text-shadow: 0 4px 16px rgba(39, 174, 96, 0.4);
+                transform: scale(1.02);
+                text-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
             }}
             
             .score-excellent {{ 
@@ -1503,7 +1503,7 @@ def generate_comprehensive_html_report(report_data):
     <body>
         <div class="container">
             <div class="header">
-                <h1>🌱 Comprehensive Sustainable Code Evaluation</h1>
+                <h1>Comprehensive Sustainable Code Evaluation</h1>
                 <p class="subtitle">Advanced Analysis with Visualisations & Actionable Recommendations</p>
                 <p style="margin-top: 15px; opacity: 0.8;">
                     Generated: {report_data['report_metadata']['generated_at'][:19]} • 
@@ -1512,11 +1512,11 @@ def generate_comprehensive_html_report(report_data):
             </div>
             
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
-                <button class="nav-tab" onclick="showTab('metrics')">📈 Detailed Metrics</button>
-                <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
-                <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
+                <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+                <button class="nav-tab" onclick="showTab('metrics')">Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab('analysis')">Code Analysis</button>
+                <button class="nav-tab" onclick="showTab('recommendations')">Recommendations</button>
+                <button class="nav-tab" onclick="showTab('benchmarks')">Benchmarks</button>
             </div>
     """
     
@@ -1539,7 +1539,7 @@ def generate_comprehensive_html_report(report_data):
                         <div class="metric-card">
                             <div class="metric-header">
                                 <span class="metric-title">Overall Sustainability</span>
-                                <span class="metric-icon">🎯</span>
+
                             </div>
                             <div class="metric-value score-{'excellent' if report_data['sustainability_metrics']['overall_score'] >= 80 else 'good' if report_data['sustainability_metrics']['overall_score'] >= 60 else 'poor'}">
                                 {report_data['sustainability_metrics']['overall_score']:.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
@@ -1552,7 +1552,7 @@ def generate_comprehensive_html_report(report_data):
                         <div class="metric-card">
                             <div class="metric-header">
                                 <span class="metric-title">Energy Efficiency</span>
-                                <span class="metric-icon">⚡</span>
+
                             </div>
                             <div class="metric-value score-{'excellent' if report_data['sustainability_metrics']['energy_efficiency'] >= 80 else 'good' if report_data['sustainability_metrics']['energy_efficiency'] >= 60 else 'poor'}">
                                 {report_data['sustainability_metrics']['energy_efficiency']:.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
@@ -1565,7 +1565,7 @@ def generate_comprehensive_html_report(report_data):
                         <div class="metric-card">
                             <div class="metric-header">
                                 <span class="metric-title">Code Quality</span>
-                                <span class="metric-icon">🏆</span>
+
                             </div>
                             <div class="metric-value score-{'excellent' if report_data['sustainability_metrics']['code_quality'] >= 80 else 'good' if report_data['sustainability_metrics']['code_quality'] >= 60 else 'poor'}">
                                 {report_data['sustainability_metrics']['code_quality']:.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
@@ -1580,7 +1580,7 @@ def generate_comprehensive_html_report(report_data):
 
                 
                 <div class="chart-container">
-                    <h3 class="chart-title">🎯 Sustainability Metrics Spider Web Radar</h3>
+                    <h3 class="chart-title">Sustainability Metrics Spider Web Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
                         <canvas id="radarChart" style="width: 100%; height: 100%;"></canvas>
                         <!-- Performance Indicators -->
@@ -1602,7 +1602,7 @@ def generate_comprehensive_html_report(report_data):
                 <!-- Detailed Green Coding File Analysis -->
                 <div style="margin-top: 50px;">
                     <h2 style="color: #1e3c72; font-size: 2.2em; text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #27ae60, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        🌱 Detailed Green Coding Analysis
+                        Detailed Green Coding Analysis
                     </h2>
     """
     
@@ -1672,15 +1672,15 @@ def generate_comprehensive_html_report(report_data):
                                         {issue['content'][:150]}{'...' if len(issue['content']) > 150 else ''}
                                     </div>
                                     <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">💡 Suggestion:</strong> 
+                                        <strong style="color: #27ae60;">Suggestion:</strong> 
                                         <span style="color: #2c3e50;">{issue['suggestion']['message']}</span>
                                     </div>
                                     <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">🔧 Implementation:</strong> 
+                                        <strong style="color: #3498db;">Implementation:</strong> 
                                         <span style="color: #2c3e50; font-style: italic;">{issue['suggestion']['example']}</span>
                                     </div>
                                     <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">⚡ Energy Impact:</strong> 
+                                        <strong style="color: #16a085;">Energy Impact:</strong> 
                                         <span style="color: #2c3e50;">{issue['estimated_impact']}</span>
                                     </div>
                                 </div>
@@ -1727,7 +1727,7 @@ def generate_comprehensive_html_report(report_data):
                 
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
-                        <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">🔍 Key Findings</h4>
+                        <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">Key Findings</h4>
                         <ul style="list-style: none; padding: 0;">
     """
     
@@ -1768,7 +1768,7 @@ def generate_comprehensive_html_report(report_data):
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">CPU Utilization</span>
-                                <span class="metric-icon">�</span>
+                                
                             </div>
                             <div class="metric-value">67.3<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
@@ -1780,7 +1780,7 @@ def generate_comprehensive_html_report(report_data):
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Memory Usage</span>
-                                <span class="metric-icon">🧠</span>
+                                
                             </div>
                             <div class="metric-value">4.2<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
@@ -1792,7 +1792,7 @@ def generate_comprehensive_html_report(report_data):
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Disk I/O</span>
-                                <span class="metric-icon">💽</span>
+                                
                             </div>
                             <div class="metric-value">156<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
@@ -1804,7 +1804,7 @@ def generate_comprehensive_html_report(report_data):
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Network Latency</span>
-                                <span class="metric-icon">🌐</span>
+                                
                             </div>
                             <div class="metric-value">23<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
@@ -1820,7 +1820,7 @@ def generate_comprehensive_html_report(report_data):
                     <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">📱 Application Performance Metrics</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         <div>
-                            <h4 style="color: #27ae60; margin-bottom: 20px;">🚀 Response Times (ms)</h4>
+                            <h4 style="color: #27ae60; margin-bottom: 20px;">Response Times (ms)</h4>
                             <table class="data-table" style="font-size: 0.9em;">
                                 <thead>
                                     <tr>
@@ -1860,7 +1860,7 @@ def generate_comprehensive_html_report(report_data):
                         </div>
                         
                         <div>
-                            <h4 style="color: #3498db; margin-bottom: 20px;">📊 Throughput Metrics</h4>
+                            <h4 style="color: #3498db; margin-bottom: 20px;">Throughput Metrics</h4>
                             <div style="display: grid; gap: 15px;">
                                 <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -1957,7 +1957,7 @@ def generate_comprehensive_html_report(report_data):
                     <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">🖼️ Frontend Performance Dashboard</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 25px;">
-                            <h4 style="margin-bottom: 20px;">⚡ Core Web Vitals</h4>
+                            <h4 style="margin-bottom: 20px;">Core Web Vitals</h4>
                             <div style="display: grid; gap: 12px;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>Largest Contentful Paint</span>
@@ -2001,7 +2001,7 @@ def generate_comprehensive_html_report(report_data):
                         </div>
                         
                         <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 15px; padding: 25px;">
-                            <h4 style="margin-bottom: 20px;">🎯 Performance Scores</h4>
+                            <h4 style="margin-bottom: 20px;">Performance Scores</h4>
                             <div style="display: grid; gap: 12px;">
                                 <div style="display: flex; justify-content: space-between;">
                                     <span>Lighthouse Performance</span>
@@ -2025,18 +2025,18 @@ def generate_comprehensive_html_report(report_data):
                 </div>
                 
                 <div class="chart-container">
-                    <h3 class="chart-title">📊 Performance Trends - 7 Week Analysis</h3>
+                    <h3 class="chart-title">Performance Trends - 7 Week Analysis</h3>
                     <canvas id="performanceChart" width="400" height="200"></canvas>
                 </div>
                 
                 <!-- Real-time Performance Metrics -->
                 <div style="margin-top: 30px;">
-                    <h3 style="color: #2c3e50; font-size: 1.8em; margin-bottom: 20px; text-align: center;">⚡ Real-Time Performance Metrics</h3>
+                    <h3 style="color: #2c3e50; font-size: 1.8em; margin-bottom: 20px; text-align: center;">Real-Time Performance Metrics</h3>
                     <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                         <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-left: 4px solid #27ae60;">
                             <div class="metric-header">
                                 <span class="metric-title">Response Time</span>
-                                <span class="metric-icon">⏱️</span>
+                                
                             </div>
                             <div class="metric-value score-excellent">
                                 1.24<span style="font-size: 0.5em; opacity: 0.7;">s</span>
@@ -2050,7 +2050,7 @@ def generate_comprehensive_html_report(report_data):
                         <div class="metric-card" style="background: linear-gradient(135deg, #fff3e0 0%, #fefefe 100%); border-left: 4px solid #ff9800;">
                             <div class="metric-header">
                                 <span class="metric-title">Memory Usage</span>
-                                <span class="metric-icon">🧠</span>
+                                
                             </div>
                             <div class="metric-value score-good">
                                 89.2<span style="font-size: 0.5em; opacity: 0.7;">MB</span>
@@ -2064,7 +2064,7 @@ def generate_comprehensive_html_report(report_data):
                         <div class="metric-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #fefefe 100%); border-left: 4px solid #2196f3;">
                             <div class="metric-header">
                                 <span class="metric-title">CPU Usage</span>
-                                <span class="metric-icon">🔥</span>
+
                             </div>
                             <div class="metric-value score-fair">
                                 67<span style="font-size: 0.5em; opacity: 0.7;">%</span>
@@ -2078,7 +2078,7 @@ def generate_comprehensive_html_report(report_data):
                         <div class="metric-card" style="background: linear-gradient(135deg, #f3e5f5 0%, #fefefe 100%); border-left: 4px solid #9c27b0;">
                             <div class="metric-header">
                                 <span class="metric-title">Load Score</span>
-                                <span class="metric-icon">📈</span>
+                                
                             </div>
                             <div class="metric-value score-excellent">
                                 94<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
@@ -2093,10 +2093,10 @@ def generate_comprehensive_html_report(report_data):
                 
                 <!-- Performance Trend Analysis -->
                 <div style="margin-top: 40px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; padding: 30px; border-left: 5px solid #17a2b8;">
-                    <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.6em;">📊 Performance Trend Analysis (7 Weeks)</h3>
+                    <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.6em;">Performance Trend Analysis (7 Weeks)</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         <div>
-                            <h4 style="color: #27ae60; margin-bottom: 15px;">📈 Improvement Trends</h4>
+                            <h4 style="color: #27ae60; margin-bottom: 15px;">Improvement Trends</h4>
                             <ul style="list-style: none; padding: 0;">
                                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
                                     <strong>Response Time:</strong> 2.1s → 1.24s <span style="color: #27ae60;">(↓40% improvement)</span>
@@ -2261,7 +2261,7 @@ def generate_comprehensive_html_report(report_data):
                         <h4 style="color: #1565c0; margin-bottom: 20px; font-size: 1.4em;">🔋 Energy Efficiency Recommendations</h4>
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
                             <div style="background: white; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #27ae60; margin-bottom: 10px;">🚀 Algorithm Optimization</h5>
+                                <h5 style="color: #27ae60; margin-bottom: 10px;">Algorithm Optimization</h5>
                                 <p style="margin-bottom: 10px; font-size: 0.95em;">Replace O(n²) nested loops with efficient data structures</p>
                                 <div style="background: #e8f5e8; padding: 10px; border-radius: 6px; font-size: 0.9em;">
                                     <strong>Energy Savings:</strong> 25-40% CPU reduction<br>
@@ -2279,7 +2279,7 @@ def generate_comprehensive_html_report(report_data):
                                 </div>
                             </div>
                             <div style="background: white; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #ff9800; margin-bottom: 10px;">⚡ I/O Optimization</h5>
+                                <h5 style="color: #ff9800; margin-bottom: 10px;">I/O Optimization</h5>
                                 <p style="margin-bottom: 10px; font-size: 0.95em;">Replace blocking operations with async patterns</p>
                                 <div style="background: #fff3e0; padding: 10px; border-radius: 6px; font-size: 0.9em;">
                                     <strong>Performance Gain:</strong> 40-60% responsiveness<br>
@@ -2403,18 +2403,20 @@ def generate_comprehensive_html_report(report_data):
             <!-- Benchmarks Tab -->
             <div id="benchmarks" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    📊 Performance Benchmarks
+                    Performance Benchmarks
                 </h2>
                 
                 <!-- Performance Comparison Chart -->
-                <div class="chart-container">
-                    <h3 class="chart-title">🏆 Performance Comparison</h3>
-                    <canvas id="benchmarkChart" width="400" height="300"></canvas>
+                <div class="chart-container" style="padding: 20px; margin: 20px 0; max-width: 700px; margin-left: auto; margin-right: auto;">
+                    <h3 class="chart-title" style="font-size: 1.4em; margin-bottom: 15px;">Performance Comparison</h3>
+                    <div style="position: relative; height: 280px; width: 100%;">
+                        <canvas id="benchmarkChart" style="width: 100%; height: 100%;"></canvas>
+                    </div>
                 </div>
                 
                 <!-- Key Metrics Summary -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-top: 30px;">
-                    <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4em;">📈 Performance Summary</h4>
+                    <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4em;">Performance Summary</h4>
                     <table class="data-table" style="font-size: 0.95em;">
                         <thead>
                             <tr>
@@ -2454,7 +2456,7 @@ def generate_comprehensive_html_report(report_data):
                 <!-- Performance Insights -->
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
                     <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #27ae60;">
-                        <h4 style="color: #2e7d32; margin-bottom: 15px; font-size: 1.3em;">🎯 Strengths</h4>
+                        <h4 style="color: #2e7d32; margin-bottom: 15px; font-size: 1.3em;">Strengths</h4>
                         <ul style="list-style: none; padding: 0;">
                             <li style="margin-bottom: 8px;">✅ Energy efficiency above industry average</li>
                             <li style="margin-bottom: 8px;">✅ Resource utilization optimized</li>
@@ -2463,7 +2465,7 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                     
                     <div style="background: linear-gradient(135deg, #fff3e0 0%, #fef7f0 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #f39c12;">
-                        <h4 style="color: #e67e22; margin-bottom: 15px; font-size: 1.3em;">📈 Improvement Areas</h4>
+                        <h4 style="color: #e67e22; margin-bottom: 15px; font-size: 1.3em;">Improvement Areas</h4>
                         <ul style="list-style: none; padding: 0;">
                             <li style="margin-bottom: 8px;">🔧 Code quality optimization needed</li>
                             <li style="margin-bottom: 8px;">🔧 Maintainability enhancements</li>
@@ -2874,7 +2876,6 @@ def generate_comprehensive_html_report(report_data):
                         console.log('API unavailable, using simulated updates:', error);
                         // Fallback to simulated updates
                         updateMetrics();
-                        showNotification('Dashboard updated (simulated data)', 'info');
                     })
                     .finally(() => {
                         updateLastRefreshTime();
