@@ -1447,11 +1447,11 @@ def generate_comprehensive_html_report(report_data):
             </div>
             
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
-                <button class="nav-tab" onclick="showTab('metrics')">📈 Detailed Metrics</button>
-                <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
-                <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
+                <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+                <button class="nav-tab" onclick="showTab('metrics')"> Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab('analysis')"> Code Analysis</button>
+                <button class="nav-tab" onclick="showTab('recommendations')">Recommendations</button>
+                <button class="nav-tab" onclick="showTab('benchmarks')">Benchmarks</button>
             </div>
     """
     
