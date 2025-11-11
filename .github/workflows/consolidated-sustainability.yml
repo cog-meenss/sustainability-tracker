@@ -60,11 +60,19 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           OUTPUT_BASE="report-${TIMESTAMP}"
           
-          python3 sustainability_evaluator.py --path . --format html --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" || true
-          python3 sustainability_evaluator.py --path . --format json --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" || true
+          echo "🔍 Generating reports..."
+          python3 sustainability_evaluator.py --path . --format html --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" || echo "HTML generation failed"
+          python3 sustainability_evaluator.py --path . --format json --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" || echo "JSON generation failed"
+          
+          # Debug: Check what was created
+          echo "📋 Reports directory after generation:"
+          ls -la ${{ env.REPORT_PATH }}/ || echo "No reports directory"
           
           if [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" ]; then
             cp "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" "${{ env.REPORT_PATH }}/latest-report.html"
+            echo "✅ Created latest-report.html"
+          else
+            echo "❌ No HTML report was generated"
           fi
           
           if [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" ]; then
@@ -98,7 +106,20 @@ jobs:
       if: github.ref == 'refs/heads/main'
       run: |
         mkdir -p pages
-        cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
+        
+        # List what's in sustainability-reports
+        echo "📁 Contents of sustainability-reports directory:"
+        ls -la ${{ env.REPORT_PATH }}/ || echo "Directory does not exist"
+        
+        # Copy reports to pages directory
+        if [ -d "${{ env.REPORT_PATH }}" ]; then
+          cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || echo "No files to copy from reports"
+        fi
+        
+        # Ensure we have a latest-report.html
+        if [ ! -f "pages/latest-report.html" ] && [ -f "${{ env.REPORT_PATH }}/latest-report.html" ]; then
+          cp "${{ env.REPORT_PATH }}/latest-report.html" pages/
+        fi
         
         # Copy the existing index.html from root if it exists, or create a simple landing page
         if [ -f "index.html" ]; then
@@ -180,6 +201,16 @@ jobs:
               </div>
           </body>
           </html>' > pages/index.html
+        fi
+        
+        # Debug: List final pages directory contents
+        echo "📋 Final pages directory contents:"
+        ls -la pages/ || echo "Pages directory is empty"
+        
+        # Ensure we have at least an index.html
+        if [ ! -f "pages/index.html" ]; then
+          echo "⚠️ No index.html found, creating basic one"
+          echo '<html><body><h1>Sustainability Tracker</h1><p>Report generation in progress...</p></body></html>' > pages/index.html
         fi
         
     - name: 🚀 Deploy to GitHub Pages
