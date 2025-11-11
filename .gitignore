@@ -51,3 +51,6 @@ __pycache__/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Sustainability Reports
+sustainability-reports/

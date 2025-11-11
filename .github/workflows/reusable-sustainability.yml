@@ -1,0 +1,265 @@
+# Reusable Sustainability Workflow Template
+# Copy this file to .github/workflows/sustainability.yml in any project
+
+name: 🌱 Sustainability Analysis
+
+on:
+  workflow_call:
+    inputs:
+      project_type:
+        description: 'Project type (python, javascript, java, go, mixed)'
+        required: false
+        default: 'mixed'
+        type: string
+      min_sustainability_score:
+        description: 'Minimum sustainability score threshold'
+        required: false
+        default: 60
+        type: number
+      analysis_depth:
+        description: 'Analysis depth (quick, standard, comprehensive)'
+        required: false
+        default: 'standard'
+        type: string
+      enable_security_scan:
+        description: 'Enable security vulnerability scanning'
+        required: false
+        default: true
+        type: boolean
+      deploy_dashboard:
+        description: 'Deploy results to GitHub Pages'
+        required: false
+        default: true
+        type: boolean
+    secrets:
+      SLACK_WEBHOOK_URL:
+        required: false
+    outputs:
+      sustainability_score:
+        description: "Overall sustainability score"
+        value: ${{ jobs.sustainability-analysis.outputs.score }}
+      quality_gate_passed:
+        description: "Whether quality gate passed"
+        value: ${{ jobs.sustainability-analysis.outputs.quality_gate }}
+      recommendations_count:
+        description: "Number of recommendations"
+        value: ${{ jobs.sustainability-analysis.outputs.recommendations }}
+
+env:
+  REPORT_PATH: 'sustainability-reports'
+  PYTHON_VERSION: '3.11'
+  NODE_VERSION: '20'
+
+jobs:
+  sustainability-analysis:
+    name: 🌱 Analyze Sustainability
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    outputs:
+      score: ${{ steps.analysis.outputs.sustainability_score }}
+      quality_gate: ${{ steps.analysis.outputs.quality_gate_passed }}
+      recommendations: ${{ steps.analysis.outputs.recommendations_count }}
+    
+    steps:
+    - name: 📥 Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: 🐍 Setup Python
+      if: inputs.project_type == 'python' || inputs.project_type == 'mixed'
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        cache: 'pip'
+
+    - name: 🟢 Setup Node.js  
+      if: inputs.project_type == 'javascript' || inputs.project_type == 'mixed'
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: 📦 Install Dependencies
+      run: |
+        # Install based on project type
+        if [[ "${{ inputs.project_type }}" == "python" || "${{ inputs.project_type }}" == "mixed" ]]; then
+          pip install radon bandit safety pylint flake8 requests psutil
+        fi
+        
+        if [[ "${{ inputs.project_type }}" == "javascript" || "${{ inputs.project_type }}" == "mixed" ]]; then
+          npm install -g eslint jshint 2>/dev/null || echo "Node.js tools installation skipped"
+        fi
+
+    - name: 📊 Use Existing Sustainability Evaluator
+      run: |
+        # Use the sustainability evaluator that's already in the repository
+        if [ ! -f "sustainability_evaluator.py" ]; then
+          echo "❌ sustainability_evaluator.py not found in repository"
+          exit 1
+        fi
+        chmod +x sustainability_evaluator.py
+
+    - name: 🌱 Run Sustainability Analysis  
+      id: analysis
+      run: |
+        mkdir -p ${{ env.REPORT_PATH }}
+        
+        # Configure analysis based on inputs
+        ARGS="--path . --format both"
+        
+        # Run analysis
+        python3 sustainability_evaluator.py $ARGS --output ${{ env.REPORT_PATH }}/report || echo "Analysis completed with warnings"
+        
+        # Extract results if report exists
+        if [ -f "${{ env.REPORT_PATH }}/report.json" ]; then
+          SCORE=$(python3 -c 'import json; f=open("${{ env.REPORT_PATH }}/report.json"); data=json.load(f); print(f"{data.get(\"sustainability_metrics\", {}).get(\"overall_score\", 50):.1f}")' 2>/dev/null || echo "50.0")
+          
+          RECOMMENDATIONS=$(python3 -c 'import json; f=open("${{ env.REPORT_PATH }}/report.json"); data=json.load(f); print(len(data.get("recommendations", [])))' 2>/dev/null || echo "0")
+          
+          # Check quality gate
+          if (( $(echo "$SCORE >= ${{ inputs.min_sustainability_score }}" | bc -l 2>/dev/null || echo "0") )); then
+            QUALITY_GATE="true"
+          else
+            QUALITY_GATE="false"
+          fi
+          
+          echo "sustainability_score=$SCORE" >> $GITHUB_OUTPUT
+          echo "recommendations_count=$RECOMMENDATIONS" >> $GITHUB_OUTPUT
+          echo "quality_gate_passed=$QUALITY_GATE" >> $GITHUB_OUTPUT
+          
+          echo "📊 Analysis Results:"
+          echo "  • Sustainability Score: $SCORE/${{ inputs.min_sustainability_score }}"
+          echo "  • Quality Gate: $([ "$QUALITY_GATE" = "true" ] && echo "✅ PASSED" || echo "❌ FAILED")"
+          echo "  • Recommendations: $RECOMMENDATIONS"
+        else
+          echo "❌ Analysis report not generated"
+          echo "sustainability_score=0" >> $GITHUB_OUTPUT
+          echo "recommendations_count=0" >> $GITHUB_OUTPUT
+          echo "quality_gate_passed=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: 🔒 Security Scan
+      if: inputs.enable_security_scan
+      run: |
+        mkdir -p ${{ env.REPORT_PATH }}/security
+        
+        # Python security scan
+        if command -v bandit >/dev/null 2>&1; then
+          bandit -r . -f json -o ${{ env.REPORT_PATH }}/security/bandit.json --exclude ".venv,node_modules" 2>/dev/null || true
+        fi
+        
+        # Node.js security scan
+        if [ -f "package.json" ] && command -v npm >/dev/null 2>&1; then
+          npm audit --json > ${{ env.REPORT_PATH }}/security/npm-audit.json 2>/dev/null || true
+        fi
+        
+        echo "🔒 Security scanning completed"
+
+    - name: 📤 Upload Analysis Results
+      uses: actions/upload-artifact@v4
+      with:
+        name: sustainability-analysis-${{ github.sha }}
+        path: ${{ env.REPORT_PATH }}/
+        retention-days: 30
+
+    - name: 💬 PR Comment
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      env:
+        SCORE: ${{ steps.analysis.outputs.sustainability_score }}
+        QUALITY_GATE: ${{ steps.analysis.outputs.quality_gate_passed }}
+        RECOMMENDATIONS: ${{ steps.analysis.outputs.recommendations_count }}
+      with:
+        script: |
+          const score = process.env.SCORE || '0';
+          const passed = process.env.QUALITY_GATE === 'true';
+          const recommendations = process.env.RECOMMENDATIONS || '0';
+          
+          const emoji = passed ? '✅' : '❌';
+          const status = passed ? 'PASSED' : 'FAILED';
+          
+          const body = `## 🌱 Sustainability Analysis Results
+          
+          ${emoji} **Quality Gate ${status}**
+          
+          | Metric | Value | Status |
+          |--------|-------|--------|
+          | 🌱 Sustainability Score | **${score}/100** | ${score >= 60 ? '✅' : '❌'} |
+          | 💡 Recommendations | **${recommendations}** | ${recommendations <= 3 ? '✅' : '⚠️'} |
+          | 🎯 Quality Threshold | **${{ inputs.min_sustainability_score }}/100** | ${passed ? '✅' : '❌'} |
+          
+          ${passed ? 
+            '🎉 Great work! Your code meets sustainability standards.' : 
+            '🔧 Please review the sustainability recommendations to improve your score.'
+          }
+          
+          ---
+          *🤖 Generated by Reusable Sustainability Pipeline*`;
+          
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
+
+  deploy-dashboard:
+    name: 🚀 Deploy Dashboard
+    needs: sustainability-analysis
+    if: inputs.deploy_dashboard && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+      
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+    - name: 📊 Download Analysis Results
+      uses: actions/download-artifact@v4
+      with:
+        name: sustainability-analysis-${{ github.sha }}
+        path: dashboard/
+        
+    - name: 🌐 Setup GitHub Pages
+      uses: actions/configure-pages@v5
+      
+    - name: 🏗️ Build Dashboard
+      run: |
+        # Create a simple dashboard if report exists
+        if [ -f "dashboard/report.html" ]; then
+          cp dashboard/report.html dashboard/index.html
+        else
+          # Create basic dashboard
+          cat > dashboard/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>Sustainability Dashboard</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+          </head>
+          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 40px; background: linear-gradient(135deg, #667eea, #764ba2);">
+            <div style="background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.2);">
+              <h1>🌱 Sustainability Dashboard</h1>
+              <p>Sustainability analysis completed. Check the Actions tab for detailed results.</p>
+            </div>
+          </body>
+          </html>
+        EOF
+        fi
+        
+    - name: 🚀 Upload Pages Artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: dashboard/
+        
+    - name: 🌐 Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

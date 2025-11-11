@@ -1,0 +1,21 @@
+name: 🌱 Sustainability Check
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    - cron: '0 2 * * 1'  # Weekly on Monday 2 AM
+
+jobs:
+  sustainability:
+    uses: ./.github/workflows/reusable-sustainability.yml
+    with:
+      project_type: 'mixed'
+      min_sustainability_score: 60
+      analysis_depth: 'standard'
+      enable_security_scan: true
+      deploy_dashboard: true
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

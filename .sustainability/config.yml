@@ -1,0 +1,32 @@
+# Sustainability Pipeline Configuration for Tracker
+project:
+  name: Tracker
+  type: mixed
+  
+analysis:
+  depth: standard
+  focus_areas:
+    - energy_efficiency
+    - code_quality  
+    - security
+    - maintainability
+
+thresholds:
+  sustainability_score: 60
+  energy_efficiency: 50
+  code_quality: 70
+  security_score: 75
+
+reporting:
+  format: both  # html, json, both
+  dashboard: true
+  trends: true
+  pr_comments: true
+
+quality_gates:
+  block_on_fail: false
+  require_improvement: true
+  
+notifications:
+  slack: false  # Set to true and add SLACK_WEBHOOK_URL secret to enable
+  pr_comments: true

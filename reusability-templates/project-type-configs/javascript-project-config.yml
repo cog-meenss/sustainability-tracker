@@ -1,0 +1,196 @@
+# JavaScript/Node.js Project Sustainability Configuration
+
+project:
+  name: "JavaScript/Node.js Project"
+  type: "javascript"
+  description: "Optimized for JavaScript projects including React, Vue, Angular, Node.js servers, and npm packages"
+
+analysis:
+  depth: standard
+  languages: ["javascript", "typescript"]
+  
+  focus_areas:
+    - bundle_size
+    - runtime_performance
+    - security
+    - code_quality
+    - dependency_management
+    
+  tools:
+    code_quality:
+      - eslint         # JavaScript linting
+      - jshint         # Alternative linter
+      - prettier       # Code formatting check
+      - tsc           # TypeScript compiler (if applicable)
+    
+    security:
+      - npm_audit      # npm security audit
+      - snyk          # Dependency vulnerability scanner (optional)
+      
+    performance:
+      - webpack-bundle-analyzer  # Bundle size analysis
+      - lighthouse    # Web performance (for frontend)
+
+thresholds:
+  sustainability_score: 65
+  energy_efficiency: 60
+  code_quality: 65
+  security_score: 70
+  bundle_size_mb: 2.0
+  
+  # JavaScript-specific thresholds
+  eslint_errors: 0
+  eslint_warnings: 10
+  bundle_size_increase: 10  # Percentage
+  
+exclusions:
+  patterns:
+    - "node_modules/"
+    - "dist/"
+    - "build/"
+    - "coverage/"
+    - "*.min.js"
+    - "*.bundle.js"
+    - ".next/"
+    - ".nuxt/"
+    - "public/assets/"
+
+analysis_rules:
+  javascript_specific:
+    # Performance anti-patterns
+    - pattern: "document\\.getElementById"
+      severity: "low"
+      message: "Consider using querySelector for consistency"
+      
+    - pattern: "var\\s+"
+      severity: "medium"
+      message: "Use 'const' or 'let' instead of 'var' for better scoping"
+      
+    - pattern: "== null|!= null"
+      severity: "low"
+      message: "Use === or !== for strict equality comparison"
+      
+    - pattern: "new Date\\(\\)"
+      severity: "low"
+      message: "Consider using more efficient date libraries like date-fns"
+      
+    # React-specific patterns
+    - pattern: "useEffect\\(\\s*\\(\\)\\s*=>\\s*{[^}]*}\\s*,\\s*\\[\\]\\s*\\)"
+      severity: "medium"
+      message: "Consider if useEffect dependencies are correctly specified"
+      
+    # Node.js patterns  
+    - pattern: "require\\s*\\(\\s*['\"]fs['\"]\\s*\\)"
+      severity: "low"
+      message: "Consider using fs/promises for async file operations"
+
+reporting:
+  format: both
+  dashboard: true
+  trends: true
+  pr_comments: true
+  
+  javascript_metrics:
+    - bundle_size
+    - eslint_issues
+    - security_vulnerabilities
+    - dependency_count
+    - outdated_dependencies
+    - performance_score
+
+quality_gates:
+  block_on_fail: false
+  require_improvement: true
+  
+  # Fail conditions
+  fail_on:
+    - security_score < 60
+    - critical_vulnerabilities > 0
+    - bundle_size > 5  # MB
+    - eslint_errors > 0
+
+notifications:
+  slack: false
+  pr_comments: true
+  email: false
+  
+  # Notify on specific conditions
+  alert_conditions:
+    - bundle_size_increase > 20
+    - high_severity_vulnerabilities > 0
+    - performance_regression: true
+
+# Framework-specific configurations
+frameworks:
+  react:
+    additional_checks:
+      - "Unused React imports"
+      - "Missing React keys in lists"
+      - "Inefficient re-renders"
+      - "Large component files"
+    
+  vue:
+    additional_checks:
+      - "Template syntax errors"
+      - "Unused computed properties"
+      
+  angular:
+    additional_checks:
+      - "OnPush strategy usage"
+      - "Track by functions"
+      - "Lazy loading implementation"
+      
+  nodejs:
+    additional_checks:
+      - "Synchronous file operations"
+      - "Missing error handling"
+      - "Unhandled promise rejections"
+
+# Package management
+dependencies:
+  security_scan: true
+  outdated_check: true
+  license_check: true
+  
+  # npm-specific configurations
+  npm_config:
+    audit_level: "moderate"
+    production_only: false
+    
+  recommendations:
+    - "Use npm ci in production for faster, reliable builds"
+    - "Regularly update dependencies with npm update"
+    - "Use .nvmrc for Node.js version consistency"
+    - "Consider using yarn for better dependency resolution"
+
+# Bundle optimization
+bundle_optimization:
+  enable: true
+  
+  checks:
+    - "Large library usage (lodash, moment.js)"
+    - "Duplicate dependencies"
+    - "Unused code (tree-shaking opportunities)"
+    - "Image optimization"
+    - "Code splitting implementation"
+    
+  recommendations:
+    - "Use dynamic imports for code splitting"
+    - "Optimize images and use modern formats (WebP, AVIF)"
+    - "Consider lighter alternatives (date-fns vs moment.js)"
+    - "Enable tree-shaking in build configuration"
+
+# Performance monitoring
+performance:
+  enable_lighthouse: true
+  
+  targets:
+    - performance_score: 90
+    - accessibility_score: 90
+    - best_practices_score: 90
+    - seo_score: 80
+    
+  web_vitals:
+    - largest_contentful_paint: 2.5  # seconds
+    - first_input_delay: 100         # milliseconds
+    - cumulative_layout_shift: 0.1   # score

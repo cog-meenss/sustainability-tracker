@@ -1,0 +1,18 @@
+# Sustainability Analysis Exclusions
+# Add patterns for files/directories to exclude from analysis
+
+# Common exclusions
+node_modules/
+.venv/
+venv/
+__pycache__/
+.git/
+.pytest_cache/
+coverage/
+dist/
+build/
+
+# Project-specific exclusions (customize as needed)
+# legacy/
+# vendor/
+# third_party/

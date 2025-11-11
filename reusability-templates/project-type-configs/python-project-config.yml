@@ -1,0 +1,139 @@
+# Python Project Sustainability Configuration
+
+project:
+  name: "Python Project"
+  type: "python"
+  description: "Optimized for Python applications including Django, Flask, FastAPI, and data science projects"
+
+analysis:
+  depth: standard
+  languages: ["python"]
+  
+  focus_areas:
+    - energy_efficiency
+    - memory_usage
+    - code_quality
+    - security
+    - dependency_management
+    
+  tools:
+    code_quality:
+      - radon          # Complexity analysis
+      - pylint         # Code quality
+      - flake8         # Style and error checking
+      - black          # Code formatting check
+    
+    security:
+      - bandit         # Security vulnerability scanner
+      - safety         # Dependency vulnerability check
+      
+    performance:
+      - memory_profiler # Memory usage analysis
+      - py-spy         # Performance profiling (optional)
+
+thresholds:
+  sustainability_score: 60
+  energy_efficiency: 55
+  code_quality: 70
+  security_score: 75
+  memory_efficiency: 60
+  
+  # Python-specific thresholds
+  cyclomatic_complexity: 10
+  maintainability_index: 50
+  
+exclusions:
+  patterns:
+    - "venv/"
+    - ".venv/"
+    - "__pycache__/"
+    - "*.pyc"
+    - ".pytest_cache/"
+    - "migrations/"
+    - "tests/fixtures/"
+    - "setup.py"
+    - "manage.py"
+
+analysis_rules:
+  python_specific:
+    # Detect inefficient patterns
+    - pattern: "import \\*"
+      severity: "medium"
+      message: "Avoid wildcard imports for better performance and readability"
+      
+    - pattern: "pandas\\.read_csv\\([^)]*\\)"
+      severity: "low" 
+      message: "Consider using chunking for large CSV files to optimize memory"
+      
+    - pattern: "range\\(len\\("
+      severity: "medium"
+      message: "Use enumerate() instead of range(len()) for better performance"
+      
+    - pattern: "\\+\\s*str\\("
+      severity: "medium"
+      message: "Use f-strings or .format() instead of string concatenation"
+
+reporting:
+  format: both
+  dashboard: true
+  trends: true
+  pr_comments: true
+  
+  python_metrics:
+    - lines_of_code
+    - cyclomatic_complexity
+    - maintainability_index
+    - security_issues
+    - dependency_vulnerabilities
+    - memory_usage_patterns
+
+quality_gates:
+  block_on_fail: false
+  require_improvement: true
+  
+  # Fail conditions
+  fail_on:
+    - security_score < 70
+    - critical_vulnerabilities > 0
+    - high_complexity_functions > 5
+
+notifications:
+  slack: false
+  pr_comments: true
+  email: false
+  
+  # Notify on specific conditions
+  alert_conditions:
+    - sustainability_score < 50
+    - security_vulnerabilities > 0
+    - memory_leaks_detected: true
+
+# Framework-specific configurations
+frameworks:
+  django:
+    additional_checks:
+      - "SECRET_KEY in settings"
+      - "DEBUG = True in production"
+      - "Insecure middleware usage"
+    
+  flask:
+    additional_checks:
+      - "app.run(debug=True)"
+      - "Insecure session configuration"
+      
+  fastapi:
+    additional_checks:
+      - "Missing input validation"
+      - "Synchronous database calls"
+
+# Package management
+dependencies:
+  security_scan: true
+  outdated_check: true
+  license_check: false
+  
+  # Package-specific rules
+  recommendations:
+    - "Use poetry or pipenv for dependency management"
+    - "Pin dependency versions in production"
+    - "Regularly update security-critical packages"
