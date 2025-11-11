@@ -2409,7 +2409,7 @@ def generate_comprehensive_html_report(report_data):
             <!-- Recommendations Tab -->
             <div id="recommendations" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    💡 Sustainability Recommendations
+                    Sustainability Recommendations
                 </h2>
                 
                 <!-- Summary Stats -->
@@ -2507,7 +2507,7 @@ def generate_comprehensive_html_report(report_data):
                     <div class="recommendation-card {priority_class}">
                         <div class="recommendation-header">
                             <span class="recommendation-title">{rec.get('title', 'Optimization Opportunity')}</span>
-                            <span class="priority-badge">{rec.get('priority', 'Medium').title()} Priority</span>
+                            <span class="priority-badge">{rec.get('priority', 'medium').title()} Priority</span>
                         </div>
                         
                         <div style="margin: 15px 0;">
@@ -2975,32 +2975,6 @@ def generate_comprehensive_html_report(report_data):
                 const controlsDiv = document.createElement('div');
                 controlsDiv.innerHTML = `
                     <div style="margin-top: 20px; display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-                        <button id="refreshBtn" onclick="refreshData()" style="
-                            background: linear-gradient(135deg, #27ae60, #2ecc71);
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 25px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
-                            transition: all 0.3s ease;
-                        ">
-                            🔄 Refresh Now
-                        </button>
-                        <button id="toggleAutoRefresh" onclick="toggleAutoRefresh()" style="
-                            background: linear-gradient(135deg, #16a085, #1abc9c);
-                            color: white;
-                            border: none;
-                            padding: 12px 24px;
-                            border-radius: 25px;
-                            font-weight: bold;
-                            cursor: pointer;
-                            box-shadow: 0 4px 15px rgba(22, 160, 133, 0.3);
-                            transition: all 0.3s ease;
-                        ">
-                            ⏰ Auto-Refresh: ON
-                        </button>
                         <div id="lastUpdate" style="
                             background: rgba(255,255,255,0.2);
                             padding: 12px 20px;
@@ -3011,7 +2985,7 @@ def generate_comprehensive_html_report(report_data):
                             align-items: center;
                             gap: 8px;
                         ">
-                            📊 Last updated: <span id="updateTime">Now</span>
+                            Last updated: <span id="updateTime">Now</span>
                         </div>
                     </div>
                 `;
@@ -3023,7 +2997,7 @@ def generate_comprehensive_html_report(report_data):
                 
                 isUpdating = true;
                 const refreshBtn = document.getElementById('refreshBtn');
-                refreshBtn.innerHTML = '⏳ Updating...';
+                refreshBtn.innerHTML = 'Updating...';
                 refreshBtn.disabled = true;
                 
                 // Show loading indicator
