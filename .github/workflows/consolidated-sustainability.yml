@@ -191,17 +191,12 @@ jobs:
         path: ${{ env.REPORT_PATH }}/*
         retention-days: 30
         
-    - name: 📝 Commit Reports
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'Auto-generated sustainability reports')
+    - name: 📝 Report Status
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        git config --local user.email "action@github.com"
-        git config --local user.name "GitHub Action"
-        git add ${{ env.REPORT_PATH }}/
-        
-        if ! git diff --staged --quiet; then
-          git commit -m "Auto-generated sustainability reports [skip ci]"
-          git push
-        fi
+        echo "✅ Reports generated successfully!"
+        echo "📊 Reports available at: https://cog-meenss.github.io/sustainability-tracker/sustainability-reports/latest-report.html"
+        echo "📁 Artifacts uploaded for ${{ github.sha }}"
         
     - name: 💬 PR Comment
       if: github.event_name == 'pull_request'
