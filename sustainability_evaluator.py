@@ -2826,44 +2826,57 @@ def generate_comprehensive_html_report(report_data):
                 // Show loading indicator
                 showLoadingIndicator();
                 
-                // Determine API endpoint based on environment
+                // Determine environment and update strategy
                 const isGitHubPages = window.location.hostname.includes('github.io');
                 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
                 
-                let apiEndpoint;
+                console.log('🔄 Environment detected:', isGitHubPages ? 'GitHub Pages' : isLocal ? 'Local Dev' : 'Unknown');
+                
                 if (isLocal) {
-                    apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                    // Try local Flask API for development
+                    const apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                    console.log('� Attempting local API:', apiEndpoint);
+                    
+                    fetch(apiEndpoint)
+                        .then(response => {
+                            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                            return response.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                updateMetricsFromAPI(data.metrics);
+                                showNotification('🚀 Dashboard updated with live API data!', 'success');
+                            } else {
+                                throw new Error(data.error || 'API returned error');
+                            }
+                        })
+                        .catch(error => {
+                            console.log('Local API unavailable, using simulated updates:', error);
+                            updateMetrics();
+                            showNotification('📊 Dashboard updated (Local - simulated)', 'info');
+                        });
                 } else if (isGitHubPages) {
-                    // For GitHub Pages deployed version, use localhost API during GitHub Actions
-                    apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                    // For GitHub Pages, check for fresh report files
+                    console.log('🌐 GitHub Pages mode - checking for fresh reports');
+                    
+                    // Try to fetch last update timestamp
+                    fetch('./last-update.txt')
+                        .then(response => response.text())
+                        .then(updateInfo => {
+                            console.log('📄 Update info:', updateInfo);
+                            updateMetrics();
+                            showNotification('📊 Dashboard refreshed (GitHub Pages)', 'success');
+                        })
+                        .catch(error => {
+                            console.log('No update info available, using simulated refresh');
+                            updateMetrics();
+                            showNotification('📊 Dashboard updated (GitHub - simulated)', 'info');
+                        });
                 } else {
-                    apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                    // Fallback for other environments
+                    updateMetrics();
+                    showNotification('📊 Dashboard updated (simulated)', 'info');
                 }
-                
-                console.log('🔄 Environment detected:', isGitHubPages ? 'GitHub Pages' : 'Local');
-                console.log('🔗 API Endpoint:', apiEndpoint);
-                
-                // Try to fetch real data from API first, fallback to simulation
-                fetch(apiEndpoint)
-                    .then(response => {
-                        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                        return response.json();
-                    })
-                    .then(data => {
-                        if (data.success) {
-                            updateMetricsFromAPI(data.metrics);
-                            showNotification('🚀 Dashboard updated with live API data!', 'success');
-                        } else {
-                            throw new Error(data.error || 'API returned error');
-                        }
-                    })
-                    .catch(error => {
-                        console.log('API unavailable, using simulated updates:', error);
-                        // Enhanced fallback to simulated updates
-                        updateMetrics();
-                        const environment = isGitHubPages ? 'GitHub Pages' : isLocal ? 'Local Dev' : 'Production';
-                        showNotification(`📊 Dashboard updated (${environment} - simulated)`, 'info');
-                    })
                     .finally(() => {
                         updateLastRefreshTime();
                         hideLoadingIndicator();

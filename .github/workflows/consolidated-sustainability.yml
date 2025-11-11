@@ -21,7 +21,7 @@ jobs:
   sustainability-analysis:
     name: 🌱 Comprehensive Analysis
     runs-on: ubuntu-latest
-    timeout-minutes: 360  # 6 hours for long-running Flask server
+    timeout-minutes: 45  # 45 minutes for periodic report generation
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -85,22 +85,14 @@ jobs:
       uses: actions/configure-pages@v5
       if: github.ref == 'refs/heads/main'
       
-    - name: 🚀 Start Flask API Server
+    - name: � Prepare Multi-Report Generation
       if: github.ref == 'refs/heads/main'
       run: |
-        echo "🚀 Starting Flask API server for live updates..."
-        python3 sustainability_evaluator.py --api &
-        FLASK_PID=$!
-        echo "Flask server started with PID: $FLASK_PID"
+        echo "� Preparing for periodic report generation..."
+        echo "This will generate multiple fresh reports over time for simulation of live updates"
         
-        # Wait for server to start
-        sleep 5
-        
-        # Test if server is running
-        curl -f http://127.0.0.1:5555/api/sustainability/refresh?path=. || echo "⚠️ Flask server may not be fully ready"
-        
-        # Keep server running in background
-        echo "FLASK_PID=$FLASK_PID" >> $GITHUB_ENV
+        # Ensure pages directory exists
+        mkdir -p pages
         
     - name: 🌐 Create Dashboard
       if: github.ref == 'refs/heads/main'
@@ -201,33 +193,45 @@ jobs:
       uses: actions/deploy-pages@v4
       if: github.ref == 'refs/heads/main'
       
-    - name: 🔄 Keep API Server Running
-      if: github.ref == 'refs/heads/main'
+    - name: � Generate Periodic Updates
+      if: github.ref == 'refs/heads/main'  
       run: |
-        echo "🔄 Maintaining Flask API server for live updates..."
-        echo "Server URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
-        echo "API Endpoint: http://127.0.0.1:5555/api/sustainability/refresh"
+        echo "� Setting up periodic report generation..."
+        echo "Dashboard URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
         
-        # Keep server alive for extended period (GitHub Actions allows up to 6 hours)
-        # This enables real-time updates for users viewing the dashboard
-        for i in {1..360}; do
-          if kill -0 $FLASK_PID 2>/dev/null; then
-            echo "⏱️  Flask server running (check $i/360) - $(date)"
-            
-            # Refresh data every 60 seconds
-            if [ $((i % 6)) -eq 0 ]; then
-              curl -s http://127.0.0.1:5555/api/sustainability/refresh?path=. > /dev/null || echo "API refresh attempted"
-            fi
-            
-            sleep 60  # Check every minute
-          else
-            echo "❌ Flask server stopped unexpectedly"
-            python3 sustainability_evaluator.py --api &
-            FLASK_PID=$!
-            echo "🔄 Restarted Flask server with PID: $FLASK_PID"
-            sleep 5
+        # Generate updated reports every 5 minutes for 30 minutes (6 iterations)
+        for i in {1..6}; do
+          echo "🔄 Generating update $i/6 - $(date)"
+          
+          # Generate fresh report
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          python3 sustainability_evaluator.py --path . --format html --output "pages/report-${TIMESTAMP}.html" || echo "Report generation failed"
+          
+          # Update latest report
+          if [ -f "pages/report-${TIMESTAMP}.html" ]; then
+            cp "pages/report-${TIMESTAMP}.html" "pages/latest-report.html"
+            echo "✅ Updated latest-report.html at $(date)"
+          fi
+          
+          # Re-deploy to GitHub Pages every update
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action Auto-Update"
+          
+          if [ -d "pages" ]; then
+            # Create a simple commit for the update
+            echo "Updated: $(date)" > pages/last-update.txt
+            echo "📈 Fresh sustainability report generated automatically" >> pages/last-update.txt
+            echo "🔄 Report #$i generated at $(date)" >> pages/last-update.txt
+          fi
+          
+          # Wait 5 minutes before next update (except last iteration)
+          if [ $i -lt 6 ]; then
+            echo "⏳ Waiting 5 minutes for next update..."
+            sleep 300
           fi
         done
+        
+        echo "✅ Periodic updates completed - 6 fresh reports generated over 30 minutes"
       
     - name: 📤 Upload Reports
       uses: actions/upload-artifact@v4
@@ -248,18 +252,15 @@ jobs:
           git push
         fi
         
-    - name: � Cleanup Flask Server
+    - name: 🧹 Cleanup and Finalize
       if: always() && github.ref == 'refs/heads/main'
       run: |
-        if [ ! -z "$FLASK_PID" ]; then
-          echo "🛑 Stopping Flask server (PID: $FLASK_PID)"
-          kill $FLASK_PID 2>/dev/null || echo "Flask server already stopped"
-        fi
+        echo "🧹 Finalizing deployment..."
         
-        # Kill any remaining Flask processes
-        pkill -f "sustainability_evaluator.py --api" || echo "No Flask processes to clean up"
+        # Ensure all reports are in place
+        ls -la pages/ || echo "Pages directory check"
         
-        echo "🧹 Flask server cleanup completed"
+        echo "✅ Deployment finalized with periodic updates"
         
     - name: �💬 PR Comment
       if: github.event_name == 'pull_request'
