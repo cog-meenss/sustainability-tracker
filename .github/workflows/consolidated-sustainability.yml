@@ -1,4 +1,4 @@
-name: 🌱 Consolidated Sustainability Analysis
+name: 🌱 Sustainability Analysis & GitHub Pages Deploy
 
 on:
   push:
@@ -184,6 +184,13 @@ jobs:
       uses: actions/deploy-pages@v4
       if: github.ref == 'refs/heads/main'
       
+    - name: 🎯 Set Deployment Output
+      if: github.ref == 'refs/heads/main'
+      run: |
+        echo "🌍 Setting deployment output for environment visibility"
+        echo "page_url=${{ steps.deployment.outputs.page_url }}" >> $GITHUB_OUTPUT
+        echo "report_url=${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html" >> $GITHUB_OUTPUT
+      
     - name: 📤 Upload Reports
       uses: actions/upload-artifact@v4
       with:
@@ -191,12 +198,24 @@ jobs:
         path: ${{ env.REPORT_PATH }}/*
         retention-days: 30
         
-    - name: 📝 Report Status
+    - name: 📝 Display GitHub Pages URL
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        echo "✅ Reports generated successfully!"
-        echo "📊 Reports available at: https://cog-meenss.github.io/sustainability-tracker/sustainability-reports/latest-report.html"
-        echo "📁 Artifacts uploaded for ${{ github.sha }}"
+        echo "🌐 GitHub Pages Deployed Successfully!"
+        echo "📊 Dashboard URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "📊 Direct Report: ${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html"
+        echo "📁 Artifacts uploaded for commit: ${{ github.sha }}"
+        
+        # Add to GitHub Job Summary
+        echo "## 🌱 Sustainability Dashboard Deployed" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "✅ **Deployment Status:** Success" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "🔗 **Main Dashboard:** [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📊 **Latest Report:** [${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html](${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html)" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "📅 **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
         
     - name: 💬 PR Comment
       if: github.event_name == 'pull_request'
