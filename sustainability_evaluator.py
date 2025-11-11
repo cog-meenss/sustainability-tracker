@@ -610,163 +610,166 @@ class ComprehensiveSustainabilityEvaluator:
         return critical
     
     def _generate_detailed_recommendations(self):
-        """Generate detailed, actionable recommendations"""
+        """Generate dynamic, codebase-specific recommendations"""
         recommendations = []
         
-        # Energy efficiency recommendations
-        if self.enhanced_metrics['energy_efficiency'] < 50:
-            recommendations.append({
-                'category': 'Energy Efficiency',
-                'priority': 'High',
-                'title': 'Implement Asynchronous Programming Patterns',
-                'description': 'Replace blocking operations with async/await patterns to reduce CPU usage',
-                'impact': 'High - Can improve energy efficiency by 15-30%',
-                'effort': 'Medium',
-                'implementation': [
-                    'Identify blocking operations in loops and I/O',
-                    'Implement Promise-based async patterns',
-                    'Use async/await for database queries',
-                    'Implement proper error handling for async operations'
-                ],
-                'code_example': '''
-// Before (blocking)
-function processData(items) {
-    return items.map(item => expensiveOperation(item));
-}
-
-// After (async)
-async function processData(items) {
-    return await Promise.all(
-        items.map(async item => await expensiveOperation(item))
-    );
-}''',
-                'estimated_improvement': '+15-25 points in energy efficiency'
-            })
+        # Analyze actual code patterns to generate targeted recommendations
+        files = self._filter_project_files(['*.py', '*.js', '*.ts', '*.jsx', '*.tsx', '*.html', '*.css'])
         
-        # Resource utilization recommendations
-        if self.enhanced_metrics['resource_utilization'] < 50:
-            recommendations.append({
-                'category': 'Resource Optimization',
-                'priority': 'High', 
-                'title': 'Optimize Memory Usage and Prevent Leaks',
-                'description': 'Implement proper memory management and cleanup patterns',
-                'impact': 'High - Reduces memory footprint by 20-40%',
-                'effort': 'Medium',
-                'implementation': [
-                    'Remove unused event listeners',
-                    'Clear intervals and timeouts properly',
-                    'Implement object pooling for frequently created objects',
-                    'Use WeakMap/WeakSet for caching when appropriate'
-                ],
-                'code_example': '''
-// Before (memory leak)
-setInterval(() => {
-    updateData();
-}, 1000);
-
-// After (proper cleanup)
-const intervalId = setInterval(() => {
-    updateData();
-}, 1000);
-
-// Cleanup when component unmounts
-clearInterval(intervalId);''',
-                'estimated_improvement': '+10-20 points in resource utilization'
-            })
-        
-        # Performance optimization recommendations
-        if self.enhanced_metrics['performance_optimization'] < 70:
-            recommendations.append({
-                'category': 'Performance',
-                'priority': 'Medium',
-                'title': 'Implement Caching Strategies',
-                'description': 'Add intelligent caching to reduce redundant computations',
-                'impact': 'Medium - Improves response times by 30-60%',
-                'effort': 'Low',
-                'implementation': [
-                    'Implement memoization for expensive functions',
-                    'Add browser/server-side caching',
-                    'Use localStorage for user preferences',
-                    'Implement API response caching'
-                ],
-                'code_example': '''
-// Memoization example
-const memoize = (fn) => {
-    const cache = new Map();
-    return (...args) => {
-        const key = JSON.stringify(args);
-        if (cache.has(key)) return cache.get(key);
-        const result = fn(...args);
-        cache.set(key, result);
-        return result;
-    };
-};
-
-const expensiveFunction = memoize((input) => {
-    // expensive computation
-    return result;
-});''',
-                'estimated_improvement': '+5-15 points in performance'
-            })
-        
-        # Code quality recommendations
-        if self.enhanced_metrics['code_quality'] < 60:
-            recommendations.append({
-                'category': 'Code Quality',
-                'priority': 'Medium',
-                'title': 'Improve Error Handling and Logging',
-                'description': 'Implement comprehensive error handling and remove debug logs',
-                'impact': 'Medium - Improves maintainability and production performance',
-                'effort': 'Low',
-                'implementation': [
-                    'Add try-catch blocks for error-prone operations',
-                    'Replace console.log with proper logging library',
-                    'Implement graceful error recovery',
-                    'Add error monitoring and alerting'
-                ],
-                'code_example': '''
-// Before (poor error handling)
-function processUser(userData) {
-    console.log('Processing user:', userData);
-    return userData.name.toUpperCase();
-}
-
-// After (proper error handling)
-function processUser(userData) {
-    try {
-        if (!userData || !userData.name) {
-            throw new Error('Invalid user data');
+        # Track found issues and patterns
+        found_patterns = {
+            'sync_operations': 0,
+            'memory_leaks': 0, 
+            'inefficient_loops': 0,
+            'large_files': 0,
+            'missing_error_handling': 0,
+            'console_logs': 0,
+            'unused_imports': 0,
+            'duplicate_code': 0,
+            'heavy_dependencies': [],
+            'languages_detected': set(),
+            'database_queries': 0,
+            'api_calls': 0
         }
-        return userData.name.toUpperCase();
-    } catch (error) {
-        logger.error('Error processing user:', error);
-        return 'Unknown User';
-    }
-}''',
-                'estimated_improvement': '+10-15 points in code quality'
-            })
         
-        # Dependency optimization
-        if self.enhanced_metrics['dependency_efficiency'] < 60:
+        # Analyze each file for specific patterns
+        for file_path in files[:20]:  # Limit analysis for performance
+            try:
+                with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    file_size = len(content.splitlines())
+                    
+                    # Detect language
+                    if file_path.suffix == '.py':
+                        found_patterns['languages_detected'].add('Python')
+                        # Python-specific patterns
+                        if 'import requests' in content or 'urllib' in content:
+                            found_patterns['api_calls'] += content.count('requests.get') + content.count('requests.post')
+                        if 'for ' in content and 'range(' in content:
+                            found_patterns['inefficient_loops'] += content.count('for i in range(')
+                        if 'print(' in content:
+                            found_patterns['console_logs'] += content.count('print(')
+                        if 'try:' not in content and ('requests.' in content or 'open(' in content):
+                            found_patterns['missing_error_handling'] += 1
+                            
+                    elif file_path.suffix in ['.js', '.jsx', '.ts', '.tsx']:
+                        found_patterns['languages_detected'].add('JavaScript/TypeScript')
+                        # JavaScript-specific patterns
+                        if 'console.log' in content:
+                            found_patterns['console_logs'] += content.count('console.log')
+                        if 'setInterval' in content or 'setTimeout' in content:
+                            found_patterns['memory_leaks'] += 1
+                        if 'fetch(' in content or 'axios.' in content:
+                            found_patterns['api_calls'] += content.count('fetch(') + content.count('axios.')
+                        if 'for(' in content and 'length' in content:
+                            found_patterns['inefficient_loops'] += content.count('for(')
+                        if 'async' not in content and ('fetch(' in content or '.then(' in content):
+                            found_patterns['sync_operations'] += 1
+                            
+                    # Universal patterns
+                    if file_size > 500:  # Large file
+                        found_patterns['large_files'] += 1
+                        
+            except Exception:
+                continue
+                
+        # Analyze dependencies
+        if (self.project_path / 'package.json').exists():
+            try:
+                with open(self.project_path / 'package.json', 'r') as f:
+                    package_data = json.load(f)
+                    deps = {**package_data.get('dependencies', {}), **package_data.get('devDependencies', {})}
+                    heavy_libs = ['lodash', 'moment', 'jquery', 'bootstrap', 'font-awesome']
+                    for lib in heavy_libs:
+                        if lib in deps:
+                            found_patterns['heavy_dependencies'].append(lib)
+            except Exception:
+                pass
+                
+        # Generate dynamic recommendations based on findings
+        
+        # 1. Async/Performance Recommendations
+        if found_patterns['sync_operations'] > 0 or found_patterns['api_calls'] > 3:
             recommendations.append({
-                'category': 'Dependencies',
-                'priority': 'Low',
-                'title': 'Optimize Package Dependencies',
-                'description': 'Reduce bundle size by optimizing dependencies',
-                'impact': 'Medium - Reduces load time and resource usage',
-                'effort': 'Medium',
-                'implementation': [
-                    'Audit and remove unused dependencies',
-                    'Use tree-shaking for large libraries',
-                    'Replace heavy libraries with lighter alternatives',
-                    'Implement code splitting and lazy loading'
-                ],
-                'estimated_improvement': '+5-10 points in dependency efficiency'
+                'title': f'🚀 Implement Asynchronous Patterns ({found_patterns["api_calls"]} API calls found)',
+                'priority': 'high',
+                'description': f'Found {found_patterns["sync_operations"]} synchronous operations and {found_patterns["api_calls"]} API calls that could benefit from async patterns',
+                'impact': f'30-50% performance improvement, reduced blocking operations'
             })
-
-        # Green Coding specific recommendations
-        green_metrics = getattr(self, 'green_coding_metrics', {})
-        if green_metrics.get('cpu_efficiency_score', 50) < 70:
+            
+        # 2. Memory Management 
+        if found_patterns['memory_leaks'] > 0:
+            recommendations.append({
+                'title': f'🔧 Fix Memory Leaks ({found_patterns["memory_leaks"]} potential leaks found)',
+                'priority': 'high', 
+                'description': f'Found {found_patterns["memory_leaks"]} files with setInterval/setTimeout that may cause memory leaks',
+                'impact': f'20-40% memory usage reduction'
+            })
+            
+        # 3. Code Quality & Error Handling
+        if found_patterns['missing_error_handling'] > 0:
+            recommendations.append({
+                'title': f'⚠️ Add Error Handling ({found_patterns["missing_error_handling"]} files need improvement)',
+                'priority': 'medium',
+                'description': f'Found {found_patterns["missing_error_handling"]} files with API/file operations lacking proper error handling',
+                'impact': f'Improved reliability and production stability'
+            })
+            
+        # 4. Development Cleanup
+        if found_patterns['console_logs'] > 5:
+            recommendations.append({
+                'title': f'🧹 Remove Debug Logs ({found_patterns["console_logs"]} console statements found)',
+                'priority': 'low',
+                'description': f'Found {found_patterns["console_logs"]} console.log/print statements that should be removed for production',
+                'impact': f'Cleaner code and slight performance improvement'
+            })
+            
+        # 5. Dependency Optimization
+        if found_patterns['heavy_dependencies']:
+            recommendations.append({
+                'title': f'📦 Optimize Dependencies ({len(found_patterns["heavy_dependencies"])} heavy libraries)',
+                'priority': 'medium',
+                'description': f'Found heavy dependencies: {", ".join(found_patterns["heavy_dependencies"])} - consider lighter alternatives',
+                'impact': f'15-30% bundle size reduction, faster load times'
+            })
+            
+        # 6. Code Structure
+        if found_patterns['large_files'] > 3:
+            recommendations.append({
+                'title': f'📂 Refactor Large Files ({found_patterns["large_files"]} files >500 lines)',
+                'priority': 'medium',
+                'description': f'Found {found_patterns["large_files"]} large files that could be split into smaller, more maintainable modules',
+                'impact': f'Better maintainability and potential performance gains'
+            })
+            
+        # 7. Loop Optimization
+        if found_patterns['inefficient_loops'] > 2:
+            recommendations.append({
+                'title': f'🔄 Optimize Loops ({found_patterns["inefficient_loops"]} inefficient patterns)',
+                'priority': 'medium',
+                'description': f'Found {found_patterns["inefficient_loops"]} loops that could be optimized with better algorithms or data structures',
+                'impact': f'10-25% performance improvement in data processing'
+            })
+            
+        # 8. Language-specific recommendations
+        if 'Python' in found_patterns['languages_detected']:
+            recommendations.append({
+                'title': '🐍 Python Performance Optimization',
+                'priority': 'medium',
+                'description': 'Implement list comprehensions, use built-in functions, and consider using numpy for data processing',
+                'impact': '15-40% Python code performance improvement'
+            })
+            
+        if 'JavaScript/TypeScript' in found_patterns['languages_detected']:
+            recommendations.append({
+                'title': '⚡ JavaScript Optimization',
+                'priority': 'medium', 
+                'description': 'Implement debouncing, use efficient DOM manipulation, and leverage modern ES6+ features',
+                'impact': '20-35% JavaScript performance improvement'
+            })
+            
+        # Fallback recommendations if no specific issues found
+        if not recommendations:
             recommendations.append({
                 'category': 'Green Coding - CPU Efficiency',
                 'priority': 'High',
@@ -804,96 +807,28 @@ def find_duplicates_fast(items):
                 'estimated_improvement': '+15-25 points in CPU efficiency, reduced power consumption'
             })
 
-        if green_metrics.get('memory_efficiency_score', 50) < 70:
-            recommendations.append({
-                'category': 'Green Coding - Memory Optimization',
-                'priority': 'High',
-                'title': 'Implement Memory-Efficient Patterns',
-                'description': 'Reduce memory allocation and implement proper cleanup to lower energy overhead',
-                'impact': 'High - Reduces memory usage by 15-40%, decreasing energy for memory management',
-                'effort': 'Medium',
-                'implementation': [
-                    'Use generators instead of loading entire datasets',
-                    'Implement object pooling for frequently created objects',
-                    'Add proper resource cleanup with context managers',
-                    'Use __slots__ in Python classes to reduce memory overhead',
-                    'Avoid global variables and memory leaks'
-                ],
-                'code_example': '''
-# Before (memory intensive)
-def process_large_file(filename):
-    with open(filename) as f:
-        all_lines = f.readlines()  # Loads entire file
-        return [line.strip().upper() for line in all_lines]
-
-# After (memory efficient)
-def process_large_file_efficient(filename):
-    def line_generator():
-        with open(filename) as f:
-            for line in f:  # Process one line at a time
-                yield line.strip().upper()
-    return line_generator()
-
-# Using __slots__ for memory optimization
-class EfficientClass:
-    __slots__ = ['name', 'value']  # Reduces memory overhead
-    def __init__(self, name, value):
-        self.name = name
-        self.value = value''',
-                'estimated_improvement': '+10-20 points in memory efficiency'
-            })
-
-        if green_metrics.get('energy_saving_score', 50) < 70:
-            recommendations.append({
-                'category': 'Green Coding - Energy Conservation',
-                'priority': 'Medium',
-                'title': 'Implement Energy-Saving Programming Practices',
-                'description': 'Adopt coding patterns that minimize energy consumption across the application lifecycle',
-                'impact': 'Medium - Overall energy reduction of 10-25% through optimized practices',
-                'effort': 'Low to Medium',
-                'implementation': [
-                    'Use lazy loading and on-demand resource loading',
-                    'Implement compression for data transmission',
-                    'Add database query optimization and connection pooling',
-                    'Use efficient serialization formats (e.g., Protocol Buffers vs JSON)',
-                    'Implement proper caching strategies',
-                    'Remove excessive logging and debug statements from production'
-                ],
-                'code_example': '''
-# Energy-efficient database operations
-class EnergyEfficientDB:
-    def __init__(self):
-        self.connection_pool = create_pool(max_connections=10)
-        self.cache = {}
-    
-    async def get_user_data(self, user_id):
-        # Check cache first (avoids DB query)
-        if user_id in self.cache:
-            return self.cache[user_id]
-        
-        # Use connection pooling (reduces connection overhead)
-        async with self.connection_pool.acquire() as conn:
-            # Optimized query with specific fields only
-            query = "SELECT id, name, email FROM users WHERE id = $1"
-            result = await conn.fetchrow(query, user_id)
-            
-            # Cache result for future use
-            self.cache[user_id] = result
-            return result
-
-# Lazy loading example
-class LazyImageLoader:
-    def __init__(self, image_urls):
-        self.image_urls = image_urls
-        self.loaded_images = {}
-    
-    def get_image(self, index):
-        # Load image only when needed (saves memory and CPU)
-        if index not in self.loaded_images:
-            self.loaded_images[index] = load_image(self.image_urls[index])
-        return self.loaded_images[index]''',
-                'estimated_improvement': '+8-15 points in energy saving practices'
-            })
+        # Fallback recommendations if no specific issues found
+        if not recommendations:
+            recommendations.extend([
+                {
+                    'title': '⚡ General Performance Optimization',
+                    'priority': 'medium',
+                    'description': 'Implement general performance best practices for better energy efficiency',
+                    'impact': '10-20% overall performance improvement'
+                },
+                {
+                    'title': '🌱 Adopt Green Coding Practices', 
+                    'priority': 'medium',
+                    'description': 'Follow sustainable development practices to reduce environmental impact',
+                    'impact': 'Reduced carbon footprint and energy consumption'
+                },
+                {
+                    'title': '📊 Add Performance Monitoring',
+                    'priority': 'low',
+                    'description': 'Implement monitoring to track and optimize resource usage over time',
+                    'impact': 'Better visibility into sustainability improvements'
+                }
+            ])
         
         return recommendations
     
@@ -1613,7 +1548,7 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                     
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
-                        <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">⚠️ Critical Areas</h4>
+                        <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;"> Critical Areas</h4>
                         <ul style="list-style: none; padding: 0;">
     """
     
@@ -1632,7 +1567,7 @@ def generate_comprehensive_html_report(report_data):
             <!-- Detailed Metrics Tab -->
             <div id="metrics" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    📈 Detailed Metrics Analysis
+                    Detailed Metrics Analysis
                 </h2>
                 
                 <!-- System Performance Overview -->
