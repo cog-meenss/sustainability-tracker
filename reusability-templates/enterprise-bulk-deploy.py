@@ -14,6 +14,7 @@ import sys
 import os
 import argparse
 import time
+import tempfile
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
 import requests
@@ -112,54 +113,52 @@ class EnterpriseDeployer:
             self.deployed.append(repo_name)
             return
         
-        temp_dir = f"temp-{repo_name}-{int(time.time())}"
-        
         try:
-            # Clone repository
-            print(f"📥 [{repo_name}] Cloning repository...")
-            subprocess.run(["gh", "repo", "clone", f"{self.org}/{repo_name}", temp_dir], 
-                         check=True, capture_output=True, cwd="/tmp")
-            
-            repo_path = f"/tmp/{temp_dir}"
-            
-            # Download deployment script
-            print(f"📦 [{repo_name}] Downloading deployment script...")
-            script_path = f"{repo_path}/deploy-sustainability.sh"
-            response = requests.get(self.deploy_script_url)
-            response.raise_for_status()
-            
-            with open(script_path, 'w') as f:
-                f.write(response.text)
-            os.chmod(script_path, 0o755)
-            
-            # Run deployment script
-            print(f"⚙️  [{repo_name}] Running sustainability deployment...")
-            deploy_cmd = ["./deploy-sustainability.sh", project_type, repo_name]
-            result = subprocess.run(deploy_cmd, cwd=repo_path, check=True, 
-                                  capture_output=True, text=True)
-            
-            # Commit changes
-            print(f"💾 [{repo_name}] Committing changes...")
-            subprocess.run(["git", "add", "."], cwd=repo_path, check=True)
-            
-            commit_msg = f"🌱 Add sustainability pipeline ({project_type} template)\n\n- Automated deployment via enterprise bulk script\n- Template: {project_type}\n- Deployed: {datetime.now().isoformat()}"
-            
-            subprocess.run(["git", "commit", "-m", commit_msg], 
-                         cwd=repo_path, check=True)
-            
-            # Push changes
-            print(f"🚀 [{repo_name}] Pushing changes...")
-            subprocess.run(["git", "push"], cwd=repo_path, check=True)
-            
-            # Configure repository settings
-            print(f"⚙️  [{repo_name}] Configuring repository settings...")
-            self.configure_repository_settings(repo_name)
-            
-            # Cleanup
-            subprocess.run(["rm", "-rf", repo_path], check=True)
-            
-            self.deployed.append(repo_name)
-            print(f"✅ [{repo_name}] Deployment completed successfully!")
+            # Create temporary directory
+            with tempfile.TemporaryDirectory() as temp_dir:
+                repo_path = os.path.join(temp_dir, repo_name)
+                
+                # Clone repository
+                print(f"📥 [{repo_name}] Cloning repository...")
+                subprocess.run(["gh", "repo", "clone", f"{self.org}/{repo_name}", repo_path], 
+                             check=True, capture_output=True)
+                
+                # Download deployment script
+                print(f"📦 [{repo_name}] Downloading deployment script...")
+                script_path = os.path.join(repo_path, "deploy-sustainability.sh")
+                response = requests.get(self.deploy_script_url)
+                response.raise_for_status()
+                
+                with open(script_path, 'w') as f:
+                    f.write(response.text)
+                os.chmod(script_path, 0o755)
+                
+                # Run deployment script
+                print(f"⚙️  [{repo_name}] Running sustainability deployment...")
+                deploy_cmd = ["./deploy-sustainability.sh", project_type, repo_name]
+                result = subprocess.run(deploy_cmd, cwd=repo_path, check=True, 
+                                      capture_output=True, text=True)
+                
+                # Commit changes
+                print(f"💾 [{repo_name}] Committing changes...")
+                subprocess.run(["git", "add", "."], cwd=repo_path, check=True)
+                
+                commit_msg = f"🌱 Add sustainability pipeline ({project_type} template)\n\n- Automated deployment via enterprise bulk script\n- Template: {project_type}\n- Deployed: {datetime.now().isoformat()}"
+                
+                subprocess.run(["git", "commit", "-m", commit_msg], 
+                             cwd=repo_path, check=True)
+                
+                # Push changes
+                print(f"🚀 [{repo_name}] Pushing changes...")
+                subprocess.run(["git", "push"], cwd=repo_path, check=True)
+                
+                # Configure repository settings
+                print(f"⚙️  [{repo_name}] Configuring repository settings...")
+                self.configure_repository_settings(repo_name)
+                
+                # Temporary directory is automatically cleaned up
+                self.deployed.append(repo_name)
+                print(f"✅ [{repo_name}] Deployment completed successfully!")
             
         except Exception as e:
             error_msg = str(e)
@@ -169,36 +168,30 @@ class EnterpriseDeployer:
             
             self.failed.append((repo_name, error_msg))
             print(f"❌ [{repo_name}] Deployment failed: {error_msg}")
-            
-            # Cleanup on failure
-            try:
-                subprocess.run(["rm", "-rf", f"/tmp/{temp_dir}"], check=False)
-            except:
-                pass
     
     def configure_repository_settings(self, repo_name):
         """Configure repository settings for sustainability pipeline"""
         try:
             # Enable GitHub Pages (source: GitHub Actions)
-            pages_config = {
-                "source": {
-                    "branch": "gh-pages",
-                    "path": "/"
-                }
-            }
-            
-            subprocess.run([
+            print(f"🌐 [{repo_name}] Enabling GitHub Pages...")
+            pages_result = subprocess.run([
                 "gh", "api", f"repos/{self.org}/{repo_name}/pages", 
-                "-X", "POST", "--field", f"source={json.dumps(pages_config['source'])}"
-            ], check=False, capture_output=True)  # Don't fail if pages already exists
+                "-X", "POST", 
+                "-f", "source[branch]=gh-pages",
+                "-f", "source[path]=/"
+            ], capture_output=True, text=True)
+            
+            if pages_result.returncode != 0 and "already exists" not in pages_result.stderr:
+                print(f"⚠️  [{repo_name}] Could not enable GitHub Pages: {pages_result.stderr}")
             
             # Enable vulnerability alerts
+            print(f"🔒 [{repo_name}] Enabling security features...")
             subprocess.run([
                 "gh", "api", f"repos/{self.org}/{repo_name}/vulnerability-alerts",
                 "-X", "PUT"
             ], check=False, capture_output=True)
             
-            # Enable dependency graph
+            # Enable dependency graph and security features
             subprocess.run([
                 "gh", "api", f"repos/{self.org}/{repo_name}",
                 "-X", "PATCH", 
@@ -206,9 +199,9 @@ class EnterpriseDeployer:
                 "-f", "has_automated_security_fixes=true"
             ], check=False, capture_output=True)
             
-            print(f"⚙️  [{repo_name}] Repository settings configured")
+            print(f"✅ [{repo_name}] Repository settings configured")
             
-        except subprocess.CalledProcessError as e:
+        except Exception as e:
             print(f"⚠️  [{repo_name}] Could not configure all settings: {e}")
     
     def bulk_deploy(self, max_workers=5, include_private=True, include_archived=False):
@@ -295,16 +288,23 @@ class EnterpriseDeployer:
 
 def verify_prerequisites():
     """Verify required tools are installed and authenticated"""
+    print("🔍 Verifying prerequisites...")
+    
     # Check GitHub CLI
     try:
-        subprocess.run(["gh", "auth", "status"], check=True, capture_output=True)
-    except (subprocess.CalledProcessError, FileNotFoundError):
+        result = subprocess.run(["gh", "auth", "status"], check=True, capture_output=True, text=True)
+        print("✅ GitHub CLI authenticated")
+    except FileNotFoundError:
+        print("❌ GitHub CLI not found. Please install GitHub CLI: https://cli.github.com/")
+        sys.exit(1)
+    except subprocess.CalledProcessError:
         print("❌ GitHub CLI not authenticated. Please run: gh auth login")
         sys.exit(1)
     
     # Check git
     try:
-        subprocess.run(["git", "--version"], check=True, capture_output=True)
+        result = subprocess.run(["git", "--version"], check=True, capture_output=True, text=True)
+        print(f"✅ Git found: {result.stdout.strip()}")
     except FileNotFoundError:
         print("❌ Git not found. Please install git.")
         sys.exit(1)
@@ -312,11 +312,23 @@ def verify_prerequisites():
     # Check python requests module
     try:
         import requests
+        print(f"✅ Python requests module found: {requests.__version__}")
     except ImportError:
         print("❌ Python requests module not found. Please run: pip install requests")
         sys.exit(1)
     
-    print("✅ Prerequisites verified")
+    # Check write permissions in temp directory
+    try:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            test_file = os.path.join(temp_dir, "test.txt")
+            with open(test_file, 'w') as f:
+                f.write("test")
+        print("✅ Temporary directory access verified")
+    except Exception as e:
+        print(f"❌ Cannot write to temporary directory: {e}")
+        sys.exit(1)
+    
+    print("✅ All prerequisites verified")
 
 def main():
     parser = argparse.ArgumentParser(
