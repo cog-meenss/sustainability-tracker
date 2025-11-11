@@ -1,4 +1,4 @@
-name: 🌱 Sustainability Analysis & GitHub Pages Deploy
+name: Sustainability Analysis & GitHub Pages Deploy
 
 on:
   push:
@@ -43,13 +43,13 @@ jobs:
       with:
         python-version: ${{ env.PYTHON_VERSION }}
         
-    - name: 📦 Install Dependencies
+    - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
         pip install radon xenon bandit safety pylint flake8
         pip install requests psutil flask flask-cors
         
-    - name: 📊 Run Analysis
+    - name: Run Analysis
       id: analysis
       run: |
         mkdir -p ${{ env.REPORT_PATH }}
@@ -85,7 +85,7 @@ jobs:
       uses: actions/configure-pages@v5
       if: github.ref == 'refs/heads/main'
       
-    - name: 🌐 Create Dashboard
+    - name: Create Dashboard
       if: github.ref == 'refs/heads/main'
       run: |
         mkdir -p pages
@@ -184,7 +184,7 @@ jobs:
       uses: actions/deploy-pages@v4
       if: github.ref == 'refs/heads/main'
       
-    - name: 🎯 Set Deployment Output
+    - name: Set Deployment Output
       if: github.ref == 'refs/heads/main'
       run: |
         echo "🌍 Setting deployment output for environment visibility"
