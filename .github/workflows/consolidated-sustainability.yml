@@ -21,7 +21,7 @@ jobs:
   sustainability-analysis:
     name: 🌱 Comprehensive Analysis
     runs-on: ubuntu-latest
-    timeout-minutes: 45  # 45 minutes for periodic report generation
+    timeout-minutes: 15
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -60,19 +60,11 @@ jobs:
           TIMESTAMP=$(date +%Y%m%d_%H%M%S)
           OUTPUT_BASE="report-${TIMESTAMP}"
           
-          echo "🔍 Generating reports..."
-          python3 sustainability_evaluator.py --path . --format html --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" || echo "HTML generation failed"
-          python3 sustainability_evaluator.py --path . --format json --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" || echo "JSON generation failed"
-          
-          # Debug: Check what was created
-          echo "📋 Reports directory after generation:"
-          ls -la ${{ env.REPORT_PATH }}/ || echo "No reports directory"
+          python3 sustainability_evaluator.py --path . --format html --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" || true
+          python3 sustainability_evaluator.py --path . --format json --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" || true
           
           if [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" ]; then
             cp "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" "${{ env.REPORT_PATH }}/latest-report.html"
-            echo "✅ Created latest-report.html"
-          else
-            echo "❌ No HTML report was generated"
           fi
           
           if [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" ]; then
@@ -93,33 +85,11 @@ jobs:
       uses: actions/configure-pages@v5
       if: github.ref == 'refs/heads/main'
       
-    - name: � Prepare Multi-Report Generation
-      if: github.ref == 'refs/heads/main'
-      run: |
-        echo "� Preparing for periodic report generation..."
-        echo "This will generate multiple fresh reports over time for simulation of live updates"
-        
-        # Ensure pages directory exists
-        mkdir -p pages
-        
     - name: 🌐 Create Dashboard
       if: github.ref == 'refs/heads/main'
       run: |
         mkdir -p pages
-        
-        # List what's in sustainability-reports
-        echo "📁 Contents of sustainability-reports directory:"
-        ls -la ${{ env.REPORT_PATH }}/ || echo "Directory does not exist"
-        
-        # Copy reports to pages directory
-        if [ -d "${{ env.REPORT_PATH }}" ]; then
-          cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || echo "No files to copy from reports"
-        fi
-        
-        # Ensure we have a latest-report.html
-        if [ ! -f "pages/latest-report.html" ] && [ -f "${{ env.REPORT_PATH }}/latest-report.html" ]; then
-          cp "${{ env.REPORT_PATH }}/latest-report.html" pages/
-        fi
+        cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
         
         # Copy the existing index.html from root if it exists, or create a simple landing page
         if [ -f "index.html" ]; then
@@ -203,16 +173,6 @@ jobs:
           </html>' > pages/index.html
         fi
         
-        # Debug: List final pages directory contents
-        echo "📋 Final pages directory contents:"
-        ls -la pages/ || echo "Pages directory is empty"
-        
-        # Ensure we have at least an index.html
-        if [ ! -f "pages/index.html" ]; then
-          echo "⚠️ No index.html found, creating basic one"
-          echo '<html><body><h1>Sustainability Tracker</h1><p>Report generation in progress...</p></body></html>' > pages/index.html
-        fi
-        
     - name: 🚀 Deploy to GitHub Pages
       uses: actions/upload-pages-artifact@v3
       if: github.ref == 'refs/heads/main'
@@ -224,46 +184,6 @@ jobs:
       uses: actions/deploy-pages@v4
       if: github.ref == 'refs/heads/main'
       
-    - name: � Generate Periodic Updates
-      if: github.ref == 'refs/heads/main'  
-      run: |
-        echo "� Setting up periodic report generation..."
-        echo "Dashboard URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
-        
-        # Generate updated reports every 5 minutes for 30 minutes (6 iterations)
-        for i in {1..6}; do
-          echo "🔄 Generating update $i/6 - $(date)"
-          
-          # Generate fresh report
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          python3 sustainability_evaluator.py --path . --format html --output "pages/report-${TIMESTAMP}.html" || echo "Report generation failed"
-          
-          # Update latest report
-          if [ -f "pages/report-${TIMESTAMP}.html" ]; then
-            cp "pages/report-${TIMESTAMP}.html" "pages/latest-report.html"
-            echo "✅ Updated latest-report.html at $(date)"
-          fi
-          
-          # Re-deploy to GitHub Pages every update
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action Auto-Update"
-          
-          if [ -d "pages" ]; then
-            # Create a simple commit for the update
-            echo "Updated: $(date)" > pages/last-update.txt
-            echo "📈 Fresh sustainability report generated automatically" >> pages/last-update.txt
-            echo "🔄 Report #$i generated at $(date)" >> pages/last-update.txt
-          fi
-          
-          # Wait 5 minutes before next update (except last iteration)
-          if [ $i -lt 6 ]; then
-            echo "⏳ Waiting 5 minutes for next update..."
-            sleep 300
-          fi
-        done
-        
-        echo "✅ Periodic updates completed - 6 fresh reports generated over 30 minutes"
-      
     - name: 📤 Upload Reports
       uses: actions/upload-artifact@v4
       with:
@@ -272,28 +192,18 @@ jobs:
         retention-days: 30
         
     - name: 📝 Commit Reports
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main' && !contains(github.event.head_commit.message, 'Auto-generated sustainability reports')
       run: |
         git config --local user.email "action@github.com"
         git config --local user.name "GitHub Action"
         git add ${{ env.REPORT_PATH }}/
         
         if ! git diff --staged --quiet; then
-          git commit -m "Auto-generated sustainability reports"
+          git commit -m "Auto-generated sustainability reports [skip ci]"
           git push
         fi
         
-    - name: 🧹 Cleanup and Finalize
-      if: always() && github.ref == 'refs/heads/main'
-      run: |
-        echo "🧹 Finalizing deployment..."
-        
-        # Ensure all reports are in place
-        ls -la pages/ || echo "Pages directory check"
-        
-        echo "✅ Deployment finalized with periodic updates"
-        
-    - name: �💬 PR Comment
+    - name: 💬 PR Comment
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v7
       env:
@@ -305,10 +215,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `🌱 **Sustainability Analysis Complete** - Score: ${score}/100 
-            
-            📊 **Live Dashboard**: Available with real-time API updates
-            🔄 **Auto-refresh**: Every 30 seconds via Flask API server  
-            ⚡ **API Endpoint**: Running for 6 hours post-deployment
-            🌐 **Dashboard URL**: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}`
+            body: `🌱 **Sustainability Analysis Complete** - Score: ${score}/100`
           });
