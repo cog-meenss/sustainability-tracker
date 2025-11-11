@@ -1,7 +1,48 @@
 # 🌱 Consolidated Sustainability Workflows
 
 ## Overview
-This directory contains the consolidated GitHub Actions workflow that replaces the previous separate sustainability analysis workflows.
+# 🌱 Sustainability Tracker Workflows
+
+This directory contains the active GitHub Actions workflows for automated sustainability analysis and reporting.
+
+## 📋 Active Workflows
+
+### 🚀 Primary Production Workflow
+- **`consolidated-sustainability.yml`** ⭐ **MAIN WORKFLOW**
+  - **Purpose:** Complete sustainability analysis with GitHub Pages deployment
+  - **Triggers:** Push to main/develop, PRs, manual dispatch
+  - **Output:** Publishes to https://cog-meenss.github.io/sustainability-tracker/sustainability-reports/latest-report.html
+  - **Status:** ✅ Production ready, no errors
+
+### 🧹 Clean Template Workflow  
+- **`clean-sustainability-pipeline.yml`** 📋 **TEMPLATE**
+  - **Purpose:** Simplified workflow template with minimal VS Code warnings
+  - **Use Case:** Copy this for new projects or when you want a cleaner starting point
+  - **Status:** ✅ No errors or warnings
+
+### 🔄 Reusable Workflow
+- **`reusable-sustainability.yml`** 🔧 **REUSABLE COMPONENT**
+  - **Purpose:** Shared workflow template for organization-wide deployment
+  - **Usage:** Called by other repositories' workflows
+  - **Status:** ✅ Fully functional, ready for cross-project use
+
+## 🗂️ Removed Workflows (Cleaned Up)
+- ❌ `sustainability.yml` - Had SLACK_WEBHOOK_URL context access errors
+- ❌ `enhanced-sustainability-pipeline.yml` - Had multiple context access warnings  
+- ❌ `github-pages.yml` - Disabled and consolidated into main workflow
+
+## 🎯 Quick Start
+1. **For this project:** The `consolidated-sustainability.yml` runs automatically
+2. **For new projects:** Copy `clean-sustainability-pipeline.yml` as your starting template
+3. **For organizations:** Use `reusable-sustainability.yml` in your workflow calls
+
+## 📊 GitHub Pages Deployment
+Reports are automatically published to:
+- **Main Dashboard:** https://cog-meenss.github.io/sustainability-tracker/
+- **Latest Report:** https://cog-meenss.github.io/sustainability-tracker/sustainability-reports/latest-report.html
+
+## 📁 Backup Directory
+The `backup/` folder contains archived workflows for reference only.
 
 ## What Changed
 - ✅ **Consolidated** `sustainability-analysis.yml` + `sustainability-auto-report.yml` → `consolidated-sustainability.yml`
