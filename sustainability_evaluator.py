@@ -565,7 +565,6 @@ class ComprehensiveSustainabilityEvaluator:
         return report
     
     def _generate_executive_summary(self):
-        """Generate executive summary"""
         overall_score = self.enhanced_metrics['overall_score']
         
         if overall_score >= 80:
@@ -610,65 +609,129 @@ class ComprehensiveSustainabilityEvaluator:
         return critical
     
     def _generate_detailed_recommendations(self):
-        """Generate dynamic, codebase-specific recommendations"""
+        """Generate dynamic, codebase-specific recommendations with file names and improvement percentages"""
         recommendations = []
         
         # Analyze actual code patterns to generate targeted recommendations
         files = self._filter_project_files(['*.py', '*.js', '*.ts', '*.jsx', '*.tsx', '*.html', '*.css'])
         
-        # Track found issues and patterns
+        # Track found issues and patterns with file details
         found_patterns = {
-            'sync_operations': 0,
-            'memory_leaks': 0, 
-            'inefficient_loops': 0,
-            'large_files': 0,
-            'missing_error_handling': 0,
-            'console_logs': 0,
-            'unused_imports': 0,
-            'duplicate_code': 0,
+            'sync_operations': {'count': 0, 'files': []},
+            'memory_leaks': {'count': 0, 'files': []}, 
+            'inefficient_loops': {'count': 0, 'files': []},
+            'large_files': {'count': 0, 'files': []},
+            'missing_error_handling': {'count': 0, 'files': []},
+            'console_logs': {'count': 0, 'files': []},
+            'unused_imports': {'count': 0, 'files': []},
+            'duplicate_code': {'count': 0, 'files': []},
             'heavy_dependencies': [],
             'languages_detected': set(),
-            'database_queries': 0,
-            'api_calls': 0
+            'database_queries': {'count': 0, 'files': []},
+            'api_calls': {'count': 0, 'files': []}
         }
         
-        # Analyze each file for specific patterns
+        # Analyze each file for specific patterns with detailed tracking
         for file_path in files[:20]:  # Limit analysis for performance
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
-                    file_size = len(content.splitlines())
+                    lines = content.splitlines()
+                    file_size = len(lines)
+                    relative_path = str(file_path.relative_to(self.project_path))
                     
-                    # Detect language
+                    # Detect language and analyze patterns
                     if file_path.suffix == '.py':
                         found_patterns['languages_detected'].add('Python')
                         # Python-specific patterns
                         if 'import requests' in content or 'urllib' in content:
-                            found_patterns['api_calls'] += content.count('requests.get') + content.count('requests.post')
-                        if 'for ' in content and 'range(' in content:
-                            found_patterns['inefficient_loops'] += content.count('for i in range(')
-                        if 'print(' in content:
-                            found_patterns['console_logs'] += content.count('print(')
+                            api_count = content.count('requests.get') + content.count('requests.post')
+                            if api_count > 0:
+                                found_patterns['api_calls']['count'] += api_count
+                                found_patterns['api_calls']['files'].append({
+                                    'file': relative_path, 
+                                    'count': api_count,
+                                    'lines': self._find_pattern_lines(content, r'requests\.(get|post)')
+                                })
+                        
+                        loop_count = content.count('for i in range(')
+                        if loop_count > 0:
+                            found_patterns['inefficient_loops']['count'] += loop_count
+                            found_patterns['inefficient_loops']['files'].append({
+                                'file': relative_path,
+                                'count': loop_count,
+                                'lines': self._find_pattern_lines(content, r'for i in range\(')
+                            })
+                        
+                        print_count = content.count('print(')
+                        if print_count > 0:
+                            found_patterns['console_logs']['count'] += print_count
+                            found_patterns['console_logs']['files'].append({
+                                'file': relative_path,
+                                'count': print_count,
+                                'lines': self._find_pattern_lines(content, r'print\(')
+                            })
+                        
                         if 'try:' not in content and ('requests.' in content or 'open(' in content):
-                            found_patterns['missing_error_handling'] += 1
+                            found_patterns['missing_error_handling']['count'] += 1
+                            found_patterns['missing_error_handling']['files'].append({
+                                'file': relative_path,
+                                'issue': 'Missing try/catch for API calls or file operations'
+                            })
                             
                     elif file_path.suffix in ['.js', '.jsx', '.ts', '.tsx']:
                         found_patterns['languages_detected'].add('JavaScript/TypeScript')
                         # JavaScript-specific patterns
-                        if 'console.log' in content:
-                            found_patterns['console_logs'] += content.count('console.log')
+                        console_count = content.count('console.log')
+                        if console_count > 0:
+                            found_patterns['console_logs']['count'] += console_count
+                            found_patterns['console_logs']['files'].append({
+                                'file': relative_path,
+                                'count': console_count,
+                                'lines': self._find_pattern_lines(content, r'console\.log')
+                            })
+                        
                         if 'setInterval' in content or 'setTimeout' in content:
-                            found_patterns['memory_leaks'] += 1
-                        if 'fetch(' in content or 'axios.' in content:
-                            found_patterns['api_calls'] += content.count('fetch(') + content.count('axios.')
-                        if 'for(' in content and 'length' in content:
-                            found_patterns['inefficient_loops'] += content.count('for(')
+                            found_patterns['memory_leaks']['count'] += 1
+                            found_patterns['memory_leaks']['files'].append({
+                                'file': relative_path,
+                                'issue': 'Potential memory leak with timers',
+                                'lines': self._find_pattern_lines(content, r'set(Interval|Timeout)')
+                            })
+                        
+                        api_count = content.count('fetch(') + content.count('axios.')
+                        if api_count > 0:
+                            found_patterns['api_calls']['count'] += api_count
+                            found_patterns['api_calls']['files'].append({
+                                'file': relative_path,
+                                'count': api_count,
+                                'lines': self._find_pattern_lines(content, r'(fetch\(|axios\.)')
+                            })
+                        
+                        loop_count = content.count('for(')
+                        if loop_count > 0 and 'length' in content:
+                            found_patterns['inefficient_loops']['count'] += loop_count
+                            found_patterns['inefficient_loops']['files'].append({
+                                'file': relative_path,
+                                'count': loop_count,
+                                'lines': self._find_pattern_lines(content, r'for\s*\(')
+                            })
+                        
                         if 'async' not in content and ('fetch(' in content or '.then(' in content):
-                            found_patterns['sync_operations'] += 1
+                            found_patterns['sync_operations']['count'] += 1
+                            found_patterns['sync_operations']['files'].append({
+                                'file': relative_path,
+                                'issue': 'Synchronous API operations detected'
+                            })
                             
                     # Universal patterns
                     if file_size > 500:  # Large file
-                        found_patterns['large_files'] += 1
+                        found_patterns['large_files']['count'] += 1
+                        found_patterns['large_files']['files'].append({
+                            'file': relative_path,
+                            'lines': file_size,
+                            'suggestion': 'Consider breaking into smaller modules'
+                        })
                         
             except Exception:
                 continue
@@ -682,100 +745,174 @@ class ComprehensiveSustainabilityEvaluator:
                     heavy_libs = ['lodash', 'moment', 'jquery', 'bootstrap', 'font-awesome']
                     for lib in heavy_libs:
                         if lib in deps:
-                            found_patterns['heavy_dependencies'].append(lib)
+                            found_patterns['heavy_dependencies'].append({'name': lib, 'version': deps[lib]})
             except Exception:
                 pass
                 
-        # Generate dynamic recommendations based on findings
+        # Generate dynamic recommendations based on findings with file specifics
         
         # 1. Async/Performance Recommendations
-        if found_patterns['sync_operations'] > 0 or found_patterns['api_calls'] > 3:
+        if found_patterns['sync_operations']['count'] > 0 or found_patterns['api_calls']['count'] > 3:
+            affected_files = found_patterns['sync_operations']['files'] + found_patterns['api_calls']['files'][:5]
+            file_list = ', '.join([f['file'] for f in affected_files[:3]])
+            if len(affected_files) > 3:
+                file_list += f" (+{len(affected_files)-3} more)"
+            
             recommendations.append({
-                'title': f'🚀 Implement Asynchronous Patterns ({found_patterns["api_calls"]} API calls found)',
+                'title': f'🚀 Implement Asynchronous Patterns',
                 'priority': 'high',
-                'description': f'Found {found_patterns["sync_operations"]} synchronous operations and {found_patterns["api_calls"]} API calls that could benefit from async patterns',
-                'impact': f'30-50% performance improvement, reduced blocking operations'
+                'description': f'Found {found_patterns["sync_operations"]["count"]} synchronous operations and {found_patterns["api_calls"]["count"]} API calls that could benefit from async patterns',
+                'affected_files': file_list,
+                'files_count': len(affected_files),
+                'improvement_percentage': '30-50%',
+                'impact': 'Performance improvement, reduced blocking operations',
+                'detailed_files': affected_files[:10]  # Limit to top 10 for display
             })
             
         # 2. Memory Management 
-        if found_patterns['memory_leaks'] > 0:
+        if found_patterns['memory_leaks']['count'] > 0:
+            affected_files = found_patterns['memory_leaks']['files']
+            file_list = ', '.join([f['file'] for f in affected_files[:3]])
+            if len(affected_files) > 3:
+                file_list += f" (+{len(affected_files)-3} more)"
+            
             recommendations.append({
-                'title': f'🔧 Fix Memory Leaks ({found_patterns["memory_leaks"]} potential leaks found)',
+                'title': f'🔧 Fix Memory Leaks',
                 'priority': 'high', 
-                'description': f'Found {found_patterns["memory_leaks"]} files with setInterval/setTimeout that may cause memory leaks',
-                'impact': f'20-40% memory usage reduction'
+                'description': f'Found {found_patterns["memory_leaks"]["count"]} files with setInterval/setTimeout that may cause memory leaks',
+                'affected_files': file_list,
+                'files_count': len(affected_files),
+                'improvement_percentage': '20-40%',
+                'impact': 'Memory usage reduction',
+                'detailed_files': affected_files
             })
             
         # 3. Code Quality & Error Handling
-        if found_patterns['missing_error_handling'] > 0:
+        if found_patterns['missing_error_handling']['count'] > 0:
+            affected_files = found_patterns['missing_error_handling']['files']
+            file_list = ', '.join([f['file'] for f in affected_files[:3]])
+            if len(affected_files) > 3:
+                file_list += f" (+{len(affected_files)-3} more)"
+            
             recommendations.append({
-                'title': f'⚠️ Add Error Handling ({found_patterns["missing_error_handling"]} files need improvement)',
+                'title': f'⚠️ Add Error Handling',
                 'priority': 'medium',
-                'description': f'Found {found_patterns["missing_error_handling"]} files with API/file operations lacking proper error handling',
-                'impact': f'Improved reliability and production stability'
+                'description': f'Found {found_patterns["missing_error_handling"]["count"]} files with API/file operations lacking proper error handling',
+                'affected_files': file_list,
+                'files_count': len(affected_files),
+                'improvement_percentage': '15-25%',
+                'impact': 'Improved reliability and production stability',
+                'detailed_files': affected_files
             })
             
         # 4. Development Cleanup
-        if found_patterns['console_logs'] > 5:
+        if found_patterns['console_logs']['count'] > 5:
+            affected_files = found_patterns['console_logs']['files']
+            file_list = ', '.join([f['file'] for f in affected_files[:3]])
+            if len(affected_files) > 3:
+                file_list += f" (+{len(affected_files)-3} more)"
+            
             recommendations.append({
-                'title': f'🧹 Remove Debug Logs ({found_patterns["console_logs"]} console statements found)',
+                'title': f'🧹 Remove Debug Logs',
                 'priority': 'low',
-                'description': f'Found {found_patterns["console_logs"]} console.log/print statements that should be removed for production',
-                'impact': f'Cleaner code and slight performance improvement'
+                'description': f'Found {found_patterns["console_logs"]["count"]} console.log/print statements that should be removed for production',
+                'affected_files': file_list,
+                'files_count': len(affected_files),
+                'improvement_percentage': '5-10%',
+                'impact': 'Cleaner code and slight performance improvement',
+                'detailed_files': affected_files[:10]
             })
             
         # 5. Dependency Optimization
         if found_patterns['heavy_dependencies']:
+            dep_names = [dep['name'] for dep in found_patterns['heavy_dependencies']]
             recommendations.append({
-                'title': f'📦 Optimize Dependencies ({len(found_patterns["heavy_dependencies"])} heavy libraries)',
+                'title': f'📦 Optimize Dependencies',
                 'priority': 'medium',
-                'description': f'Found heavy dependencies: {", ".join(found_patterns["heavy_dependencies"])} - consider lighter alternatives',
-                'impact': f'15-30% bundle size reduction, faster load times'
+                'description': f'Found heavy dependencies: {", ".join(dep_names)} - consider lighter alternatives',
+                'affected_files': 'package.json',
+                'files_count': 1,
+                'improvement_percentage': '15-30%',
+                'impact': 'Bundle size reduction, faster load times',
+                'detailed_files': [{'file': 'package.json', 'dependencies': found_patterns['heavy_dependencies']}]
             })
             
         # 6. Code Structure
-        if found_patterns['large_files'] > 3:
+        if found_patterns['large_files']['count'] > 3:
+            affected_files = found_patterns['large_files']['files']
+            file_list = ', '.join([f['file'] for f in affected_files[:3]])
+            if len(affected_files) > 3:
+                file_list += f" (+{len(affected_files)-3} more)"
+            
             recommendations.append({
-                'title': f'📂 Refactor Large Files ({found_patterns["large_files"]} files >500 lines)',
+                'title': f'📂 Refactor Large Files',
                 'priority': 'medium',
-                'description': f'Found {found_patterns["large_files"]} large files that could be split into smaller, more maintainable modules',
-                'impact': f'Better maintainability and potential performance gains'
+                'description': f'Found {found_patterns["large_files"]["count"]} large files that could be split into smaller, more maintainable modules',
+                'affected_files': file_list,
+                'files_count': len(affected_files),
+                'improvement_percentage': '10-20%',
+                'impact': 'Better maintainability and potential performance gains',
+                'detailed_files': affected_files
             })
             
         # 7. Loop Optimization
-        if found_patterns['inefficient_loops'] > 2:
+        if found_patterns['inefficient_loops']['count'] > 2:
+            affected_files = found_patterns['inefficient_loops']['files']
+            file_list = ', '.join([f['file'] for f in affected_files[:3]])
+            if len(affected_files) > 3:
+                file_list += f" (+{len(affected_files)-3} more)"
+            
             recommendations.append({
-                'title': f'🔄 Optimize Loops ({found_patterns["inefficient_loops"]} inefficient patterns)',
+                'title': f'🔄 Optimize Loops',
                 'priority': 'medium',
-                'description': f'Found {found_patterns["inefficient_loops"]} loops that could be optimized with better algorithms or data structures',
-                'impact': f'10-25% performance improvement in data processing'
+                'description': f'Found {found_patterns["inefficient_loops"]["count"]} loops that could be optimized with better algorithms or data structures',
+                'affected_files': file_list,
+                'files_count': len(affected_files),
+                'improvement_percentage': '10-25%',
+                'impact': 'Performance improvement in data processing',
+                'detailed_files': affected_files[:10]
             })
             
         # 8. Language-specific recommendations
         if 'Python' in found_patterns['languages_detected']:
+            python_files = [f for f in files if f.suffix == '.py'][:5]
+            file_list = ', '.join([str(f.relative_to(self.project_path)) for f in python_files[:3]])
+            
             recommendations.append({
                 'title': '🐍 Python Performance Optimization',
                 'priority': 'medium',
                 'description': 'Implement list comprehensions, use built-in functions, and consider using numpy for data processing',
-                'impact': '15-40% Python code performance improvement'
+                'affected_files': file_list,
+                'files_count': len(python_files),
+                'improvement_percentage': '15-40%',
+                'impact': 'Python code performance improvement'
             })
             
         if 'JavaScript/TypeScript' in found_patterns['languages_detected']:
+            js_files = [f for f in files if f.suffix in ['.js', '.jsx', '.ts', '.tsx']][:5]
+            file_list = ', '.join([str(f.relative_to(self.project_path)) for f in js_files[:3]])
+            
             recommendations.append({
                 'title': '⚡ JavaScript Optimization',
                 'priority': 'medium', 
                 'description': 'Implement debouncing, use efficient DOM manipulation, and leverage modern ES6+ features',
-                'impact': '20-35% JavaScript performance improvement'
+                'affected_files': file_list,
+                'files_count': len(js_files),
+                'improvement_percentage': '20-35%',
+                'impact': 'JavaScript performance improvement'
             })
             
         # Fallback recommendations if no specific issues found
         if not recommendations:
             recommendations.append({
                 'category': 'Green Coding - CPU Efficiency',
-                'priority': 'High',
+                'priority': 'high',
                 'title': 'Optimize Algorithm Efficiency for Lower CPU Usage',
                 'description': 'Replace inefficient algorithms with optimized alternatives to reduce energy consumption',
-                'impact': 'High - Can reduce CPU usage by 20-50%, directly lowering power consumption',
+                'affected_files': 'Multiple files analyzed',
+                'files_count': len(files),
+                'improvement_percentage': '20-50%',
+                'impact': 'CPU usage reduction, lower power consumption',
                 'effort': 'Medium',
                 'implementation': [
                     'Replace O(n²) algorithms with O(n log n) or O(n) alternatives',
@@ -807,30 +944,49 @@ def find_duplicates_fast(items):
                 'estimated_improvement': '+15-25 points in CPU efficiency, reduced power consumption'
             })
 
-        # Fallback recommendations if no specific issues found
+        # Additional fallback recommendations if still empty
         if not recommendations:
             recommendations.extend([
                 {
                     'title': '⚡ General Performance Optimization',
                     'priority': 'medium',
                     'description': 'Implement general performance best practices for better energy efficiency',
-                    'impact': '10-20% overall performance improvement'
+                    'affected_files': 'All project files',
+                    'files_count': len(files),
+                    'improvement_percentage': '10-20%',
+                    'impact': 'Overall performance improvement'
                 },
                 {
                     'title': '🌱 Adopt Green Coding Practices', 
                     'priority': 'medium',
                     'description': 'Follow sustainable development practices to reduce environmental impact',
+                    'affected_files': 'All project files',
+                    'files_count': len(files),
+                    'improvement_percentage': '15-30%',
                     'impact': 'Reduced carbon footprint and energy consumption'
                 },
                 {
                     'title': '📊 Add Performance Monitoring',
                     'priority': 'low',
                     'description': 'Implement monitoring to track and optimize resource usage over time',
+                    'affected_files': 'New monitoring files',
+                    'files_count': 1,
+                    'improvement_percentage': '5-15%',
                     'impact': 'Better visibility into sustainability improvements'
                 }
             ])
         
         return recommendations
+    
+    def _find_pattern_lines(self, content, pattern):
+        """Find line numbers where a pattern occurs"""
+        import re
+        lines = content.splitlines()
+        matches = []
+        for i, line in enumerate(lines, 1):
+            if re.search(pattern, line):
+                matches.append(i)
+        return matches[:5]  # Return first 5 matches
     
 
     def _generate_visualization_data(self):
@@ -1515,7 +1671,7 @@ def generate_comprehensive_html_report(report_data):
 
                 
                 <div class="chart-container">
-                    <h3 class="chart-title">Sustainability Metrics Spider Web Radar</h3>
+                    <h3 class="chart-title">Sustainability Metrics Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
                         <canvas id="radarChart" style="width: 100%; height: 100%;"></canvas>
                         <!-- Performance Indicators -->
@@ -1572,7 +1728,7 @@ def generate_comprehensive_html_report(report_data):
                 
                 <!-- System Performance Overview -->
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; color: white;">
-                    <h3 style="margin-bottom: 25px; font-size: 1.8em; text-align: center;">🖥️ System Performance Overview</h3>
+                    <h3 style="margin-bottom: 25px; font-size: 1.8em; text-align: center;">System Performance Overview</h3>
                     <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
@@ -1626,7 +1782,7 @@ def generate_comprehensive_html_report(report_data):
                 
                 <!-- Application Performance Metrics -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                    <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">📱 Application Performance Metrics</h3>
+                    <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Application Performance Metrics</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         <div>
                             <h4 style="color: #27ae60; margin-bottom: 20px;">Response Times (ms)</h4>
@@ -1709,7 +1865,7 @@ def generate_comprehensive_html_report(report_data):
                 
                 <!-- Database Performance Analysis -->
                 <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px;">
-                    <h3 style="color: #8b4513; margin-bottom: 25px; font-size: 1.8em; text-align: center;">🗄️ Database Performance Analysis</h3>
+                    <h3 style="color: #8b4513; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Database Performance Analysis</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
                         <div style="background: rgba(255,255,255,0.9); border-radius: 15px; padding: 20px;">
                             <h4 style="color: #d35400; margin-bottom: 15px;">Query Performance</h4>
@@ -1761,9 +1917,9 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
-                <!-- Frontend Performance Dashboard -->
+                <!-- Performance Dashboard -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
-                    <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">🖼️ Frontend Performance Dashboard</h3>
+                    <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Performance Dashboard</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 25px;">
                             <h4 style="margin-bottom: 20px;">Core Web Vitals</h4>
@@ -2256,7 +2412,10 @@ def generate_comprehensive_html_report(report_data):
                     💡 Sustainability Recommendations
                 </h2>
                 
-                <div class="recommendations-grid">
+                <!-- Summary Stats -->
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px; padding: 25px; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 20px; text-align: center;">Optimization Overview</h3>
+                    <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); color: white;">
     """
     
     # Add recommendations from the report data
@@ -2268,23 +2427,58 @@ def generate_comprehensive_html_report(report_data):
                 'title': '🚀 Optimize Performance Bottlenecks',
                 'priority': 'high',
                 'description': 'Address blocking operations and inefficient algorithms',
-                'impact': '25-60% performance improvement'
+                'improvement_percentage': '25-60%',
+                'affected_files': 'Multiple files',
+                'files_count': 5
             },
             {
                 'title': '🔄 Implement Caching Strategies',
                 'priority': 'medium',
                 'description': 'Add intelligent caching for frequently accessed data',
-                'impact': '15-40% reduction in server load'
+                'improvement_percentage': '15-40%',
+                'affected_files': 'Backend files',
+                'files_count': 3
             },
             {
                 'title': '⚡ Optimize Data Structures',
                 'priority': 'medium', 
                 'description': 'Leverage efficient data structures and algorithms',
-                'impact': '10-30% memory usage reduction'
+                'improvement_percentage': '10-30%',
+                'affected_files': 'Core logic files',
+                'files_count': 4
             }
         ]
     
-    for rec in recommendations[:6]:  # Limit to 6 recommendations
+    # Calculate summary stats
+    total_recommendations = len(recommendations)
+    high_priority = len([r for r in recommendations if r.get('priority') == 'high'])
+    total_files_affected = sum(r.get('files_count', 1) for r in recommendations)
+    avg_improvement = sum(float(r.get('improvement_percentage', '15').split('-')[0]) for r in recommendations) / max(1, total_recommendations)
+    
+    html += f"""
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{total_recommendations}</div>
+                            <div style="opacity: 0.9;">Total Recommendations</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{high_priority}</div>
+                            <div style="opacity: 0.9;">High Priority Issues</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{total_files_affected}</div>
+                            <div style="opacity: 0.9;">Files Affected</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{avg_improvement:.0f}%</div>
+                            <div style="opacity: 0.9;">Avg. Improvement Potential</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="recommendations-grid">
+    """
+    
+    for rec in recommendations[:8]:  # Show up to 8 recommendations
         priority_colors = {
             'high': 'priority-high',
             'medium': 'priority-medium', 
@@ -2292,14 +2486,79 @@ def generate_comprehensive_html_report(report_data):
         }
         priority_class = priority_colors.get(rec.get('priority', 'medium'), 'priority-medium')
         
+        # Get file information
+        affected_files = rec.get('affected_files', 'Not specified')
+        files_count = rec.get('files_count', 0)
+        improvement_pct = rec.get('improvement_percentage', 'Variable')
+        
+        # Create file display text
+        if files_count > 0:
+            file_display = f"📁 {affected_files} ({files_count} file{'s' if files_count != 1 else ''})"
+        else:
+            file_display = f"📁 {affected_files}"
+        
+        # Format improvement percentage for display
+        if improvement_pct and improvement_pct != 'Variable':
+            improvement_display = f"🎯 Potential Improvement: {improvement_pct}"
+        else:
+            improvement_display = "🎯 Improvement: Variable"
+        
         html += f"""
                     <div class="recommendation-card {priority_class}">
                         <div class="recommendation-header">
                             <span class="recommendation-title">{rec.get('title', 'Optimization Opportunity')}</span>
                             <span class="priority-badge">{rec.get('priority', 'Medium').title()} Priority</span>
                         </div>
-                        <p>{rec.get('description', 'Improve sustainability practices')}</p>
-                        <p><strong>Energy Impact:</strong> {rec.get('impact', 'Moderate improvement expected')}</p>
+                        
+                        <div style="margin: 15px 0;">
+                            <p style="margin-bottom: 12px;">{rec.get('description', 'Improve sustainability practices')}</p>
+                            
+                            <!-- File Information -->
+                            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
+                                <div style="margin-bottom: 6px; color: #495057;"><strong>{file_display}</strong></div>
+                                <div style="color: #28a745; font-weight: 600;">{improvement_display}</div>
+                            </div>
+                            
+                            <!-- Impact Display -->
+                            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
+                                <strong style="color: #155724;">Expected Impact:</strong> 
+                                <span style="color: #2e7d32;">{rec.get('impact', 'Moderate improvement expected')}</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Detailed Files (if available) -->"""
+        
+        # Show detailed file information if available
+        detailed_files = rec.get('detailed_files', [])
+        if detailed_files and len(detailed_files) <= 3:
+            html += f"""
+                        <div style="margin-top: 15px;">
+                            <details style="background: #f1f3f4; padding: 10px; border-radius: 6px;">
+                                <summary style="cursor: pointer; font-weight: 600; color: #495057;">
+                                    📋 View Affected Files ({len(detailed_files)} files)
+                                </summary>
+                                <div style="margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.85em;">
+            """
+            
+            for file_info in detailed_files[:5]:  # Show max 5 files
+                file_name = file_info.get('file', 'Unknown file')
+                if 'count' in file_info:
+                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name} ({file_info['count']} occurrences)</div>"
+                elif 'lines' in file_info and isinstance(file_info['lines'], list):
+                    lines_display = ', '.join(map(str, file_info['lines'][:3]))
+                    if len(file_info['lines']) > 3:
+                        lines_display += f" (+{len(file_info['lines'])-3} more)"
+                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name} (lines: {lines_display})</div>"
+                else:
+                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name}</div>"
+            
+            html += """
+                                </div>
+                            </details>
+                        </div>
+            """
+        
+        html += """
                     </div>
         """
     
