@@ -1580,18 +1580,9 @@ def generate_comprehensive_html_report(report_data):
 
                 
                 <div class="chart-container">
-                    <h3 class="chart-title">Sustainability Metrics Spider Web Radar</h3>
+                    <h3 class="chart-title">Sustainability Maturity Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
                         <canvas id="radarChart" style="width: 100%; height: 100%;"></canvas>
-                        <!-- Performance Indicators -->
-                        <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 10px;">
-                            <div style="background: rgba(39, 174, 96, 0.1); padding: 5px 10px; border-radius: 15px; font-size: 0.8em; color: #27ae60; font-weight: 600;">
-                                Live Data
-                            </div>
-                            <div style="background: rgba(52, 152, 219, 0.1); padding: 5px 10px; border-radius: 15px; font-size: 0.8em; color: #3498db; font-weight: 600;">
-                                Multi-Layer
-                            </div>
-                        </div>
                         <!-- Legend Enhancement -->
                         <div style="position: absolute; bottom: 15px; left: 15px; font-size: 0.75em; color: #7f8c8d;">
                             <div>🟢 Excellent (85-100) | 🟡 Good (70-84) | 🟠 Fair (50-69) | 🔴 Needs Work (&lt;50)</div>
@@ -3323,36 +3314,36 @@ def main():
 ║         🌱 COMPREHENSIVE SUSTAINABILITY EVALUATION           ║
 ╚══════════════════════════════════════════════════════════════╝
 
-📊 OVERALL SCORE: {metrics['overall_score']:.1f}/100
+OVERALL SCORE: {metrics['overall_score']:.1f}/100
 
-🎯 CORE METRICS:
+ CORE METRICS:
    • Energy Efficiency: {metrics['energy_efficiency']:.1f}/100
    • Resource Utilization: {metrics['resource_utilization']:.1f}/100
    • Code Quality: {metrics['code_quality']:.1f}/100
    • Performance: {metrics['performance_optimization']:.1f}/100
 
-🌱 GREEN CODING ANALYSIS:
+ GREEN CODING ANALYSIS:
    • CPU Efficiency: {metrics.get('cpu_efficiency', 0):.1f}/100
    • Memory Efficiency: {metrics.get('memory_efficiency', 0):.1f}/100  
    • Energy Saving Practices: {metrics.get('energy_saving_practices', 0):.1f}/100
    • Green Coding Score: {metrics.get('green_coding_score', 0):.1f}/100
 
-📁 FILE-LEVEL ANALYSIS:
+ FILE-LEVEL ANALYSIS:
    • Total Files Analyzed: {file_analysis.get('total_files', 0)}
    • Files with Issues: {len([f for f in green_issues if f.get('issues')])}
    • Critical Issues Found: {sum(len(f.get('issues', [])) for f in green_issues)}
    • Languages Detected: {len(file_analysis.get('language_breakdown', {}))}
 
-💡 ACTIONABLE INSIGHTS:
+ ACTIONABLE INSIGHTS:
    • Recommendations Generated: {len(report.get('recommendations', []))}
    • High Priority Issues: {len([r for r in report.get('recommendations', []) if r.get('priority') == 'high'])}
    • Energy Impact Potential: {len([f for f in green_issues if any('energy' in str(issue).lower() for issue in f.get('issues', []))])} files
 
-📈 QUALITY GATES: {report['quality_gates']['overall_assessment']['overall_status']}
+ QUALITY GATES: {report['quality_gates']['overall_assessment']['overall_status']}
 
 
 
-� RUNTIME DASHBOARD FEATURES:
+ RUNTIME DASHBOARD FEATURES:
    • Real-time metric updates every 30 seconds
    • Interactive charts and progress bars
    • File-specific issue detection with line numbers  
@@ -3360,7 +3351,7 @@ def main():
    • Professional visual theme with animations
    • API endpoint available for live data refresh
 
-🔄 Analysis completed in {report['report_metadata']['analysis_time']:.3f} seconds
+ Analysis completed in {report['report_metadata']['analysis_time']:.3f} seconds
     """)
 
 if __name__ == "__main__":
