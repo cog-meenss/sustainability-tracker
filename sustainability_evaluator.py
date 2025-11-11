@@ -1512,11 +1512,11 @@ def generate_comprehensive_html_report(report_data):
             </div>
             
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
-                <button class="nav-tab" onclick="showTab('metrics')">Detailed Metrics</button>
-                <button class="nav-tab" onclick="showTab('analysis')">Code Analysis</button>
-                <button class="nav-tab" onclick="showTab('recommendations')">Recommendations</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">Benchmarks</button>
+                <button class="nav-tab active" onclick="showTab('overview')">📊 Overview</button>
+                <button class="nav-tab" onclick="showTab('metrics')">📈 Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab('analysis')">🔍 Code Analysis</button>
+                <button class="nav-tab" onclick="showTab('recommendations')">💡 Recommendations</button>
+                <button class="nav-tab" onclick="showTab('benchmarks')">📊 Benchmarks</button>
             </div>
     """
     
@@ -1580,9 +1580,18 @@ def generate_comprehensive_html_report(report_data):
 
                 
                 <div class="chart-container">
-                    <h3 class="chart-title">Sustainability Maturity Radar</h3>
+                    <h3 class="chart-title">Sustainability Metrics Spider Web Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
                         <canvas id="radarChart" style="width: 100%; height: 100%;"></canvas>
+                        <!-- Performance Indicators -->
+                        <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 10px;">
+                            <div style="background: rgba(39, 174, 96, 0.1); padding: 5px 10px; border-radius: 15px; font-size: 0.8em; color: #27ae60; font-weight: 600;">
+                                Live Data
+                            </div>
+                            <div style="background: rgba(52, 152, 219, 0.1); padding: 5px 10px; border-radius: 15px; font-size: 0.8em; color: #3498db; font-weight: 600;">
+                                Multi-Layer
+                            </div>
+                        </div>
                         <!-- Legend Enhancement -->
                         <div style="position: absolute; bottom: 15px; left: 15px; font-size: 0.75em; color: #7f8c8d;">
                             <div>🟢 Excellent (85-100) | 🟡 Good (70-84) | 🟠 Fair (50-69) | 🔴 Needs Work (&lt;50)</div>
@@ -2826,57 +2835,22 @@ def generate_comprehensive_html_report(report_data):
                 // Show loading indicator
                 showLoadingIndicator();
                 
-                // Determine environment and update strategy
-                const isGitHubPages = window.location.hostname.includes('github.io');
-                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-                
-                console.log('🔄 Environment detected:', isGitHubPages ? 'GitHub Pages' : isLocal ? 'Local Dev' : 'Unknown');
-                
-                if (isLocal) {
-                    // Try local Flask API for development
-                    const apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
-                    console.log('� Attempting local API:', apiEndpoint);
-                    
-                    fetch(apiEndpoint)
-                        .then(response => {
-                            if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                            return response.json();
-                        })
-                        .then(data => {
-                            if (data.success) {
-                                updateMetricsFromAPI(data.metrics);
-                                showNotification('🚀 Dashboard updated with live API data!', 'success');
-                            } else {
-                                throw new Error(data.error || 'API returned error');
-                            }
-                        })
-                        .catch(error => {
-                            console.log('Local API unavailable, using simulated updates:', error);
-                            updateMetrics();
-                            showNotification('📊 Dashboard updated (Local - simulated)', 'info');
-                        });
-                } else if (isGitHubPages) {
-                    // For GitHub Pages, check for fresh report files
-                    console.log('🌐 GitHub Pages mode - checking for fresh reports');
-                    
-                    // Try to fetch last update timestamp
-                    fetch('./last-update.txt')
-                        .then(response => response.text())
-                        .then(updateInfo => {
-                            console.log('📄 Update info:', updateInfo);
-                            updateMetrics();
-                            showNotification('📊 Dashboard refreshed (GitHub Pages)', 'success');
-                        })
-                        .catch(error => {
-                            console.log('No update info available, using simulated refresh');
-                            updateMetrics();
-                            showNotification('📊 Dashboard updated (GitHub - simulated)', 'info');
-                        });
-                } else {
-                    // Fallback for other environments
-                    updateMetrics();
-                    showNotification('📊 Dashboard updated (simulated)', 'info');
-                }
+                // Try to fetch real data from API first, fallback to simulation
+                fetch('http://127.0.0.1:5555/api/sustainability/refresh?path=.')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            updateMetricsFromAPI(data.metrics);
+                            showNotification('Dashboard updated with fresh analysis!', 'success');
+                        } else {
+                            throw new Error(data.error || 'API error');
+                        }
+                    })
+                    .catch(error => {
+                        console.log('API unavailable, using simulated updates:', error);
+                        // Fallback to simulated updates
+                        updateMetrics();
+                    })
                     .finally(() => {
                         updateLastRefreshTime();
                         hideLoadingIndicator();
@@ -3327,36 +3301,36 @@ def main():
 ║         🌱 COMPREHENSIVE SUSTAINABILITY EVALUATION           ║
 ╚══════════════════════════════════════════════════════════════╝
 
-OVERALL SCORE: {metrics['overall_score']:.1f}/100
+📊 OVERALL SCORE: {metrics['overall_score']:.1f}/100
 
- CORE METRICS:
+🎯 CORE METRICS:
    • Energy Efficiency: {metrics['energy_efficiency']:.1f}/100
    • Resource Utilization: {metrics['resource_utilization']:.1f}/100
    • Code Quality: {metrics['code_quality']:.1f}/100
    • Performance: {metrics['performance_optimization']:.1f}/100
 
- GREEN CODING ANALYSIS:
+🌱 GREEN CODING ANALYSIS:
    • CPU Efficiency: {metrics.get('cpu_efficiency', 0):.1f}/100
    • Memory Efficiency: {metrics.get('memory_efficiency', 0):.1f}/100  
    • Energy Saving Practices: {metrics.get('energy_saving_practices', 0):.1f}/100
    • Green Coding Score: {metrics.get('green_coding_score', 0):.1f}/100
 
- FILE-LEVEL ANALYSIS:
+📁 FILE-LEVEL ANALYSIS:
    • Total Files Analyzed: {file_analysis.get('total_files', 0)}
    • Files with Issues: {len([f for f in green_issues if f.get('issues')])}
    • Critical Issues Found: {sum(len(f.get('issues', [])) for f in green_issues)}
    • Languages Detected: {len(file_analysis.get('language_breakdown', {}))}
 
- ACTIONABLE INSIGHTS:
+💡 ACTIONABLE INSIGHTS:
    • Recommendations Generated: {len(report.get('recommendations', []))}
    • High Priority Issues: {len([r for r in report.get('recommendations', []) if r.get('priority') == 'high'])}
    • Energy Impact Potential: {len([f for f in green_issues if any('energy' in str(issue).lower() for issue in f.get('issues', []))])} files
 
- QUALITY GATES: {report['quality_gates']['overall_assessment']['overall_status']}
+📈 QUALITY GATES: {report['quality_gates']['overall_assessment']['overall_status']}
 
 
 
- RUNTIME DASHBOARD FEATURES:
+� RUNTIME DASHBOARD FEATURES:
    • Real-time metric updates every 30 seconds
    • Interactive charts and progress bars
    • File-specific issue detection with line numbers  
@@ -3364,7 +3338,7 @@ OVERALL SCORE: {metrics['overall_score']:.1f}/100
    • Professional visual theme with animations
    • API endpoint available for live data refresh
 
- Analysis completed in {report['report_metadata']['analysis_time']:.3f} seconds
+🔄 Analysis completed in {report['report_metadata']['analysis_time']:.3f} seconds
     """)
 
 if __name__ == "__main__":
