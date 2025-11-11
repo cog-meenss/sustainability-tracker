@@ -1599,132 +1599,6 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
-                <!-- Detailed Green Coding File Analysis -->
-                <div style="margin-top: 50px;">
-                    <h2 style="color: #1e3c72; font-size: 2.2em; text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #27ae60, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                        Detailed Green Coding Analysis
-                    </h2>
-    """
-    
-    # Add file-specific analysis
-    green_analysis = report_data.get('detailed_analysis', {}).get('green_coding_analysis', {})
-    file_issues = green_analysis.get('file_issues', [])
-    
-    if file_issues:
-        html += """
-                    <div style="background: linear-gradient(135deg, #e8f8f5 0%, #f0fff4 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; border-left: 5px solid #27ae60;">
-                        <h3 style="color: #1e3c72; margin-bottom: 20px; font-size: 1.6em;">📂 File-by-File Green Coding Assessment</h3>
-        """
-        
-        for file_data in file_issues[:10]:  # Limit to top 10 files
-            file_name = file_data['file']
-            issues = file_data['issues']
-            improvements = file_data['improvements']
-            green_score = file_data['green_score']
-            
-            # Color coding based on green score
-            if green_score >= 80:
-                score_color = "#27ae60"
-                badge_class = "excellent"
-            elif green_score >= 60:
-                score_color = "#f39c12"
-                badge_class = "good"
-            else:
-                score_color = "#e74c3c"
-                badge_class = "poor"
-                
-            html += f"""
-                        <div style="background: white; border-radius: 15px; padding: 25px; margin-bottom: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08); border-left: 4px solid {score_color};">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h4 style="color: #2c3e50; font-family: 'Monaco', 'Consolas', monospace; font-size: 1.2em; background: #f8f9fa; padding: 8px 12px; border-radius: 8px;">
-                                    📄 {file_name}
-                                </h4>
-                                <div style="background: {score_color}; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 0.9em;">
-                                    Green Score: {green_score:.0f}/100
-                                </div>
-                            </div>
-            """
-            
-            # Add issues section
-            if issues:
-                html += f"""
-                            <div style="margin-bottom: 20px;">
-                                <h5 style="color: #e74c3c; margin-bottom: 12px; font-size: 1.1em;">⚠️ Energy Efficiency Issues ({len(issues)} found)</h5>
-                """
-                
-                for issue in issues[:5]:  # Limit to top 5 issues per file
-                    severity_colors = {
-                        'high': '#e74c3c',
-                        'medium': '#f39c12',
-                        'low': '#3498db'
-                    }
-                    severity_color = severity_colors.get(issue['severity'], '#95a5a6')
-                    
-                    html += f"""
-                                <div style="background: #fff5f5; border-left: 3px solid {severity_color}; padding: 15px; margin-bottom: 12px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                                        <span style="background: {severity_color}; color: white; padding: 4px 8px; border-radius: 12px; font-size: 0.8em; text-transform: uppercase; font-weight: bold;">
-                                            {issue['severity']} Priority
-                                        </span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; font-family: monospace;">Line {issue['line']}</span>
-                                    </div>
-                                    <div style="background: #2c3e50; color: #ecf0f1; padding: 12px; border-radius: 6px; font-family: 'Monaco', 'Consolas', monospace; font-size: 0.9em; margin-bottom: 10px; overflow-x: auto;">
-                                        {issue['content'][:150]}{'...' if len(issue['content']) > 150 else ''}
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #27ae60;">Suggestion:</strong> 
-                                        <span style="color: #2c3e50;">{issue['suggestion']['message']}</span>
-                                    </div>
-                                    <div style="margin-bottom: 8px;">
-                                        <strong style="color: #3498db;">Implementation:</strong> 
-                                        <span style="color: #2c3e50; font-style: italic;">{issue['suggestion']['example']}</span>
-                                    </div>
-                                    <div style="background: #e8f6f3; padding: 8px 12px; border-radius: 6px; font-size: 0.9em;">
-                                        <strong style="color: #16a085;">Energy Impact:</strong> 
-                                        <span style="color: #2c3e50;">{issue['estimated_impact']}</span>
-                                    </div>
-                                </div>
-                    """
-                
-                html += """
-                            </div>
-                """
-            
-            # Add improvements section
-            if improvements:
-                html += f"""
-                            <div>
-                                <h5 style="color: #27ae60; margin-bottom: 12px; font-size: 1.1em;">✅ Green Coding Best Practices Found ({len(improvements)})</h5>
-                """
-                
-                for improvement in improvements[:3]:  # Limit to top 3 improvements per file
-                    html += f"""
-                                <div style="background: #f0fff4; border-left: 3px solid #27ae60; padding: 12px; margin-bottom: 8px; border-radius: 0 8px 8px 0;">
-                                    <div style="display: flex; justify-content: between; align-items: center;">
-                                        <span style="color: #27ae60; font-weight: bold; text-transform: capitalize;">{improvement['type'].replace('_', ' ')}</span>
-                                        <span style="color: #7f8c8d; font-size: 0.9em; margin-left: auto;">Line {improvement['line']}</span>
-                                    </div>
-                                    <div style="color: #2c3e50; font-size: 0.9em; margin-top: 5px; font-family: monospace; background: #ecf0f1; padding: 8px; border-radius: 4px;">
-                                        {improvement['content'][:100]}{'...' if len(improvement['content']) > 100 else ''}
-                                    </div>
-                                </div>
-                    """
-                
-                html += """
-                            </div>
-                """
-                
-            html += """
-                        </div>
-            """
-            
-        html += """
-                    </div>
-        """
-    
-    html += """
-                </div>
-                
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px;">
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
                         <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">Key Findings</h4>
@@ -2961,21 +2835,43 @@ def generate_comprehensive_html_report(report_data):
                 // Show loading indicator
                 showLoadingIndicator();
                 
+                // Determine API endpoint based on environment
+                const isGitHubPages = window.location.hostname.includes('github.io');
+                const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+                
+                let apiEndpoint;
+                if (isLocal) {
+                    apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                } else if (isGitHubPages) {
+                    // For GitHub Pages deployed version, use localhost API during GitHub Actions
+                    apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                } else {
+                    apiEndpoint = 'http://127.0.0.1:5555/api/sustainability/refresh?path=.';
+                }
+                
+                console.log('🔄 Environment detected:', isGitHubPages ? 'GitHub Pages' : 'Local');
+                console.log('🔗 API Endpoint:', apiEndpoint);
+                
                 // Try to fetch real data from API first, fallback to simulation
-                fetch('http://127.0.0.1:5555/api/sustainability/refresh?path=.')
-                    .then(response => response.json())
+                fetch(apiEndpoint)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             updateMetricsFromAPI(data.metrics);
-                            showNotification('Dashboard updated with fresh analysis!', 'success');
+                            showNotification('🚀 Dashboard updated with live API data!', 'success');
                         } else {
-                            throw new Error(data.error || 'API error');
+                            throw new Error(data.error || 'API returned error');
                         }
                     })
                     .catch(error => {
                         console.log('API unavailable, using simulated updates:', error);
-                        // Fallback to simulated updates
+                        // Enhanced fallback to simulated updates
                         updateMetrics();
+                        const environment = isGitHubPages ? 'GitHub Pages' : isLocal ? 'Local Dev' : 'Production';
+                        showNotification(`📊 Dashboard updated (${environment} - simulated)`, 'info');
                     })
                     .finally(() => {
                         updateLastRefreshTime();

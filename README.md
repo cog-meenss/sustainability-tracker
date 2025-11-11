@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🌱 Sustainability Tracker
 
 A comprehensive code sustainability analysis tool with automated CI/CD integration for business applications.
@@ -131,4 +130,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 =======
 # sustainability-tracker
 Code sustainability analysis and business data tracker
->>>>>>> github/main
