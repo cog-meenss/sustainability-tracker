@@ -107,8 +107,11 @@
         </div>
         
         <div id="metrics-container">
-            <h2>📊 Loading Latest Metrics...</h2>
-            <p>Please wait while we fetch the latest sustainability analysis results.</p>
+            <h2>📊 Latest Sustainability Report</h2>
+            <p>
+                The most recent full report is available at:
+                <a href="latest-report.html">latest-report.html</a>
+            </p>
         </div>
         
         <div class="actions">
@@ -125,59 +128,7 @@
     </div>
     
     <script>
-        // Simulate loading metrics (in real implementation, this would fetch from API)
-        setTimeout(() => {
-            document.getElementById('metrics-container').innerHTML = `
-                <div class="metrics-grid">
-                    <div class="metric-card">
-                        <div class="metric-score poor">29.3/100</div>
-                        <div>Overall Score</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 29.3%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="metric-card">
-                        <div class="metric-score poor">9.3/100</div>
-                        <div>Energy Efficiency</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 9.3%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="metric-card">
-                        <div class="metric-score poor">12.5/100</div>
-                        <div>Resource Usage</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 12.5%"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="metric-card">
-                        <div class="metric-score good">77.9/100</div>
-                        <div>Performance</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" style="width: 77.9%"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <h3>💡 Key Recommendations:</h3>
-                <ul>
-                    <li>🔴 <strong>Improve Async Patterns</strong> - Implement more asynchronous programming patterns</li>
-                    <li>🔴 <strong>Optimize Memory Usage</strong> - Review memory allocation patterns</li>
-                    <li>🟡 <strong>Reduce Runtime Complexity</strong> - Optimize algorithmic efficiency</li>
-                </ul>
-                
-                <h3>📈 Next Steps:</h3>
-                <ol>
-                    <li>Focus on HIGH priority recommendations first</li>
-                    <li>Implement async/await patterns in JavaScript code</li>
-                    <li>Add memory optimization techniques in Python</li>
-                    <li>Re-run analysis to track improvements</li>
-                </ol>
-            `;
-        }, 1000);
+        // Keep index simple and link to the auto-updated full report
     </script>
 </body>
 </html>

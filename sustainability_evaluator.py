@@ -1207,116 +1207,6 @@ def generate_comprehensive_html_report(report_data):
             }}
             
             .nav-tab:last-child {{ border-right: none; }}
-            
-            .nav-tab.active {{
-                background: white;
-                color: #2c3e50;
-                transform: translateY(-2px);
-                box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            }}
-            
-            .nav-tab:hover {{
-                background: #f1f3f4;
-                transform: translateY(-1px);
-            }}
-            
-            .tab-content {{
-                display: none;
-                padding: 40px;
-                animation: fadeIn 0.5s ease-in;
-            }}
-            
-            .tab-content.active {{ display: block; }}
-            
-            @keyframes fadeIn {{
-                from {{ opacity: 0; transform: translateY(10px); }}
-                to {{ opacity: 1; transform: translateY(0); }}
-            }}
-            
-            .metric-grid {{
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 30px;
-                margin-bottom: 40px;
-            }}
-            
-            .metric-card {{
-                background: linear-gradient(135deg, #f8fffe 0%, #ffffff 100%);
-                border-radius: 20px;
-                padding: 30px;
-                box-shadow: 0 10px 30px rgba(39, 174, 96, 0.08);
-                transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
-                border: 1px solid rgba(39, 174, 96, 0.1);
-                position: relative;
-                overflow: hidden;
-                backdrop-filter: blur(10px);
-            }}
-            
-            .metric-card::before {{
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 4px;
-                background: linear-gradient(90deg, #27ae60, #16a085, #2ecc71, #1abc9c);
-                background-size: 300% 100%;
-                animation: gradientShift 3s ease infinite;
-            }}
-            
-            .metric-card:hover {{
-                transform: translateY(-12px) scale(1.02);
-                box-shadow: 0 25px 50px rgba(39, 174, 96, 0.2);
-                border-color: rgba(39, 174, 96, 0.3);
-            }}
-            
-            @keyframes gradientShift {{
-                0% {{ background-position: 0% 50%; }}
-                50% {{ background-position: 100% 50%; }}
-                100% {{ background-position: 0% 50%; }}
-            }}
-            
-            .metric-header {{
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 20px;
-            }}
-            
-            .metric-title {{
-                font-size: 1.4em;
-                font-weight: 600;
-                color: #2c3e50;
-            }}
-            
-            .metric-icon {{
-                font-size: 2em;
-                opacity: 0.7;
-            }}
-            
-            .metric-value {{
-                font-size: 2.2em;
-                font-weight: 600;
-                text-align: center;
-                margin: 20px 0;
-                letter-spacing: -0.5px;
-                text-shadow: 0 1px 4px rgba(0,0,0,0.1);
-                transition: all 0.3s ease;
-            }}
-            
-            .metric-value:hover {{
-                transform: scale(1.02);
-                text-shadow: 0 2px 8px rgba(39, 174, 96, 0.2);
-            }}
-            
-            .score-excellent {{ 
-                color: #27ae60;
-                text-shadow: 0 2px 8px rgba(39, 174, 96, 0.3);
-            }}
-            .score-good {{ 
-                color: #f39c12;
-                text-shadow: 0 2px 8px rgba(243, 156, 18, 0.3);
-            }}
             .score-fair {{ 
                 color: #e67e22;
                 text-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);
@@ -1569,7 +1459,8 @@ def generate_comprehensive_html_report(report_data):
                 .container {{ margin: 0; }}
                 .header {{ padding: 20px; }}
                 .header h1 {{ font-size: 2em; }}
-                .tab-content {{ padding: 20px; }}
+            .tab-content {{ padding: 20px; display: none; }}
+            .tab-content.active {{ display: block; }}
                 .metric-grid {{ grid-template-columns: 1fr; }}
                 .nav-tabs {{ flex-direction: column; }}
                 .nav-tab {{ border-right: none; border-bottom: 1px solid #dee2e6; }}
@@ -1718,6 +1609,146 @@ def generate_comprehensive_html_report(report_data):
             </div>
     """
     
+    # Prepare dynamic sections from analysis data
+    detailed = report_data.get('detailed_analysis', {})
+    perf = detailed.get('performance_analysis', {})
+    deps_count = detailed.get('dependency_analysis', {}).get('package_json', {}).get('total_dependencies', 0)
+    file_complexity = detailed.get('file_complexity', []) or []
+    gc_summary = detailed.get('green_coding_analysis', {}) or {}
+    file_issues_dyn = gc_summary.get('file_issues', []) or []
+    avg_complexity = int(sum((f.get('complexity_score') or 0) for f in file_complexity) / max(1, len(file_complexity)))
+    avg_green_score = int(sum((f.get('green_score') or 0) for f in file_issues_dyn) / max(1, len(file_issues_dyn))) if file_issues_dyn else 0
+    rec_count = len(report_data.get('recommendations', []))
+    perf_cards_html = ""
+    perf_items = [
+        ("Files Analyzed", len(file_complexity), '#3498db'),
+        ("Avg Complexity", avg_complexity, '#1abc9c'),
+        ("Avg Green Score", avg_green_score, '#27ae60'),
+        ("Recommendations", rec_count, '#f39c12'),
+        ("Inefficient Loops", perf.get('inefficient_loops', 0), '#ff6b6b'),
+        ("Missing Async", perf.get('missing_async', 0), '#e67e22'),
+        ("Potential Memory Leaks", perf.get('potential_memory_leaks', 0), '#e74c3c'),
+        ("Console Logs", perf.get('console_logs', 0), '#95a5a6'),
+        ("Total Dependencies", deps_count, '#8e44ad'),
+    ]
+    for title, value, color in perf_items:
+        perf_cards_html += f"""
+                        <div style=\"background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);\">
+                            <div class=\"metric-header\">
+                                <span class=\"metric-title\">{title}</span>
+                            </div>
+                            <div class=\"metric-value\" style=\"color:{color}\">{value}</div>
+                            <div style=\"background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;\">
+                                <div style=\"background: {color}; height: 100%; width: {min(100, (value or 0) * 5)}%; border-radius: 4px;\"></div>
+                            </div>
+                            <p style=\"font-size: 0.9em; opacity: 0.9;\">Count: {value}</p>
+                        </div>
+        """
+
+    gc = report_data.get('detailed_analysis', {}).get('green_coding_analysis', {})
+    green_patterns = gc.get('green_patterns', {}) or {}
+    wasteful_patterns = gc.get('wasteful_patterns', {}) or {}
+
+    def _top_items_html(items_dict, good=True):
+        items = sorted(items_dict.items(), key=lambda x: x[1], reverse=True)[:6]
+        html_block = ""
+        for name, cnt in items:
+            label = name.replace('_', ' ').title()
+            bg = '#4caf50' if good else '#e57373'
+            color = 'white'
+            html_block += f"""
+                                <div style=\"font-weight: 600;\">{label}</div>
+                                <div style=\"background: {bg}; color: {color}; padding: 4px 8px; border-radius: 12px; text-align: center;\">{cnt} instances</div>
+            """
+        if not items:
+            html_block += "<div>No data found</div><div></div>"
+        return html_block
+
+    green_grid_html = _top_items_html(green_patterns, good=True)
+    waste_grid_html = _top_items_html(wasteful_patterns, good=False)
+
+    # Build dynamic file-level assessment rows (top 10 by green_score)
+    file_issues = gc.get('file_issues', []) or []
+    def _status_badge(score):
+        if score >= 85:
+            return ("Excellent", "status-pass")
+        if score >= 70:
+            return ("Good", "status-pass")
+        if score >= 55:
+            return ("Fair", "status-conditional")
+        if score >= 40:
+            return ("Needs Work", "status-conditional")
+        return ("Critical", "status-fail")
+
+    file_table_rows = ""
+    for f in sorted(file_issues, key=lambda x: x.get('green_score', 0), reverse=True)[:10]:
+        file_path = f.get('file', 'Unknown')
+        score = max(0, min(100, int(f.get('green_score', 0))))
+        issues_cnt = len(f.get('issues', []) or [])
+        practices_cnt = len(f.get('improvements', []) or [])
+        if score >= 80:
+            efficiency = 'High efficiency'
+        elif score >= 60:
+            efficiency = 'Moderate efficiency'
+        else:
+            efficiency = 'Needs optimization'
+        label, badge = _status_badge(score)
+        file_table_rows += f"""
+                                <tr>
+                                    <td><code style=\"background: #f8f9fa; padding: 4px 8px; border-radius: 4px;\">{file_path}</code></td>
+                                    <td><strong style=\"color: {'#27ae60' if score>=80 else '#f39c12' if score>=60 else '#e74c3c'};\">{score}/100</strong></td>
+                                    <td><span style=\"background: {'#d4edda' if issues_cnt<=2 else '#fff3cd' if issues_cnt<=5 else '#f8d7da'}; color: {'#155724' if issues_cnt<=2 else '#856404' if issues_cnt<=5 else '#721c24'}; padding: 2px 8px; border-radius: 10px;\">{issues_cnt} issues</span></td>
+                                    <td><span style=\"background: {'#27ae60' if practices_cnt>=5 else '#28a745' if practices_cnt>=3 else '#95a5a6'}; color: white; padding: 2px 8px; border-radius: 10px;\">{practices_cnt} practices</span></td>
+                                    <td>{efficiency}</td>
+                                    <td><span class=\"status-badge {badge}\">{label}</span></td>
+                                </tr>
+        """
+    if not file_table_rows:
+        file_table_rows = """
+                                <tr>
+                                    <td colspan=\"6\" style=\"text-align:center; color:#666;\">No qualifying files found</td>
+                                </tr>
+        """
+
+    # Dynamic high priority issues for Analysis tab
+    from collections import defaultdict as _dd
+    issues_by_type = _dd(list)
+    for f in file_issues:
+        for issue in (f.get('issues') or []):
+            if issue.get('severity') == 'high':
+                issues_by_type[issue.get('type','unknown')].append({
+                    'file': f.get('file',''),
+                    'line': issue.get('line'),
+                    'content': issue.get('content','')
+                })
+    top_issue_types = sorted(issues_by_type.items(), key=lambda x: len(x[1]), reverse=True)[:3]
+    issue_cards_html = ""
+    for itype, occs in top_issue_types:
+        example = occs[0] if occs else {}
+        title = itype.replace('_',' ').title()
+        issue_cards_html += f"""
+                    <div style=\"background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;\">
+                        <div style=\"display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;\">
+                            <h4 style=\"color: #e53e3e; margin: 0;\">{title}</h4>
+                            <span style=\"background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;\">Critical</span>
+                        </div>
+                        <div style=\"background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;\">
+                            <div style=\"color: #68d391; margin-bottom: 5px;\">📁 {example.get('file','')}</div>
+                            <div style=\"color: #fbd38d;\">Line {example.get('line','?')}:</div>
+                            <div style=\"margin-left: 20px; color: #f7fafc;\">{example.get('content','')}</div>
+                        </div>
+                        <div style=\"margin-bottom: 15px;\">
+                            <strong style=\"color: #2d3748;\">Occurrences:</strong> {len(occs)} across files
+                        </div>
+                    </div>
+        """
+    if not issue_cards_html:
+        issue_cards_html = """
+                    <div style=\"background: #f8f9fa; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-bottom: 20px;\">
+                        <div style=\"color:#2d3748;\">No critical issues detected from analysis</div>
+                    </div>
+        """
+
     # Detailed Metrics Tab
     html += f"""
             <!-- Detailed Metrics Tab -->
@@ -1730,6 +1761,9 @@ def generate_comprehensive_html_report(report_data):
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; color: white;">
                     <h3 style="margin-bottom: 25px; font-size: 1.8em; text-align: center;">System Performance Overview</h3>
                     <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+{perf_cards_html}
+                    </div>
+                    <div class="metric-grid" style="display: none; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">CPU Utilization</span>
@@ -1780,8 +1814,8 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
-                <!-- Application Performance Metrics -->
-                <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
+                <!-- Application Performance Metrics (hidden static demo) -->
+                <div style="display: none; background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Application Performance Metrics</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
                         <div>
@@ -1989,13 +2023,13 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
-                <div class="chart-container">
+                <div class="chart-container" style="display:none;">
                     <h3 class="chart-title">Performance Trends - 7 Week Analysis</h3>
                     <canvas id="performanceChart" width="400" height="200"></canvas>
                 </div>
                 
-                <!-- Real-time Performance Metrics -->
-                <div style="margin-top: 30px;">
+                <!-- Real-time Performance Metrics (hidden static demo) -->
+                <div style="display: none; margin-top: 30px;">
                     <h3 style="color: #2c3e50; font-size: 1.8em; margin-bottom: 20px; text-align: center;">Real-Time Performance Metrics</h3>
                     <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
                         <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-left: 4px solid #27ae60;">
@@ -2105,8 +2139,25 @@ def generate_comprehensive_html_report(report_data):
                         🌱 Comprehensive Green Coding Analysis
                     </h3>
                     
-                    <!-- Green Practices Distribution -->
+                    <!-- Green Practices Distribution (Dynamic) -->
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+                        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #27ae60;">
+                            <h4 style="color: #2e7d32; margin-bottom: 20px; font-size: 1.4em;">✅ Efficient Practices Found</h4>
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; font-size: 0.95em;">
+{green_grid_html}
+                            </div>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, #fff3e0 0%, #fefefe 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #ff9800;">
+                            <h4 style="color: #e65100; margin-bottom: 20px; font-size: 1.4em;">⚠️ Energy Wasteful Patterns</h4>
+                            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; font-size: 0.95em;">
+{waste_grid_html}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Hidden static fallback (preserved but not displayed) -->
+                    <div style="display: none; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
                         <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #27ae60;">
                             <h4 style="color: #2e7d32; margin-bottom: 20px; font-size: 1.4em;">✅ Efficient Practices Found</h4>
                             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; font-size: 0.95em;">
@@ -2177,46 +2228,7 @@ def generate_comprehensive_html_report(report_data):
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/services/ideaEvaluationService.js</code></td>
-                                    <td><strong style="color: #27ae60;">89/100</strong></td>
-                                    <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">2 minor</span></td>
-                                    <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">15 found</span></td>
-                                    <td>High efficiency</td>
-                                    <td><span class="status-badge status-pass">Excellent</span></td>
-                                </tr>
-                                <tr>
-                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/utils/exportCsv.js</code></td>
-                                    <td><strong style="color: #27ae60;">84/100</strong></td>
-                                    <td><span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px;">3 medium</span></td>
-                                    <td><span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 10px;">12 found</span></td>
-                                    <td>Good efficiency</td>
-                                    <td><span class="status-badge status-pass">Good</span></td>
-                                </tr>
-                                <tr>
-                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">server.js</code></td>
-                                    <td><strong style="color: #f39c12;">71/100</strong></td>
-                                    <td><span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px;">5 medium</span></td>
-                                    <td><span style="background: #ffc107; color: #333; padding: 2px 8px; border-radius: 10px;">8 found</span></td>
-                                    <td>Moderate efficiency</td>
-                                    <td><span class="status-badge status-conditional">Fair</span></td>
-                                </tr>
-                                <tr>
-                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/App.js</code></td>
-                                    <td><strong style="color: #f39c12;">68/100</strong></td>
-                                    <td><span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px;">4 high</span></td>
-                                    <td><span style="background: #fd7e14; color: white; padding: 2px 8px; border-radius: 10px;">10 found</span></td>
-                                    <td>Needs optimization</td>
-                                    <td><span class="status-badge status-conditional">Needs Work</span></td>
-                                </tr>
-                                <tr>
-                                    <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/ChatSection.js</code></td>
-                                    <td><strong style="color: #e74c3c;">52/100</strong></td>
-                                    <td><span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px;">8 high</span></td>
-                                    <td><span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px;">5 found</span></td>
-                                    <td>Poor efficiency</td>
-                                    <td><span class="status-badge status-fail">Critical</span></td>
-                                </tr>
+{file_table_rows}
                             </tbody>
                         </table>
                     </div>
@@ -2266,8 +2278,8 @@ def generate_comprehensive_html_report(report_data):
                 <!-- Code Issues Analysis -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #e74c3c; margin-bottom: 20px; font-size: 1.5em;">High Priority Issues</h3>
-                    
-                    <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+{issue_cards_html}
+                    <div style="display: none; background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <h4 style="color: #e53e3e; margin: 0;">Memory Leak Detection</h4>
                             <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
@@ -2297,7 +2309,7 @@ def generate_comprehensive_html_report(report_data):
                         </div>
                     </div>
 
-                    <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                    <div style="display: none; background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                             <h4 style="color: #e53e3e; margin: 0;">Inefficient Database Queries</h4>
                             <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
@@ -3409,6 +3421,17 @@ def main():
         with open(html_output, 'w') as f:
             f.write(html_content)
         print(f"✅ Interactive Dashboard: {html_output}")
+
+        # Also write/update a stable latest-report.html for easy sharing (prefer docs/ if available)
+        try:
+            docs_latest = os.path.join('docs', 'latest-report.html')
+            root_latest = 'latest-report.html'
+            target_latest = docs_latest if os.path.isdir('docs') else root_latest
+            with open(target_latest, 'w') as f:
+                f.write(html_content)
+            print(f"✅ Latest Report: {target_latest}")
+        except Exception as e:
+            print(f"⚠️  Could not write latest-report.html: {e}")
         
         # Generate JSON report if requested or format is 'both'
         if args.format in ['json', 'both']:
@@ -3416,12 +3439,24 @@ def main():
             with open(json_output, 'w') as f:
                 f.write(json_content)
             print(f"✅ JSON Report: {json_output}")
+
+            # Also mirror stable latest-report.json (prefer docs/ if available)
+            try:
+                docs_latest_json = os.path.join('docs', 'latest-report.json')
+                root_latest_json = 'latest-report.json'
+                target_latest_json = docs_latest_json if os.path.isdir('docs') else root_latest_json
+                with open(target_latest_json, 'w') as f:
+                    f.write(json_content)
+                print(f"✅ Latest JSON: {target_latest_json}")
+            except Exception as e:
+                print(f"⚠️  Could not write latest-report.json: {e}")
         
         # Print dashboard features summary
         print(f"\n🎯 Dashboard Features Generated:")
         print(f"   • 📊 Real-time metrics with {len(report.get('sustainability_metrics', {}))} key indicators")
         print(f"   • 🌱 Green coding evaluation with detailed analysis")
-        print(f"   • 📁 File-specific issues: {len(report.get('file_analysis', {}).get('green_coding_issues', []))} files analyzed")
+        gc_tmp = report.get('detailed_analysis', {}).get('green_coding_analysis', {})
+        print(f"   • 📁 File-specific issues: {len(gc_tmp.get('file_issues', []))} files analyzed")
         print(f"   • 💡 Actionable suggestions: {len(report.get('recommendations', []))} improvements identified")
         print(f"   • 🔄 Auto-refresh controls for runtime updates")
         print(f"   • 📈 Interactive charts and progress indicators")
@@ -3461,8 +3496,19 @@ def main():
     
     # Print comprehensive runtime summary to console
     metrics = report['sustainability_metrics']
-    file_analysis = report.get('file_analysis', {})
-    green_issues = file_analysis.get('green_coding_issues', [])
+    detailed = report.get('detailed_analysis', {})
+    gc_console = detailed.get('green_coding_analysis', {})
+    green_issues = gc_console.get('file_issues', [])
+    file_complexity = detailed.get('file_complexity', [])
+    # Derive languages detected from analyzed files
+    langs = set()
+    for f in file_complexity:
+        fp = (f.get('file') or '').lower()
+        if fp.endswith('.py'): langs.add('python')
+        elif fp.endswith(('.js', '.jsx')): langs.add('javascript')
+        elif fp.endswith(('.ts', '.tsx')): langs.add('typescript')
+        elif fp.endswith('.css'): langs.add('css')
+        elif fp.endswith('.html'): langs.add('html')
     
     print(f"""
 ╔══════════════════════════════════════════════════════════════╗
@@ -3484,10 +3530,10 @@ def main():
    • Green Coding Score: {metrics.get('green_coding_score', 0):.1f}/100
 
 📁 FILE-LEVEL ANALYSIS:
-   • Total Files Analyzed: {file_analysis.get('total_files', 0)}
+   • Total Files Analyzed: {len(file_complexity)}
    • Files with Issues: {len([f for f in green_issues if f.get('issues')])}
    • Critical Issues Found: {sum(len(f.get('issues', [])) for f in green_issues)}
-   • Languages Detected: {len(file_analysis.get('language_breakdown', {}))}
+   • Languages Detected: {len(langs)}
 
 💡 ACTIONABLE INSIGHTS:
    • Recommendations Generated: {len(report.get('recommendations', []))}

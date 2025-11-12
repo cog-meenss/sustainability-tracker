@@ -56,3 +56,8 @@ Thumbs.db
 sustainability-reports/*.html
 sustainability-reports/*.json
 !sustainability-reports/.gitkeep
+
+# Local generated dashboards and latest snapshots (not committed)
+docs/latest-report.html
+docs/latest-report.json
+sustainability_dashboard_*.html
