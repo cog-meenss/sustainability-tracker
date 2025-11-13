@@ -19,7 +19,7 @@ env:
 
 jobs:
   sustainability-analysis:
-    name: 🌱 Comprehensive Analysis
+    name: Sustainability Analysis
     runs-on: ubuntu-latest
     timeout-minutes: 15
     environment:
@@ -35,10 +35,10 @@ jobs:
       pull-requests: write
     
     steps:
-    - name: 📥 Checkout
+    - name: Checkout
       uses: actions/checkout@v4
       
-    - name: 🐍 Setup Python
+    - name: Setup Python
       uses: actions/setup-python@v5
       with:
         python-version: ${{ env.PYTHON_VERSION }}
@@ -81,7 +81,7 @@ jobs:
           exit 1
         fi
         
-    - name: 🏗️ Setup GitHub Pages
+    - name: Setup GitHub Pages
       uses: actions/configure-pages@v5
       if: github.ref == 'refs/heads/main'
       
@@ -100,7 +100,7 @@ jobs:
           <head>
               <meta charset="UTF-8">
               <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>🌱 Green Coding Academy - Sustainability Dashboard</title>
+              <title>Green Coding - Sustainability Dashboard</title>
               <style>
                   * { margin: 0; padding: 0; box-sizing: border-box; }
                   body { 
@@ -139,16 +139,16 @@ jobs:
           </head>
           <body>
               <div class="container">
-                  <h1>🌱 Green Coding Academy</h1>
+                  <h1>Green Coding Academy</h1>
                   <p class="subtitle">Sustainability Analysis & Environmental Impact Dashboard</p>
                   
                   <a href="latest-report.html" class="dashboard-btn">
-                      📊 View Sustainability Dashboard
+                      View Sustainability Dashboard
                   </a>
                   
                   <div class="features">
                       <div class="feature">
-                          <h3>🌍 Carbon Analysis</h3>
+                          <h3>Carbon Analysis</h3>
                           <p>Track CO₂ emissions and environmental impact</p>
                       </div>
                       <div class="feature">
@@ -156,30 +156,30 @@ jobs:
                           <p>Monitor efficiency with spider web charts</p>
                       </div>
                       <div class="feature">
-                          <h3>📊 Benchmarks</h3>
+                          <h3>Benchmarks</h3>
                           <p>Compare against industry standards</p>
                       </div>
                       <div class="feature">
-                          <h3>🚀 Green Practices</h3>
+                          <h3>Green Practices</h3>
                           <p>96+ sustainable coding patterns</p>
                       </div>
                   </div>
                   
                   <p style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.8;">
-                      🕒 Auto-generated sustainability reports
+                      Auto-generated sustainability reports
                   </p>
               </div>
           </body>
           </html>' > pages/index.html
         fi
         
-    - name: 🚀 Deploy to GitHub Pages
+    - name: Deploy to GitHub Pages
       uses: actions/upload-pages-artifact@v3
       if: github.ref == 'refs/heads/main'
       with:
         path: pages/
         
-    - name: 🌐 Publish GitHub Pages
+    - name: Publish GitHub Pages
       id: deployment
       uses: actions/deploy-pages@v4
       if: github.ref == 'refs/heads/main'
@@ -187,37 +187,37 @@ jobs:
     - name: Set Deployment Output
       if: github.ref == 'refs/heads/main'
       run: |
-        echo "🌍 Setting deployment output for environment visibility"
+        echo "Setting deployment output for environment visibility"
         echo "page_url=${{ steps.deployment.outputs.page_url }}" >> $GITHUB_OUTPUT
         echo "report_url=${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html" >> $GITHUB_OUTPUT
       
-    - name: 📤 Upload Reports
+    - name: Upload Reports
       uses: actions/upload-artifact@v4
       with:
         name: sustainability-reports-${{ github.sha }}
         path: ${{ env.REPORT_PATH }}/*
         retention-days: 30
         
-    - name: 📝 Display GitHub Pages URL
+    - name: Display GitHub Pages URL
       if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       run: |
-        echo "🌐 GitHub Pages Deployed Successfully!"
-        echo "📊 Dashboard URL: ${{ steps.deployment.outputs.page_url }}"
-        echo "📊 Direct Report: ${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html"
-        echo "📁 Artifacts uploaded for commit: ${{ github.sha }}"
+        echo "GitHub Pages Deployed Successfully!"
+        echo "Dashboard URL: ${{ steps.deployment.outputs.page_url }}"
+        echo "Direct Report: ${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html"
+        echo "Artifacts uploaded for commit: ${{ github.sha }}"
         
         # Add to GitHub Job Summary
-        echo "## 🌱 Sustainability Dashboard Deployed" >> $GITHUB_STEP_SUMMARY
+        echo "## Sustainability Dashboard Deployed" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "✅ **Deployment Status:** Success" >> $GITHUB_STEP_SUMMARY
+        echo " **Deployment Status:** Success" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "🔗 **Main Dashboard:** [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+        echo " **Main Dashboard:** [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "📊 **Latest Report:** [${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html](${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html)" >> $GITHUB_STEP_SUMMARY
+        echo " **Latest Report:** [${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html](${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo "📅 **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
+        echo " **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
         
-    - name: 💬 PR Comment
+    - name: PR Comment
       if: github.event_name == 'pull_request'
       uses: actions/github-script@v7
       env:

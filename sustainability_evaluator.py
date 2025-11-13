@@ -1,280 +1,461 @@
-import json
-import sys
+#!/usr/bin/env python3
+"""
+Sustainability Code Evaluation Analyzer
+Core analysis engine for evaluating code sustainability metrics
+"""
+
 import os
-import shutil
+import sys
+import json
+import argparse
+import time
 from datetime import datetime
+from typing import Dict, List, Any, Optional
 from pathlib import Path
+import hashlib
+from dataclasses import dataclass, asdict
 
+@dataclass
+class SustainabilityMetrics:
+    """Core sustainability metrics data structure"""
+    energy_efficiency: float = 0.0
+    resource_utilization: float = 0.0  
+    carbon_footprint: float = 0.0
+    performance_optimization: float = 0.0
+    sustainable_practices: float = 0.0
+    overall_score: float = 0.0
+    
+    def to_dict(self) -> Dict[str, float]:
+        return asdict(self)
 
-class ComprehensiveSustainabilityEvaluator:
-    """Minimal evaluator to produce deterministic report_data for testing."""
+@dataclass 
+class AnalysisResult:
+    """Complete analysis result structure"""
+    metrics: SustainabilityMetrics
+    file_count: int = 0
+    language_breakdown: Dict[str, int] = None
+    issues: List[Dict[str, Any]] = None
+    recommendations: List[Dict[str, Any]] = None
+    execution_time: float = 0.0
+    timestamp: str = ""
+    
+    def __post_init__(self):
+        if self.language_breakdown is None:
+            self.language_breakdown = {}
+        if self.issues is None:
+            self.issues = []
+        if self.recommendations is None:
+            self.recommendations = []
+        if not self.timestamp:
+            self.timestamp = datetime.now().isoformat()
 
-    def __init__(self, project_path='.'):
-        self.project_path = Path(project_path)
-
-    def analyze_project_comprehensively(self):
-        now = datetime.now().isoformat()
-        metrics = {
-            'overall_score': 78.4,
-            'energy_efficiency': 71.2,
-            'resource_utilization': 68.5,
-            'performance_optimization': 63.0,
-            'code_quality': 74.1,
-            'maintainability': 70.0,
-            'cpu_efficiency': 72,
-            'memory_efficiency': 65,
-            'green_coding_score': 73
-        }
-
-        top_files = [
-            {
-                'path': 'frontend/src/App.js',
-                'score': 68,
-                'issues': ['large bundle', 'sync I/O'],
-                'energy_impact': 8.2,
-                'lines': [12, 45, 78],
-                'language': 'javascript',
-                'last_modified': '2025-11-10',
-                'recommendation_refs': [0]
+class SustainabilityAnalyzer:
+    """Main sustainability code analyzer"""
+    
+    # Language file extensions mapping
+    LANGUAGE_EXTENSIONS = {
+        'python': ['.py', '.pyw', '.pyx'],
+        'javascript': ['.js', '.mjs', '.jsx', '.ts', '.tsx'],
+        'java': ['.java'],
+        'csharp': ['.cs'],
+        'go': ['.go'],
+        'rust': ['.rs'],
+        'cpp': ['.cpp', '.cc', '.cxx', '.c'],
+        'php': ['.php'],
+        'ruby': ['.rb'],
+        'kotlin': ['.kt', '.kts']
+    }
+    
+    # Sustainability rules by language
+    SUSTAINABILITY_RULES = {
+        'python': {
+            'async_patterns': {
+                'positive': ['async def', 'await ', 'asyncio', 'aiohttp'],
+                'negative': ['time.sleep(', 'requests.get(', 'urllib.request'],
+                'weight': 15
             },
-            {
-                'path': 'backend/server.js',
-                'score': 54,
-                'issues': ['memory leak', 'unused deps'],
-                'energy_impact': 12.5,
-                'lines': [33, 102],
-                'language': 'javascript',
-                'last_modified': '2025-11-09',
-                'recommendation_refs': [1]
+            'memory_efficiency': {
+                'positive': ['__slots__', 'generator', 'yield ', 'itertools'],
+                'negative': ['global ', 'import *', 'exec(', 'eval('],
+                'weight': 20
             },
-            {
-                'path': 'frontend/src/ChatSection.js',
-                'score': 52,
-                'issues': ['inefficient loops'],
-                'energy_impact': 6.7,
-                'lines': [21, 22, 23],
-                'language': 'javascript',
-                'last_modified': '2025-11-08',
-                'recommendation_refs': [1]
+            'performance_patterns': {
+                'positive': ['list comprehension', 'numpy', 'pandas.vectorized', 'cython'],
+                'negative': ['nested loops', 'repeated string concatenation'],
+                'weight': 25
             }
-        ]
-
-        recommendations = [
-            {
-                'title': 'Implement lazy-loading for heavy modules',
-                'description': 'Reduce initial bundle size by loading charts lazily',
+        },
+        'javascript': {
+            'async_patterns': {
+                'positive': ['async function', 'await ', 'Promise.all', 'Promise.race'],
+                'negative': ['XMLHttpRequest', 'setTimeout', 'setInterval'],
+                'weight': 15
+            },
+            'bundle_optimization': {
+                'positive': ['import()', 'dynamic import', 'tree shaking', 'code splitting'],
+                'negative': ['require()', 'import entire library'],
+                'weight': 20
+            },
+            'dom_efficiency': {
+                'positive': ['document fragment', 'virtual DOM', 'requestAnimationFrame'],
+                'negative': ['innerHTML', 'document.write', 'synchronous DOM'],
+                'weight': 18
+            }
+        },
+        'java': {
+            'memory_management': {
+                'positive': ['StringBuilder', 'ArrayList', 'HashMap', 'Stream API'],
+                'negative': ['String concatenation', 'Vector', 'Hashtable'],
+                'weight': 22
+            },
+            'concurrency': {
+                'positive': ['CompletableFuture', 'parallel streams', 'ExecutorService'],
+                'negative': ['synchronized blocks', 'Thread.sleep'],
+                'weight': 18
+            }
+        }
+    }
+    
+    def __init__(self, config_path: Optional[str] = None):
+        """Initialize analyzer with optional config"""
+        self.config = self._load_config(config_path) if config_path else self._default_config()
+        self.start_time = time.time()
+        
+    def _default_config(self) -> Dict[str, Any]:
+        """Default configuration"""
+        return {
+            'sustainability_thresholds': {
+                'energy_efficiency_min': 75,
+                'resource_utilization_max': 85, 
+                'carbon_footprint_max': 50,
+                'performance_optimization_min': 80
+            },
+            'analysis_depth': 'comprehensive',
+            'generate_recommendations': True,
+            'include_file_details': True
+        }
+    
+    def _load_config(self, config_path: str) -> Dict[str, Any]:
+        """Load configuration from JSON file"""
+        try:
+            with open(config_path, 'r') as f:
+                return json.load(f)
+        except Exception as e:
+            print(f"Warning: Could not load config {config_path}: {e}")
+            return self._default_config()
+    
+    def analyze_project(self, project_path: str) -> AnalysisResult:
+        """Analyze entire project for sustainability metrics"""
+        print(f"Starting sustainability analysis of: {project_path}")
+        
+        # Initialize result structure
+        metrics = SustainabilityMetrics()
+        language_breakdown = {}
+        issues = []
+        recommendations = []
+        file_count = 0
+        
+        # Walk through all files in project
+        for root, dirs, files in os.walk(project_path):
+            # Skip common ignore directories
+            dirs[:] = [d for d in dirs if d not in ['.git', 'node_modules', '__pycache__', 
+                                                   '.venv', 'venv', 'build', 'dist', 'target']]
+            
+            for file in files:
+                file_path = os.path.join(root, file)
+                language = self._detect_language(file)
+                
+                if language:
+                    file_count += 1
+                    language_breakdown[language] = language_breakdown.get(language, 0) + 1
+                    
+                    # Analyze individual file
+                    file_metrics, file_issues, file_recommendations = self._analyze_file(
+                        file_path, language
+                    )
+                    
+                    # Aggregate metrics
+                    self._aggregate_metrics(metrics, file_metrics, language)
+                    issues.extend(file_issues)
+                    recommendations.extend(file_recommendations)
+        
+        # Calculate final scores
+        self._calculate_final_scores(metrics, file_count, language_breakdown)
+        
+        # Generate recommendations
+        if self.config.get('generate_recommendations', True):
+            recommendations.extend(self._generate_project_recommendations(metrics, language_breakdown))
+        
+        execution_time = time.time() - self.start_time
+        
+        print(f"Analysis complete! Processed {file_count} files in {execution_time:.2f}s")
+        print(f"Overall Sustainability Score: {metrics.overall_score:.1f}/100")
+        
+        return AnalysisResult(
+            metrics=metrics,
+            file_count=file_count,
+            language_breakdown=language_breakdown,
+            issues=issues,
+            recommendations=recommendations,
+            execution_time=execution_time
+        )
+    
+    def _detect_language(self, filename: str) -> Optional[str]:
+        """Detect programming language from file extension"""
+        file_ext = Path(filename).suffix.lower()
+        
+        for language, extensions in self.LANGUAGE_EXTENSIONS.items():
+            if file_ext in extensions:
+                return language
+        return None
+    
+    def _analyze_file(self, file_path: str, language: str) -> tuple:
+        """Analyze individual file for sustainability patterns"""
+        try:
+            with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
+                content = f.read()
+        except Exception as e:
+            return SustainabilityMetrics(), [], []
+        
+        metrics = SustainabilityMetrics()
+        issues = []
+        recommendations = []
+        
+        # Get language-specific rules
+        rules = self.SUSTAINABILITY_RULES.get(language, {})
+        
+        # Analyze patterns in file content
+        for rule_name, rule_config in rules.items():
+            positive_patterns = rule_config.get('positive', [])
+            negative_patterns = rule_config.get('negative', [])
+            weight = rule_config.get('weight', 10)
+            
+            positive_count = sum(content.count(pattern) for pattern in positive_patterns)
+            negative_count = sum(content.count(pattern) for pattern in negative_patterns)
+            
+            # Calculate rule score (0-100)
+            total_patterns = positive_count + negative_count
+            if total_patterns > 0:
+                rule_score = (positive_count / total_patterns) * 100
+            else:
+                rule_score = 50  # Neutral if no patterns found
+            
+            # Map rule to metrics
+            self._map_rule_to_metrics(metrics, rule_name, rule_score, weight)
+            
+            # Generate issues for negative patterns
+            if negative_count > 0:
+                issues.append({
+                    'type': 'sustainability_concern',
+                    'file': file_path,
+                    'rule': rule_name,
+                    'severity': 'medium' if negative_count < 5 else 'high',
+                    'count': negative_count,
+                    'message': f"Found {negative_count} sustainability concerns in {rule_name}"
+                })
+        
+        # Basic file-level metrics
+        lines = content.split('\n')
+        metrics.performance_optimization += self._analyze_code_complexity(content, language)
+        
+        return metrics, issues, recommendations
+    
+    def _map_rule_to_metrics(self, metrics: SustainabilityMetrics, rule_name: str, 
+                           score: float, weight: int):
+        """Map rule analysis to sustainability metrics"""
+        weighted_score = (score * weight) / 100
+        
+        if 'async' in rule_name or 'concurrency' in rule_name:
+            metrics.energy_efficiency += weighted_score
+        elif 'memory' in rule_name or 'optimization' in rule_name:
+            metrics.resource_utilization += weighted_score  
+        elif 'bundle' in rule_name or 'dom' in rule_name:
+            metrics.carbon_footprint += (100 - weighted_score)  # Lower is better
+        else:
+            metrics.sustainable_practices += weighted_score
+    
+    def _analyze_code_complexity(self, content: str, language: str) -> float:
+        """Analyze code complexity for performance implications"""
+        lines = content.split('\n')
+        
+        # Basic complexity indicators
+        complexity_indicators = {
+            'nested_loops': 0,
+            'recursive_calls': 0,
+            'database_queries': 0,
+            'file_operations': 0
+        }
+        
+        for line in lines:
+            line = line.strip().lower()
+            
+            # Nested loops detection (simplified)
+            if any(keyword in line for keyword in ['for ', 'while ']):
+                if '    for' in content or '    while' in content:  # Indented = nested
+                    complexity_indicators['nested_loops'] += 1
+            
+            # Database operations
+            if any(keyword in line for keyword in ['select ', 'insert ', 'update ', 'delete ']):
+                complexity_indicators['database_queries'] += 1
+            
+            # File operations  
+            if any(keyword in line for keyword in ['open(', 'read(', 'write(']):
+                complexity_indicators['file_operations'] += 1
+        
+        # Calculate complexity score (higher complexity = lower sustainability)
+        total_complexity = sum(complexity_indicators.values())
+        total_lines = len([l for l in lines if l.strip()])
+        
+        if total_lines == 0:
+            return 50
+            
+        complexity_ratio = total_complexity / total_lines
+        return max(0, 100 - (complexity_ratio * 1000))  # Scale and invert
+    
+    def _aggregate_metrics(self, total_metrics: SustainabilityMetrics, 
+                         file_metrics: SustainabilityMetrics, language: str):
+        """Aggregate file metrics into total project metrics"""
+        # Weight by language importance (could be configurable)
+        weight = 1.0
+        
+        total_metrics.energy_efficiency += file_metrics.energy_efficiency * weight
+        total_metrics.resource_utilization += file_metrics.resource_utilization * weight
+        total_metrics.carbon_footprint += file_metrics.carbon_footprint * weight
+        total_metrics.performance_optimization += file_metrics.performance_optimization * weight
+        total_metrics.sustainable_practices += file_metrics.sustainable_practices * weight
+    
+    def _calculate_final_scores(self, metrics: SustainabilityMetrics, file_count: int, 
+                              language_breakdown: Dict[str, int]):
+        """Calculate final normalized scores"""
+        if file_count == 0:
+            return
+        
+        # Normalize by file count
+        metrics.energy_efficiency = min(100, metrics.energy_efficiency / file_count)
+        metrics.resource_utilization = min(100, metrics.resource_utilization / file_count)
+        metrics.carbon_footprint = min(100, metrics.carbon_footprint / file_count)
+        metrics.performance_optimization = min(100, metrics.performance_optimization / file_count)
+        metrics.sustainable_practices = min(100, metrics.sustainable_practices / file_count)
+        
+        # Calculate overall score (weighted average)
+        weights = {
+            'energy_efficiency': 0.25,
+            'resource_utilization': 0.25,
+            'carbon_footprint': 0.20,  # Lower is better, so invert
+            'performance_optimization': 0.20,
+            'sustainable_practices': 0.10
+        }
+        
+        metrics.overall_score = (
+            metrics.energy_efficiency * weights['energy_efficiency'] +
+            metrics.resource_utilization * weights['resource_utilization'] +
+            (100 - metrics.carbon_footprint) * weights['carbon_footprint'] +  # Invert carbon footprint
+            metrics.performance_optimization * weights['performance_optimization'] +
+            metrics.sustainable_practices * weights['sustainable_practices']
+        )
+    
+    def _generate_project_recommendations(self, metrics: SustainabilityMetrics, 
+                                        language_breakdown: Dict[str, int]) -> List[Dict[str, Any]]:
+        """Generate actionable sustainability recommendations"""
+        recommendations = []
+        
+        # Energy Efficiency Recommendations
+        if metrics.energy_efficiency < 70:
+            recommendations.append({
+                'category': 'energy_efficiency',
                 'priority': 'high',
-                'affected_files': ['frontend/src/App.js'],
-                'files_count': 1,
-                'improvement_percentage': '5-12%',
-                'energy_saving': 4.2,
-                'tags': ['performance', 'energy'],
-                'status': 'open'
-            },
-            {
-                'title': 'Refactor nested loops',
-                'description': 'Replace O(n^2) loops with efficient algorithms',
+                'title': 'Improve Async Patterns',
+                'description': 'Implement more asynchronous programming patterns to reduce CPU blocking and improve energy efficiency.',
+                'impact': 'High',
+                'effort': 'Medium'
+            })
+        
+        # Resource Utilization Recommendations
+        if metrics.resource_utilization < 70:
+            recommendations.append({
+                'category': 'resource_utilization',
+                'priority': 'high', 
+                'title': 'Optimize Memory Usage',
+                'description': 'Review memory allocation patterns and implement more efficient data structures.',
+                'impact': 'High',
+                'effort': 'Medium'
+            })
+        
+        # Carbon Footprint Recommendations
+        if metrics.carbon_footprint > 60:
+            recommendations.append({
+                'category': 'carbon_footprint',
                 'priority': 'medium',
-                'affected_files': ['frontend/src/ChatSection.js', 'backend/server.js'],
-                'files_count': 2,
-                'improvement_percentage': '8-15%',
-                'energy_saving': 7.1,
-                'tags': ['algorithm', 'energy'],
-                'status': 'open'
-            }
-        ]
-
-        report = {
-            'report_metadata': {
-                'title': 'Comprehensive Sustainable Code Evaluation',
-                'generated_at': now,
-                'project_path': str(self.project_path),
-                'report_version': '2.0.0',
-                'analysis_time': 0.123
-            },
-            'executive_summary': {
-                'key_findings': [
-                    'Overall sustainability score is moderate',
-                    'Energy efficiency can be improved by optimizing I/O and bundling',
-                    'Several files show opportunities for green coding improvements'
-                ]
-            },
-            'sustainability_metrics': metrics,
-            'detailed_analysis': {
-                'file_complexity': top_files
-            },
-            'recommendations': recommendations,
-            'top_files': [f['path'] for f in top_files],
-            'file_analysis': {
-                'green_coding_issues': top_files,
-                'total_files': len(top_files),
-                'language_breakdown': {'javascript': 12, 'python': 3}
-            },
-            'quality_gates': {
-                'overall_assessment': {
-                    'overall_status': 'CONDITIONAL'
-                }
-            }
-        }
-
-        return report
-
-
-def generate_comprehensive_html_report(report_data):
-    """Generate a compact HTML report driven entirely by report_data."""
-
-    # Validate input
-    if not isinstance(report_data, dict):
-        report_data = {}
-
-    exec_summary = report_data.get('executive_summary', {})
-    metrics = report_data.get('sustainability_metrics', {})
-    detailed = report_data.get('detailed_analysis', {})
-    recommendations = report_data.get('recommendations', [])
-
-    files = detailed.get('file_complexity', []) if isinstance(detailed, dict) else []
-
-    # Normalize file list
-    normalized_files = []
-    for f in (files or [])[:10]:
-        if isinstance(f, dict):
-            path = f.get('path') or f.get('file') or f.get('filename') or 'unknown'
-            score = f.get('score') or f.get('complexity_score') or 0
-            issues = ', '.join(map(str, f.get('issues', []))) if f.get('issues') else 'None'
-            status = 'Excellent' if score >= 85 else 'Good' if score >= 70 else 'Fair' if score >= 50 else 'Critical'
-            normalized_files.append((path, score, issues, status))
-
-    # Build HTML parts
-    parts = []
-    parts.append('<!doctype html>')
-    parts.append('<html lang="en">')
-    parts.append('<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">')
-    parts.append('<title>Sustainability Report</title>')
-    parts.append('<style>body{font-family:Segoe UI,Arial,sans-serif;margin:20px;color:#2c3e50} h1,h2{color:#2c3e50} table{width:100%;border-collapse:collapse} th,td{padding:8px;border:1px solid #e6e6e6;text-align:left} .badge{padding:4px 8px;border-radius:8px;color:white;font-weight:600} .pass{background:#27ae60}.good{background:#2ecc71}.fair{background:#f39c12}.critical{background:#e74c3c} .container{max-width:1100px;margin:0 auto}</style>')
-    parts.append('</head><body>')
-    parts.append('<div class="container">')
-    parts.append('<h1>🔍 Analysis & Recommendations</h1>')
-
-    # File level assessment first in this section (user request)
-    parts.append('<section>')
-    parts.append('<h2>📁 File-Level Green Coding Assessment (Top 10)</h2>')
-    parts.append('<table><thead><tr><th>File Path</th><th>Green Score</th><th>Issues</th><th>Status</th></tr></thead><tbody>')
-    if normalized_files:
-        for path, score, issues, status in normalized_files:
-            cls = 'pass' if status == 'Excellent' else 'good' if status == 'Good' else 'fair' if status == 'Fair' else 'critical'
-            parts.append(f'<tr><td><code>{path}</code></td><td>{score}</td><td>{issues}</td><td><span class="badge {cls}">{status}</span></td></tr>')
-    else:
-        parts.append('<tr><td colspan="4">No file-level data available</td></tr>')
-    parts.append('</tbody></table>')
-    parts.append('</section>')
-
-    # Executive summary
-    parts.append('<section style="margin-top:24px;">')
-    parts.append('<h2>Executive Summary</h2>')
-    overall = metrics.get('overall_score', 'N/A')
-    ee = metrics.get('energy_efficiency', 'N/A')
-    cq = metrics.get('code_quality', 'N/A')
-    parts.append(f'<p><strong>Overall Score:</strong> {overall} / 100 &nbsp; | &nbsp; <strong>Energy Efficiency:</strong> {ee} &nbsp; | &nbsp; <strong>Code Quality:</strong> {cq}</p>')
-
-    key_findings = exec_summary.get('key_findings') if isinstance(exec_summary, dict) else None
-    if key_findings:
-        parts.append('<ul>')
-        for k in key_findings[:8]:
-            parts.append(f'<li>{k}</li>')
-        parts.append('</ul>')
-    else:
-        parts.append('<p>No executive findings available.</p>')
-    parts.append('</section>')
-
-    # Recommendations
-    parts.append('<section style="margin-top:24px;">')
-    parts.append('<h2>Recommendations</h2>')
-    if recommendations:
-        parts.append('<ol>')
-        for r in recommendations[:12]:
-            title = r.get('title', 'Recommendation') if isinstance(r, dict) else str(r)
-            desc = r.get('description', '') if isinstance(r, dict) else ''
-            parts.append(f'<li><strong>{title}</strong> - {desc}</li>')
-        parts.append('</ol>')
-    else:
-        parts.append('<p>No recommendations provided.</p>')
-    parts.append('</section>')
-
-    # Footer
-    gen_time = report_data.get('report_metadata', {}).get('generated_at', datetime.now().isoformat()) if isinstance(report_data, dict) else datetime.now().isoformat()
-    parts.append(f'<footer style="margin-top:30px;color:#6c757d;font-size:0.9em">Generated: {gen_time}</footer>')
-
-    # Embed report_data as JSON for the external dashboard.js to consume
-    try:
-        report_json = json.dumps(report_data)
-    except Exception:
-        report_json = '{}'
-
-    parts.append(f"<script id=\"report-data\" type=\"application/json\">{report_json}</script>")
-    # Include Chart.js from CDN for richer charts, then load external dashboard script
-    parts.append('<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>')
-    parts.append('<script src="static/dashboard.js"></script>')
-    parts.append('</div></body></html>')
-
-    return '\n'.join(parts)
-
-
-def write_latest_report(report_data, output_path=None):
-    base_dir = Path('sustainability-reports')
-    base_dir.mkdir(parents=True, exist_ok=True)
-
-    html = generate_comprehensive_html_report(report_data)
-
-    target = base_dir / 'latest-report.html'
-    with open(target, 'w', encoding='utf-8') as f:
-        f.write(html)
-
-    # Always write/copy to docs/latest-report.html
-    docs_dir = Path('docs')
-    docs_dir.mkdir(parents=True, exist_ok=True)
-    with open(docs_dir / 'latest-report.html', 'w', encoding='utf-8') as f:
-        f.write(html)
-
-    # Create the external dashboard.js
-    static_dir = base_dir / 'static'
-    static_dir.mkdir(parents=True, exist_ok=True)
-    dashboard_js = '''// Rich interactive dashboard script generated by sustainability_evaluator
-    (function(){
-        try {
-            const el = document.getElementById('report-data');
-            const data = el ? JSON.parse(el.textContent || '{}') : {};
-            // ...existing code...
-        } catch(e){
-            console.error('dashboard interactive error', e);
-        }
-    })()
-    '''
-    with open(static_dir / 'dashboard.js', 'w', encoding='utf-8') as jsf:
-        jsf.write(dashboard_js)
-
-    # Always write/copy dashboard.js to docs/static/
-    docs_static = docs_dir / 'static'
-    docs_static.mkdir(parents=True, exist_ok=True)
-    with open(docs_static / 'dashboard.js', 'w', encoding='utf-8') as jsf:
-        jsf.write(dashboard_js)
-
-    return str(target)
-
+                'title': 'Reduce Runtime Complexity',
+                'description': 'Optimize algorithms to reduce execution time and energy consumption.',
+                'impact': 'Medium',
+                'effort': 'High'
+            })
+        
+        # Language-specific recommendations
+        for language, count in language_breakdown.items():
+            if language == 'javascript' and count > 10:
+                recommendations.append({
+                    'category': 'javascript_optimization',
+                    'priority': 'medium',
+                    'title': 'Bundle Size Optimization',
+                    'description': 'Implement code splitting and tree shaking to reduce JavaScript bundle size.',
+                    'impact': 'Medium',
+                    'effort': 'Low'
+                })
+        
+        return recommendations
 
 def main():
-    import argparse
-
-    parser = argparse.ArgumentParser(description='Generate sustainability HTML report')
-    parser.add_argument('--path', default='.', help='Project path to analyze')
-    parser.add_argument('--out', default=None, help='Output path for the HTML report')
+    """Command line interface for sustainability analyzer"""
+    parser = argparse.ArgumentParser(description='Sustainability Code Evaluation Analyzer')
+    parser.add_argument('--path', default='.', help='Path to analyze (default: current directory)')
+    parser.add_argument('--output', default='sustainability_analysis.json', 
+                       help='Output file for analysis results')
+    parser.add_argument('--config', help='Path to configuration file')
+    parser.add_argument('--format', choices=['json', 'summary'], default='json',
+                       help='Output format')
+    
     args = parser.parse_args()
+    
+    # Initialize and run analyzer
+    analyzer = SustainabilityAnalyzer(config_path=args.config)
+    result = analyzer.analyze_project(args.path)
+    
+    # Output results
+    if args.format == 'json':
+        output_data = {
+            'sustainability_metrics': result.metrics.to_dict(),
+            'analysis_summary': {
+                'file_count': result.file_count,
+                'language_breakdown': result.language_breakdown,
+                'execution_time': result.execution_time,
+                'timestamp': result.timestamp
+            },
+            'issues': result.issues,
+            'recommendations': result.recommendations
+        }
+        
+        with open(args.output, 'w') as f:
+            json.dump(output_data, f, indent=2)
+        print(f"Results saved to: {args.output}")
+        
+    elif args.format == 'summary':
+        print(f"\nSUSTAINABILITY ANALYSIS SUMMARY")
+        print(f"{'='*50}")
+        print(f"Overall Score: {result.metrics.overall_score:.1f}/100")
+        print(f"Energy Efficiency: {result.metrics.energy_efficiency:.1f}/100")
+        print(f"Resource Utilization: {result.metrics.resource_utilization:.1f}/100") 
+        print(f"Carbon Footprint: {result.metrics.carbon_footprint:.1f}/100 (lower is better)")
+        print(f"Performance Optimization: {result.metrics.performance_optimization:.1f}/100")
+        print(f"Sustainable Practices: {result.metrics.sustainable_practices:.1f}/100")
+        print(f"\nAnalyzed {result.file_count} files")
+        print(f"Execution time: {result.execution_time:.2f}s")
+        
+        if result.recommendations:
+            print(f"\nTOP RECOMMENDATIONS:")
+            for i, rec in enumerate(result.recommendations[:3], 1):
+                print(f"  {i}. {rec['title']} ({rec['priority']} priority)")
 
-    evaluator = ComprehensiveSustainabilityEvaluator(args.path)
-    report = evaluator.analyze_project_comprehensively()
-
-    out = write_latest_report(report, args.out)
-    print(f'Wrote latest report to: {out}')
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
