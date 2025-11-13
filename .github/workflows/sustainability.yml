@@ -63,7 +63,11 @@ jobs:
           python3 sustainability_evaluator.py --path . --format html --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" || true
           python3 sustainability_evaluator.py --path . --format json --output "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.json" || true
           
-          if [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" ]; then
+          # Deploy the latest generated dashboard file as the main report
+          DASHBOARD_FILE=$(ls -t sustainability_dashboard_Tracker_*.html 2>/dev/null | head -n 1)
+          if [ -f "$DASHBOARD_FILE" ]; then
+            cp "$DASHBOARD_FILE" "${{ env.REPORT_PATH }}/latest-report.html"
+          elif [ -f "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" ]; then
             cp "${{ env.REPORT_PATH }}/${OUTPUT_BASE}.html" "${{ env.REPORT_PATH }}/latest-report.html"
           fi
           
@@ -88,11 +92,12 @@ jobs:
     - name: Create Dashboard
       if: github.ref == 'refs/heads/main'
       run: |
-        # Find the latest timestamped dashboard file
-        DASHBOARD=$(ls sustainability_dashboard_Tracker_*.html 2>/dev/null | sort | tail -n 1)
-        if [ -n "$DASHBOARD" ]; then
-          cp "$DASHBOARD" pages/
-          echo "Copied $DASHBOARD to pages/ for GitHub Pages deployment."
+        mkdir -p pages
+        cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
+        
+        # Copy the existing index.html from root if it exists, or create a simple landing page
+        if [ -f "index.html" ]; then
+          cp index.html pages/
         else
           echo '<!DOCTYPE html>
           <html lang="en">

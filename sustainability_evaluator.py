@@ -23,6 +23,42 @@ class ComprehensiveSustainabilityEvaluator:
         self.analysis_data = {}
         self.code_patterns = defaultdict(int)
         self.file_metrics = []
+        self.system_performance = {}
+    def _collect_system_performance_metrics(self):
+        """Collect system performance metrics using psutil"""
+        try:
+            import psutil
+            cpu_util = psutil.cpu_percent(interval=1)
+            mem = psutil.virtual_memory()
+            disk = psutil.disk_io_counters()
+            net = psutil.net_io_counters()
+            # Network latency is not directly available; set as placeholder or use ping if needed
+            network_latency_ms = 20  # Placeholder, could be improved with actual ping
+            self.system_performance = {
+                'cpu_utilization': cpu_util,
+                'memory_usage_gb': mem.used / (1024 ** 3),
+                'memory_total_gb': mem.total / (1024 ** 3),
+                'memory_percent': mem.percent,
+                'disk_io_mb_s': (disk.read_bytes + disk.write_bytes) / (1024 ** 2),
+                'network_latency_ms': network_latency_ms,
+                'disk_read_mb_s': disk.read_bytes / (1024 ** 2),
+                'disk_write_mb_s': disk.write_bytes / (1024 ** 2),
+                'network_sent_mb': net.bytes_sent / (1024 ** 2),
+                'network_recv_mb': net.bytes_recv / (1024 ** 2)
+            }
+        except Exception as e:
+            self.system_performance = {
+                'cpu_utilization': 0,
+                'memory_usage_gb': 0,
+                'memory_total_gb': 0,
+                'memory_percent': 0,
+                'disk_io_mb_s': 0,
+                'network_latency_ms': 0,
+                'disk_read_mb_s': 0,
+                'disk_write_mb_s': 0,
+                'network_sent_mb': 0,
+                'network_recv_mb': 0
+            }
         
     def _filter_project_files(self, file_patterns):
         """Filter project files excluding node_modules, build artifacts, evaluator files, and workflows"""
@@ -558,12 +594,10 @@ class ComprehensiveSustainabilityEvaluator:
             'recommendations': recommendations,
             'benchmarking': self._generate_benchmarks(),
             'trends_analysis': self._generate_trends_analysis(),
-
-            'quality_gates': self._evaluate_quality_gates()
+            'quality_gates': self._evaluate_quality_gates(),
+            'system_performance': self.system_performance
         }
-        
         return report
-    
     def _generate_executive_summary(self):
         overall_score = self.enhanced_metrics['overall_score']
         
@@ -1612,6 +1646,7 @@ def generate_comprehensive_html_report(report_data):
     
     # Executive Summary Tab
     exec_summary = report_data['executive_summary']
+    metrics = report_data['sustainability_metrics']
     html += f"""
             <div id="overview" class="tab-content active">
                 <div class="chart-container">
@@ -1629,12 +1664,11 @@ def generate_comprehensive_html_report(report_data):
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
                         <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">Key Findings</h4>
                         <ul style="list-style: none; padding: 0;">
-    """
-    
-    for finding in exec_summary['key_findings']:
-        html += f'<li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 {finding}</li>'
-    
-    html += f"""
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Overall sustainability score: {metrics['overall_score']:.1f}/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Energy efficiency: {metrics['energy_efficiency']:.1f}/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Code quality: {metrics['code_quality']:.1f}/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Total files analyzed: {len(report_data.get('detailed_analysis', {}).get('file_complexity', []))}</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Performance issues detected: {sum(report_data.get('detailed_analysis', {}).get('performance_analysis', {}).values())}</li>
                         </ul>
                     </div>
                     
@@ -1642,10 +1676,8 @@ def generate_comprehensive_html_report(report_data):
                         <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;"> Critical Areas</h4>
                         <ul style="list-style: none; padding: 0;">
     """
-    
     for area in exec_summary.get('critical_areas', ['No critical issues identified']):
         html += f'<li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 {area}</li>'
-    
     html += f"""
                         </ul>
                     </div>
@@ -1665,49 +1697,45 @@ def generate_comprehensive_html_report(report_data):
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">CPU Utilization</span>
-                                
                             </div>
-                            <div class="metric-value">67.3<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
+                            <div class="metric-value">{report_data['system_performance']['cpu_utilization']:.1f}<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
-                                <div style="background: #ff6b6b; height: 100%; width: 67%; border-radius: 4px;"></div>
+                                <div style="background: #ff6b6b; height: 100%; width: {report_data['system_performance']['cpu_utilization']:.0f}%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Peak: 89% | Avg: 52%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Available: {report_data['system_performance']['memory_total_gb']:.1f}GB | Used: {report_data['system_performance']['memory_percent']:.0f}%</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Memory Usage</span>
-                                
                             </div>
-                            <div class="metric-value">4.2<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
+                            <div class="metric-value">{report_data['system_performance']['memory_usage_gb']:.1f}<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
-                                <div style="background: #4ecdc4; height: 100%; width: 52%; border-radius: 4px;"></div>
+                                <div style="background: #4ecdc4; height: 100%; width: {report_data['system_performance']['memory_percent']:.0f}%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Available: 8GB | Used: 52%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Available: {report_data['system_performance']['memory_total_gb']:.1f}GB | Used: {report_data['system_performance']['memory_percent']:.0f}%</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Disk I/O</span>
-                                
                             </div>
-                            <div class="metric-value">156<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
+                            <div class="metric-value">{report_data['system_performance']['disk_io_mb_s']:.0f}<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
                                 <div style="background: #45b7d1; height: 100%; width: 78%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Read: 89MB/s | Write: 67MB/s</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Read: {report_data['system_performance']['disk_read_mb_s']:.0f}MB/s | Write: {report_data['system_performance']['disk_write_mb_s']:.0f}MB/s</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Network Latency</span>
-                                
                             </div>
-                            <div class="metric-value">23<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
+                            <div class="metric-value">{report_data['system_performance']['network_latency_ms']:.0f}<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
                                 <div style="background: #96ceb4; height: 100%; width: 85%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Jitter: 2.1ms | Loss: 0.02%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Sent: {report_data['system_performance']['network_sent_mb']:.1f}MB | Recv: {report_data['system_performance']['network_recv_mb']:.1f}MB</p>
                         </div>
                     </div>
                 </div>
@@ -1728,30 +1756,15 @@ def generate_comprehensive_html_report(report_data):
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
-                                        <td>/api/ideas/evaluate</td>
-                                        <td><strong>1,240ms</strong></td>
-                                        <td>1,500ms</td>
-                                        <td><span class="status-badge status-pass">Good</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>/api/chat/generate</td>
-                                        <td><strong>890ms</strong></td>
-                                        <td>1,000ms</td>
-                                        <td><span class="status-badge status-pass">Excellent</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>/api/export/csv</td>
-                                        <td><strong>2,150ms</strong></td>
-                                        <td>2,000ms</td>
-                                        <td><span class="status-badge status-fail">Slow</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>/api/training/data</td>
-                                        <td><strong>567ms</strong></td>
-                                        <td>800ms</td>
-                                        <td><span class="status-badge status-pass">Fast</span></td>
-                                    </tr>
+    """
+    for endpoint in report_data.get('application_performance', {}).get('response_times', []):
+        html += f'''<tr>
+            <td>{endpoint.get('name')}</td>
+            <td><strong>{endpoint.get('current')}ms</strong></td>
+            <td>{endpoint.get('target')}ms</td>
+            <td><span class="status-badge status-{endpoint.get('status_class', 'pass')}">{endpoint.get('status')}</span></td>
+        </tr>'''
+    html += """
                                 </tbody>
                             </table>
                         </div>
@@ -1759,37 +1772,18 @@ def generate_comprehensive_html_report(report_data):
                         <div>
                             <h4 style="color: #3498db; margin-bottom: 20px;">Throughput Metrics</h4>
                             <div style="display: grid; gap: 15px;">
-                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="font-weight: 600;">Requests/Second</span>
-                                        <span style="color: #3498db; font-size: 1.4em; font-weight: 700;">247</span>
-                                    </div>
-                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Peak: 412 req/s</div>
-                                </div>
-                                
-                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #e74c3c;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="font-weight: 600;">Error Rate</span>
-                                        <span style="color: #e74c3c; font-size: 1.4em; font-weight: 700;">0.8%</span>
-                                    </div>
-                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Target: <0.5%</div>
-                                </div>
-                                
-                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #f39c12;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="font-weight: 600;">Concurrent Users</span>
-                                        <span style="color: #f39c12; font-size: 1.4em; font-weight: 700;">89</span>
-                                    </div>
-                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Max supported: 500</div>
-                                </div>
-                                
-                                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #27ae60;">
-                                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                                        <span style="font-weight: 600;">Uptime</span>
-                                        <span style="color: #27ae60; font-size: 1.4em; font-weight: 700;">99.7%</span>
-                                    </div>
-                                    <div style="font-size: 0.9em; color: #666; margin-top: 5px;">Last 30 days</div>
-                                </div>
+    """
+    for metric in report_data.get('application_performance', {}).get('throughput', []):
+        html += f'''
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid {metric.get('color', '#3498db')};">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600;">{metric.get('name')}</span>
+                    <span style="color: {metric.get('color', '#3498db')}; font-size: 1.4em; font-weight: 700;">{metric.get('value')}</span>
+                </div>
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">{metric.get('description')}</div>
+            </div>
+        '''
+    html += """
                             </div>
                         </div>
                     </div>
@@ -1801,66 +1795,45 @@ def generate_comprehensive_html_report(report_data):
                         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 15px; padding: 25px;">
                             <h4 style="margin-bottom: 20px;">Core Web Vitals</h4>
                             <div style="display: grid; gap: 12px;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Largest Contentful Paint</span>
-                                    <strong>1.8s</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>First Input Delay</span>
-                                    <strong>89ms</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Cumulative Layout Shift</span>
-                                    <strong>0.08</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>First Contentful Paint</span>
-                                    <strong>1.2s</strong>
-                                </div>
+    """
+    for vital in report_data.get('performance_dashboard', {}).get('web_vitals', []):
+        html += f'''
+            <div style="display: flex; justify-content: space-between;">
+                <span>{vital.get('name')}</span>
+                <strong>{vital.get('value')}</strong>
+            </div>
+        '''
+    html += """
                             </div>
                         </div>
                         
                         <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 15px; padding: 25px;">
                             <h4 style="margin-bottom: 20px;">📦 Bundle Analysis</h4>
                             <div style="display: grid; gap: 12px;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Total Bundle Size</span>
-                                    <strong>2.7MB</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Gzipped Size</span>
-                                    <strong>842KB</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Chunks Count</span>
-                                    <strong>12</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Tree-shaking Savings</span>
-                                    <strong>34%</strong>
-                                </div>
+    """
+    for bundle in report_data.get('performance_dashboard', {}).get('bundle_analysis', []):
+        html += f'''
+            <div style="display: flex; justify-content: space-between;">
+                <span>{bundle.get('name')}</span>
+                <strong>{bundle.get('value')}</strong>
+            </div>
+        '''
+    html += """
                             </div>
                         </div>
                         
                         <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 15px; padding: 25px;">
                             <h4 style="margin-bottom: 20px;">Performance Scores</h4>
                             <div style="display: grid; gap: 12px;">
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Lighthouse Performance</span>
-                                    <strong>87/100</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Accessibility</span>
-                                    <strong>94/100</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>Best Practices</span>
-                                    <strong>92/100</strong>
-                                </div>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <span>SEO Score</span>
-                                    <strong>89/100</strong>
-                                </div>
+    """
+    for score in report_data.get('performance_dashboard', {}).get('performance_scores', []):
+        html += f'''
+            <div style="display: flex; justify-content: space-between;">
+                <span>{score.get('name')}</span>
+                <strong>{score.get('value')}</strong>
+            </div>
+        '''
+    html += """
                             </div>
                         </div>
                     </div>
@@ -1890,175 +1863,92 @@ def generate_comprehensive_html_report(report_data):
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/services/ideaEvaluationService.js</code></td>
-                                <td><strong style="color: #27ae60;">89/100</strong></td>
-                                <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">2 minor</span></td>
-                                <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">15 found</span></td>
-                                <td>High efficiency</td>
-                                <td><span class="status-badge status-pass">Excellent</span></td>
-                            </tr>
-                            <tr>
-                                <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/utils/exportCsv.js</code></td>
-                                <td><strong style="color: #27ae60;">84/100</strong></td>
-                                <td><span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px;">3 medium</span></td>
-                                <td><span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 10px;">12 found</span></td>
-                                <td>Good efficiency</td>
-                                <td><span class="status-badge status-pass">Good</span></td>
-                            </tr>
-                            <tr>
-                                <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">server.js</code></td>
-                                <td><strong style="color: #f39c12;">71/100</strong></td>
-                                <td><span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px;">5 medium</span></td>
-                                <td><span style="background: #ffc107; color: #333; padding: 2px 8px; border-radius: 10px;">8 found</span></td>
-                                <td>Moderate efficiency</td>
-                                <td><span class="status-badge status-conditional">Fair</span></td>
-                            </tr>
-                            <tr>
-                                <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/App.js</code></td>
-                                <td><strong style="color: #f39c12;">68/100</strong></td>
-                                <td><span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px;">4 high</span></td>
-                                <td><span style="background: #fd7e14; color: white; padding: 2px 8px; border-radius: 10px;">10 found</span></td>
-                                <td>Needs optimization</td>
-                                <td><span class="status-badge status-conditional">Needs Work</span></td>
-                            </tr>
-                            <tr>
-                                <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/ChatSection.js</code></td>
-                                <td><strong style="color: #e74c3c;">52/100</strong></td>
-                                <td><span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px;">8 high</span></td>
-                                <td><span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px;">5 found</span></td>
-                                <td>Poor efficiency</td>
-                                <td><span class="status-badge status-fail">Critical</span></td>
-                            </tr>
+    """
+    for file in report_data.get('file_analysis', {}).get('green_coding_issues', [])[:10]:
+        status_class = 'pass' if file.get('green_score', 0) >= 80 else 'conditional' if file.get('green_score', 0) >= 60 else 'fail'
+        html += f'''<tr>
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">{file.get('file')}</code></td>
+            <td><strong style="color: #27ae60;">{file.get('green_score', 0)}/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">{len(file.get('issues', []))} issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">{len(file.get('improvements', []))} found</span></td>
+            <td>{file.get('energy_impact', 'N/A')}</td>
+            <td><span class="status-badge status-{status_class}">{'Excellent' if status_class == 'pass' else 'Fair' if status_class == 'conditional' else 'Critical'}</span></td>
+        </tr>'''
+    html += """
                         </tbody>
                     </table>
                 </div>
                 <!-- Code Issues Analysis -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #e74c3c; margin-bottom: 20px; font-size: 1.5em;">High Priority Issues</h3>
-                    
-                    <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="color: #e53e3e; margin: 0;">Memory Leak Detection</h4>
-                            <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
-                        </div>
-                        <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
-                            <div style="color: #68d391; margin-bottom: 5px;">📁 backend/server.js</div>
-                            <div style="color: #fbd38d;">Line 127-135:</div>
-                            <div style="margin-left: 20px; color: #f7fafc;">
-                                <div style="color: #fc8181;">❌ const results = [];</div>
-                                <div style="color: #fc8181;">❌ for (let i = 0; i < 10000; i++) {{</div>
-                                <div style="color: #fc8181;">❌     results.push(processLargeData(data[i]));</div>
-                                <div style="color: #fc8181;">❌ }}</div>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color: #2d3748;">Issue:</strong> Large array accumulation without memory cleanup
-                        </div>
-                        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
-                            <strong style="color: #2f855a;">Green Suggestion:</strong>
-                            <div style="color: #2d3748; margin-top: 8px;">Process data in batches and use streaming to reduce memory footprint by ~75%:</div>
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">
-                                <div style="color: #68d391;">✅ const batchSize = 100;</div>
-                                <div style="color: #68d391;">✅ for (let i = 0; i < data.length; i += batchSize) {{</div>
-                                <div style="color: #68d391;">✅     await processBatch(data.slice(i, i + batchSize));</div>
-                                <div style="color: #68d391;">✅ }}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="color: #e53e3e; margin: 0;">Inefficient Database Queries</h4>
-                            <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
-                        </div>
-                        <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
-                            <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/services/ideaEvaluationService.js</div>
-                            <div style="color: #fbd38d;">Line 45-52:</div>
-                            <div style="margin-left: 20px; color: #f7fafc;">
-                                <div style="color: #fc8181;">❌ for (const id of userIds) {{</div>
-                                <div style="color: #fc8181;">❌     const user = await db.users.findById(id);</div>
-                                <div style="color: #fc8181;">❌     results.push(user);</div>
-                                <div style="color: #fc8181;">❌ }}</div>
-                            </div>
-                        </div>
-                        <div style="margin-bottom: 15px;">
-                            <strong style="color: #2d3748;">Issue:</strong> N+1 query problem causing excessive database calls
-                        </div>
-                        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
-                            <strong style="color: #2f855a;">Green Suggestion:</strong>
-                            <div style="color: #2d3748; margin-top: 8px;">Use bulk queries to reduce database load by ~90%:</div>
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">
-                                <div style="color: #68d391;">✅ const users = await db.users.findByIds(userIds);</div>
-                                <div style="color: #68d391;">✅ // Single query instead of multiple calls</div>
-                            </div>
-                        </div>
-                    </div>
+    """
+    for issue in report_data.get('high_priority_issues', []):
+        html += f'''
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">{issue.get('title')}</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">{issue.get('priority', 'Critical')}</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 {issue.get('file')}</div>
+                <div style="color: #fbd38d;">{issue.get('location')}</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{issue.get('code')}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> {issue.get('description')}
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">{issue.get('suggestion')}</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{issue.get('suggestion_code')}</div>
+            </div>
+        </div>
+        '''
+    html += """
                 </div>
 
                 <!-- Medium Priority Issues -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #f39c12; margin-bottom: 20px; font-size: 1.5em;">Optimization Opportunities</h3>
-                    
-                    <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="color: #c05621; margin: 0;">Unused Dependencies</h4>
-                            <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
-                        </div>
-                        <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
-                            <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/package.json</div>
-                            <div style="color: #fbd38d;">Dependencies analysis:</div>
-                            <div style="margin-left: 20px; color: #f7fafc;">
-                                <div style="color: #fc8181;">❌ "lodash": "^4.17.21" (unused)</div>
-                                <div style="color: #fc8181;">❌ "moment": "^2.29.4" (could use native Date)</div>
-                                <div style="color: #fc8181;">❌ "axios": "^1.4.0" (could use fetch API)</div>
-                            </div>
-                        </div>
-                        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
-                            <strong style="color: #2f855a;">Green Suggestion:</strong>
-                            <div style="color: #2d3748; margin-top: 8px;">Remove unused packages to reduce bundle size by ~320KB and improve loading time</div>
-                        </div>
-                    </div>
-
-                    <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                            <h4 style="color: #c05621; margin: 0;">Resource Loading Optimization</h4>
-                            <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
-                        </div>
-                        <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
-                            <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/App.js</div>
-                            <div style="color: #fbd38d;">Line 23-28:</div>
-                            <div style="margin-left: 20px; color: #f7fafc;">
-                                <div style="color: #fc8181;">❌ import './assets/large-chart.js';</div>
-                                <div style="color: #fc8181;">❌ import './assets/heavy-utils.js';</div>
-                            </div>
-                        </div>
-                        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
-                            <strong style="color: #2f855a;">Green Suggestion:</strong>
-                            <div style="color: #2d3748; margin-top: 8px;">Use lazy loading for heavy components to improve initial page load by ~40%:</div>
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">
-                                <div style="color: #68d391;">✅ const ChartComponent = lazy(() => import('./ChartComponent'));</div>
-                            </div>
-                        </div>
-                    </div>
+    """
+    for opp in report_data.get('optimization_opportunities', []):
+        html += f'''
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">{opp.get('title')}</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">{opp.get('priority', 'Medium')}</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 {opp.get('file')}</div>
+                <div style="color: #fbd38d;">{opp.get('location')}</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{opp.get('code')}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">{opp.get('suggestion')}</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{opp.get('suggestion_code')}</div>
+            </div>
+        </div>
+        '''
+    html += """
                 </div>
 
                 <!-- Code Quality Summary -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
                     <h3 style="color: #27ae60; margin-bottom: 20px; font-size: 1.5em;">Green Coding Practices Found</h3>
-                    
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
-                            <h4 style="color: #2f855a; margin: 0 0 15px 0;">Efficient Patterns</h4>
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
-                                <div style="color: #68d391;">📁 frontend/src/utils/exportCsv.js:15</div>
-                                <div style="color: #68d391;">✅ Using Map() for O(1) lookups</div>
-                            </div>
-                            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
-                                <div style="color: #68d391;">📁 backend/server.js:89</div>
-                                <div style="color: #68d391;">✅ Proper resource cleanup with try/finally</div>
-                            </div>
-                        </div>
+    """
+    for practice in report_data.get('green_coding_practices', []):
+        html += f'''
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">{practice.get('title')}</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 {practice.get('file')}</div>
+                <div style="color: #68d391;">✅ {practice.get('description')}</div>
+            </div>
+        </div>
+        '''
+    html += """
                     </div>
                 </div>
             </div>
