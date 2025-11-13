@@ -2847,38 +2847,51 @@ def main():
     # Generate timestamp for automatic naming
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     project_name = os.path.basename(os.path.abspath(args.path))
-    
+    report_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sustainability-reports")
+    os.makedirs(report_dir, exist_ok=True)
+
     print("🌱 Starting Comprehensive Sustainable Code Evaluation...")
     print(f"📁 Analyzing project: {project_name}")
     print(f"🎯 Target path: {os.path.abspath(args.path)}")
-    
+
     evaluator = ComprehensiveSustainabilityEvaluator(args.path)
     report = evaluator.analyze_project_comprehensively()
-    
+
     if 'error' in report:
         print(f"❌ {report['error']}")
         sys.exit(1)
-    
+
     # Auto-generate comprehensive runtime dashboard
     if not args.no_dashboard:
         print("\n📊 Generating comprehensive runtime dashboard...")
-        
+
         # Determine output filenames
         if args.output:
             base_name = args.output.rsplit('.', 1)[0] if '.' in args.output else args.output
             html_output = f"{base_name}.html" if not args.output.endswith('.html') else args.output
             json_output = f"{base_name}.json"
+            # If output is not in sustainability-reports, move it there
+            html_output = os.path.join(report_dir, os.path.basename(html_output))
+            json_output = os.path.join(report_dir, os.path.basename(json_output))
         else:
             # Auto-generated filenames with timestamp
-            html_output = f"sustainability_dashboard_{project_name}_{timestamp}.html"
-            json_output = f"sustainability_report_{project_name}_{timestamp}.json"
-        
+            html_output = os.path.join(report_dir, f"sustainability_dashboard_{project_name}_{timestamp}.html")
+            json_output = os.path.join(report_dir, f"sustainability_report_{project_name}_{timestamp}.json")
+
+
         # Generate HTML dashboard (always created for visual analysis)
         html_content = generate_comprehensive_html_report(report)
+        # Write timestamped dashboard file
         with open(html_output, 'w') as f:
             f.write(html_content)
         print(f"✅ Interactive Dashboard: {html_output}")
-        
+
+        # Always update latest-report.html with the same dashboard content
+        latest_html_path = os.path.join(report_dir, "latest-report.html")
+        with open(latest_html_path, 'w') as f:
+            f.write(html_content)
+        print(f"✅ Updated: {latest_html_path}")
+
         # Generate JSON report if requested or format is 'both'
         if args.format in ['json', 'both']:
             json_content = json.dumps(report, indent=2)
