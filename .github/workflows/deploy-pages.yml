@@ -1,0 +1,40 @@
+name: Deploy Sustainability Report to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r sustainability-analyzer/analyzer/requirements.txt || true
+
+      - name: Run sustainability report generator
+        run: |
+          python3 sustainability_evaluator.py
+
+      - name: Commit updated docs
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/latest-report.html docs/static/dashboard.js
+          git commit -m "Auto-update sustainability report for GitHub Pages" || echo "No changes to commit"
+          git push
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          publish_dir: docs
+          github_token: ${{ secrets.GITHUB_TOKEN }}
