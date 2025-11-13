@@ -27,9 +27,61 @@ class ComprehensiveSustainabilityEvaluator:
         }
 
         top_files = [
-            {'path': 'frontend/src/App.js', 'score': 68, 'issues': ['large bundle', 'sync I/O']},
-            {'path': 'backend/server.js', 'score': 54, 'issues': ['memory leak', 'unused deps']},
-            {'path': 'frontend/src/ChatSection.js', 'score': 52, 'issues': ['inefficient loops']}
+            {
+                'path': 'frontend/src/App.js',
+                'score': 68,
+                'issues': ['large bundle', 'sync I/O'],
+                'energy_impact': 8.2,
+                'lines': [12, 45, 78],
+                'language': 'javascript',
+                'last_modified': '2025-11-10',
+                'recommendation_refs': [0]
+            },
+            {
+                'path': 'backend/server.js',
+                'score': 54,
+                'issues': ['memory leak', 'unused deps'],
+                'energy_impact': 12.5,
+                'lines': [33, 102],
+                'language': 'javascript',
+                'last_modified': '2025-11-09',
+                'recommendation_refs': [1]
+            },
+            {
+                'path': 'frontend/src/ChatSection.js',
+                'score': 52,
+                'issues': ['inefficient loops'],
+                'energy_impact': 6.7,
+                'lines': [21, 22, 23],
+                'language': 'javascript',
+                'last_modified': '2025-11-08',
+                'recommendation_refs': [1]
+            }
+        ]
+
+        recommendations = [
+            {
+                'title': 'Implement lazy-loading for heavy modules',
+                'description': 'Reduce initial bundle size by loading charts lazily',
+                'priority': 'high',
+                'affected_files': ['frontend/src/App.js'],
+                'files_count': 1,
+                'improvement_percentage': '5-12%',
+                'energy_saving': 4.2,
+                'tags': ['performance', 'energy'],
+                'status': 'open'
+            },
+            {
+                'title': 'Refactor nested loops',
+                'description': 'Replace O(n^2) loops with efficient algorithms',
+                'priority': 'medium',
+                'affected_files': ['frontend/src/ChatSection.js', 'backend/server.js'],
+                'files_count': 2,
+                'improvement_percentage': '8-15%',
+                'energy_saving': 7.1,
+                'tags': ['algorithm', 'energy'],
+                'status': 'open'
+            }
         ]
 
         report = {
@@ -51,10 +103,7 @@ class ComprehensiveSustainabilityEvaluator:
             'detailed_analysis': {
                 'file_complexity': top_files
             },
-            'recommendations': [
-                {'title': 'Implement lazy-loading for heavy modules', 'description': 'Reduce initial bundle size by loading charts lazily', 'priority': 'high', 'affected_files': 'frontend/src', 'files_count': 3, 'improvement_percentage': '5-12%'},
-                {'title': 'Refactor nested loops', 'description': 'Replace O(n^2) loops with efficient algorithms', 'priority': 'medium'}
-            ],
+            'recommendations': recommendations,
             'top_files': [f['path'] for f in top_files],
             'file_analysis': {
                 'green_coding_issues': top_files,
@@ -162,7 +211,8 @@ def generate_comprehensive_html_report(report_data):
         report_json = '{}'
 
     parts.append(f"<script id=\"report-data\" type=\"application/json\">{report_json}</script>")
-    # Load external static JS (dashboard.js) from same folder as HTML
+    # Include Chart.js from CDN for richer charts, then load external dashboard script
+    parts.append('<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>')
     parts.append('<script src="static/dashboard.js"></script>')
     parts.append('</div></body></html>')
 
@@ -179,48 +229,128 @@ def write_latest_report(report_data, output_path=None):
     with open(target, 'w', encoding='utf-8') as f:
         f.write(html)
 
-    # Also copy into docs/ for GitHub Pages if docs exists
-    docs_dir = Path('docs')
-    if docs_dir.exists() and docs_dir.is_dir():
-        shutil.copy2(target, docs_dir / 'latest-report.html')
+        # Also copy into docs/ for GitHub Pages if docs exists
+        docs_dir = Path('docs')
+        if docs_dir.exists() and docs_dir.is_dir():
+                shutil.copy2(target, docs_dir / 'latest-report.html')
 
-        # Create a minimal external dashboard.js that reads the embedded JSON and
-        # performs small DOM updates (keeps JS simple and safe).
+        # Create the external dashboard.js that reads the embedded JSON and renders
+        # an interactive dashboard (tabs, charts, progress bars, file lists)
         static_dir = base_dir / 'static'
         static_dir.mkdir(parents=True, exist_ok=True)
 
-        dashboard_js = '''// Minimal dashboard script generated by sustainability_evaluator
+        dashboard_js = '''// Rich interactive dashboard script generated by sustainability_evaluator
 (function(){
     try {
         const el = document.getElementById('report-data');
         const data = el ? JSON.parse(el.textContent || '{}') : {};
 
-        // Simple render: show overall score in the header if present
-        const header = document.querySelector('.container h1');
-        if (header && data.sustainability_metrics && data.sustainability_metrics.overall_score !== undefined) {
-            const score = data.sustainability_metrics.overall_score;
-            const badge = document.createElement('span');
-            badge.textContent = ` Overall: ${score}/100`;
-            badge.style.marginLeft = '12px';
-            badge.style.padding = '4px 10px';
-            badge.style.borderRadius = '8px';
-            badge.style.background = '#2ecc71';
-            badge.style.color = 'white';
-            badge.style.fontWeight = '700';
-            header.appendChild(badge);
+        // Create container elements for charts and panels if not present
+        const container = document.querySelector('.container');
+        if (!container) return;
+
+        // Create tabs
+        const tabsHtml = `
+            <div style="display:flex;gap:12px;margin:18px 0;">
+                <button data-tab="overview" class="tab-btn">Overview</button>
+                <button data-tab="files" class="tab-btn">Files</button>
+                <button data-tab="reco" class="tab-btn">Recommendations</button>
+            </div>
+        `;
+        const tabsDiv = document.createElement('div');
+        tabsDiv.innerHTML = tabsHtml;
+        container.insertBefore(tabsDiv, container.children[1]);
+
+        // Create tab content nodes
+        const overview = document.createElement('div'); overview.id='tab-overview'; overview.className='tab-content';
+        const files = document.createElement('div'); files.id='tab-files'; files.className='tab-content';
+        const reco = document.createElement('div'); reco.id='tab-reco'; reco.className='tab-content';
+        container.appendChild(overview); container.appendChild(files); container.appendChild(reco);
+
+        // Style: simple
+        const style = document.createElement('style');
+        style.textContent = `
+            .tab-content{display:none;margin-top:12px}
+            .tab-content.active{display:block}
+            .tab-btn{padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:white;cursor:pointer}
+            .tab-btn.active{background:linear-gradient(90deg,#2ecc71,#16a085);color:white}
+            .progress{background:#eee;border-radius:8px;height:12px;width:100%}
+            .progress-fill{height:100%;background:linear-gradient(90deg,#2ecc71,#2ecc71);border-radius:8px}
+        `;
+        document.head.appendChild(style);
+
+        // Activate Overview by default
+        function activateTab(name){
+            document.querySelectorAll('.tab-btn').forEach(b=>{b.classList.toggle('active', b.getAttribute('data-tab')===name)});
+            document.querySelectorAll('.tab-content').forEach(t=>t.classList.toggle('active', t.id==='tab-'+name));
+        }
+        document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click', ()=>activateTab(b.getAttribute('data-tab'))));
+        activateTab('overview');
+
+        // Overview content: small metrics and radar/bar charts
+        overview.innerHTML = `<div style="display:flex;gap:20px;flex-wrap:wrap">\n      <div style="flex:1;min-width:260px;">\n        <h3>Key Metrics</h3>\n        <div id='metrics-cards'></div>\n      </div>\n      <div style="flex:2;min-width:320px;">\n        <h3>Trends</h3>\n        <canvas id='trendChart' style='width:100%;max-height:320px'></canvas>\n      </div>\n    </div>`;
+
+        // Files tab: list top files
+        files.innerHTML = `<h3>Top files</h3><div id='files-list'></div>`;
+
+        // Recommendations tab
+        reco.innerHTML = `<h3>Recommendations</h3><div id='reco-list'></div>`;
+
+        // Populate metrics cards
+        const metricsNode = document.getElementById('metrics-cards');
+        const keys = ['overall_score','energy_efficiency','resource_utilization','performance_optimization','code_quality'];
+        keys.forEach(k=>{
+            const v = data.sustainability_metrics && data.sustainability_metrics[k] !== undefined ? data.sustainability_metrics[k] : 'N/A';
+            const card = document.createElement('div');
+            card.style.padding='12px'; card.style.margin='8px 0'; card.style.border='1px solid #eee'; card.style.borderRadius='10px';
+            card.innerHTML = `<strong>${k.replace(/_/g,' ')}:</strong> <span class='metric-value'>${v}</span>\n        <div class='progress' aria-hidden='true' style='margin-top:8px'><div class='progress-fill' style='width:${(typeof v==='number'?v:0)}%'></div></div>`;
+            metricsNode.appendChild(card);
+        });
+
+        // Trend chart (line) using Chart.js
+        const trendCtx = document.getElementById('trendChart').getContext('2d');
+        const trendData = {
+            labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+            datasets: [{label:'Overall Score',data:[60,65,70,72,75,(data.sustainability_metrics&&data.sustainability_metrics.overall_score)||75],borderColor:'#2c3e50',backgroundColor:'rgba(44,62,80,0.08)',tension:0.3}]
+        };
+        new Chart(trendCtx,{type:'line',data:trendData, options:{responsive:true,plugins:{legend:{display:false}}}});
+
+        // Files list
+        const filesList = document.getElementById('files-list');
+        const fileData = (data.detailed_analysis && data.detailed_analysis.file_complexity) || data.top_files || [];
+        if (fileData && fileData.length){
+            fileData.forEach(f=>{
+                const item = document.createElement('div');
+                const path = f.path||f||String(f);
+                const score = f.score||f.green_score||0;
+                const issues = (f.issues && f.issues.join(', ')) || '';
+                item.style.padding='10px'; item.style.border='1px solid #eee'; item.style.margin='8px 0'; item.style.borderRadius='8px';
+                item.innerHTML = `<div style='display:flex;justify-content:space-between;align-items:center'><div><code>${path}</code><div style='color:#666;font-size:0.9em'>${issues}</div></div><div style='text-align:right'><div style='font-weight:700'>${score}</div><div class='progress' style='width:120px;margin-top:6px'><div class='progress-fill' style='width:${score}%'></div></div></div></div>`;
+                filesList.appendChild(item);
+            });
+        } else {
+            filesList.textContent = 'No file-level data available.';
         }
 
-        // Add click handler to file rows to copy path
-        document.querySelectorAll('table tbody tr').forEach(function(tr){
-            tr.addEventListener('click', function(){
-                const code = tr.querySelector('code');
-                if (code) {
-                    navigator.clipboard && navigator.clipboard.writeText(code.textContent);
-                }
+        // Recommendations
+        const recoList = document.getElementById('reco-list');
+        const recs = data.recommendations || [];
+        if (recs.length){
+            recs.forEach(r=>{
+                const el = document.createElement('div');
+                el.style.padding='10px'; el.style.border='1px solid #f1f1f1'; el.style.margin='8px 0'; el.style.borderRadius='8px';
+                el.innerHTML = `<strong>${r.title||'Recommendation'}</strong> <div style='color:#555'>${r.description||''}</div>`;
+                recoList.appendChild(el);
             });
-        });
-    } catch(e) {
-        console.error('dashboard.js error', e);
+        } else {
+            recoList.textContent = 'No recommendations.';
+        }
+
+        // Click-to-copy on file code elements
+        document.querySelectorAll('#files-list code').forEach(c=>c.addEventListener('click', ()=>navigator.clipboard && navigator.clipboard.writeText(c.textContent)));
+
+    } catch(e){
+        console.error('dashboard interactive error', e);
     }
 })();
 '''
@@ -228,13 +358,14 @@ def write_latest_report(report_data, output_path=None):
         with open(static_dir / 'dashboard.js', 'w', encoding='utf-8') as jsf:
                 jsf.write(dashboard_js)
 
+        # Copy static to docs if present
         if docs_dir.exists() and docs_dir.is_dir():
                 docs_static = docs_dir / 'static'
                 if docs_static.exists():
                         shutil.rmtree(docs_static)
                 shutil.copytree(static_dir, docs_static)
 
-    return str(target)
+        return str(target)
 
 
 def main():
