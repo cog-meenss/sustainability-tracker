@@ -1495,9 +1495,8 @@ def generate_comprehensive_html_report(report_data):
             
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="showTab(event, 'overview')">Overview</button>
-                <button class="nav-tab" onclick="showTab(event, 'metrics')"> Detailed Metrics</button>
-                <button class="nav-tab" onclick="showTab(event, 'analysis')"> Code Analysis</button>
-                <button class="nav-tab" onclick="showTab(event, 'recommendations')">Recommendations</button>
+                <button class="nav-tab" onclick="showTab(event, 'metrics')">Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab(event, 'analysis')">Analysis &amp; Recommendations</button>
                 <button class="nav-tab" onclick="showTab(event, 'benchmarks')">Benchmarks</button>
             </div>
     """
@@ -2197,7 +2196,7 @@ def generate_comprehensive_html_report(report_data):
             <!-- Code Analysis Tab -->
             <div id="analysis" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    Code Analysis Results
+                    Analysis &amp; Recommendations
                 </h2>
                 
                 <!-- Code Issues Analysis -->
@@ -2343,199 +2342,6 @@ def generate_comprehensive_html_report(report_data):
                 </div>
             </div>
             
-            <!-- Recommendations Tab -->
-            <div id="recommendations" class="tab-content">
-                <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                    Sustainability Recommendations
-                </h2>
-                
-                <!-- Summary Stats -->
-                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px; padding: 25px; margin-bottom: 30px;">
-                    <h3 style="margin-bottom: 20px; text-align: center;">Optimization Overview</h3>
-                    <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); color: white;">
-    """
-    
-    # Add recommendations from the report data
-    recommendations = report_data.get('recommendations', [])
-    if not recommendations:
-        # Fallback recommendations if none provided
-        recommendations = [
-            {
-                'title': '🚀 Optimize Performance Bottlenecks',
-                'priority': 'high',
-                'description': 'Address blocking operations and inefficient algorithms',
-                'improvement_percentage': '25-60%',
-                'affected_files': 'Multiple files',
-                'files_count': 5
-            },
-            {
-                'title': '🔄 Implement Caching Strategies',
-                'priority': 'medium',
-                'description': 'Add intelligent caching for frequently accessed data',
-                'improvement_percentage': '15-40%',
-                'affected_files': 'Backend files',
-                'files_count': 3
-            },
-            {
-                'title': '⚡ Optimize Data Structures',
-                'priority': 'medium', 
-                'description': 'Leverage efficient data structures and algorithms',
-                'improvement_percentage': '10-30%',
-                'affected_files': 'Core logic files',
-                'files_count': 4
-            }
-        ]
-    
-    # Calculate summary stats
-    total_recommendations = len(recommendations)
-    high_priority = len([r for r in recommendations if r.get('priority') == 'high'])
-    total_files_affected = sum(r.get('files_count', 1) for r in recommendations)
-    avg_improvement = sum(float(r.get('improvement_percentage', '15').split('-')[0]) for r in recommendations) / max(1, total_recommendations)
-    
-    html += f"""
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{total_recommendations}</div>
-                            <div style="opacity: 0.9;">Total Recommendations</div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{high_priority}</div>
-                            <div style="opacity: 0.9;">High Priority Issues</div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{total_files_affected}</div>
-                            <div style="opacity: 0.9;">Files Affected</div>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{avg_improvement:.0f}%</div>
-                            <div style="opacity: 0.9;">Avg. Improvement Potential</div>
-                        </div>
-                    </div>
-                </div>
-                
-    """
-    
-    # Highlight energy-focused recommendations (top matches or fallback)
-    energy_recommendations = [
-        r for r in recommendations
-        if 'energy' in f"{r.get('title', '')} {r.get('description', '')}".lower()
-    ]
-    if not energy_recommendations and recommendations:
-        energy_recommendations = recommendations[:min(2, len(recommendations))]
-    
-    if energy_recommendations:
-        energy_cards_html = ""
-        for energy in energy_recommendations:
-            energy_improvement = energy.get('improvement_percentage', 'Variable')
-            energy_cards_html += f"""
-                <div style="background: white; border-radius: 12px; padding: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
-                    <div style="font-weight: 700; color: #1a202c; margin-bottom: 8px;">{energy.get('title', 'Energy Optimization')}</div>
-                    <p style="margin: 0 0 10px 0; color: #4a5568; font-size: 0.92em;">{energy.get('description', 'Targeted improvement opportunity')}</p>
-                    <div style="font-size: 0.9em; color: #2f855a; font-weight: 600;">🎯 Potential Improvement: {energy_improvement}</div>
-                </div>
-            """
-        html += f"""
-            <div style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); border-radius: 20px; padding: 25px; margin-bottom: 30px; color: white;">
-                <h3 style="margin: 0 0 15px 0; text-align: center;">🔋 Energy Optimization Highlights</h3>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
-                    {energy_cards_html}
-                </div>
-            </div>
-        """
-    
-    html += """
-                <div class="recommendations-grid">
-    """
-    
-    for rec in recommendations[:8]:  # Show up to 8 recommendations
-        priority_colors = {
-            'high': 'priority-high',
-            'medium': 'priority-medium', 
-            'low': 'priority-low'
-        }
-        priority_class = priority_colors.get(rec.get('priority', 'medium'), 'priority-medium')
-        
-        # Get file information
-        affected_files = rec.get('affected_files', 'Not specified')
-        files_count = rec.get('files_count', 0)
-        improvement_pct = rec.get('improvement_percentage', 'Variable')
-        
-        # Create file display text
-        if files_count > 0:
-            file_display = f"📁 {affected_files} ({files_count} file{'s' if files_count != 1 else ''})"
-        else:
-            file_display = f"📁 {affected_files}"
-        
-        # Format improvement percentage for display
-        if improvement_pct and improvement_pct != 'Variable':
-            improvement_display = f"🎯 Potential Improvement: {improvement_pct}"
-        else:
-            improvement_display = "🎯 Improvement: Variable"
-        
-        html += f"""
-                    <div class="recommendation-card {priority_class}">
-                        <div class="recommendation-header">
-                            <span class="recommendation-title">{rec.get('title', 'Optimization Opportunity')}</span>
-                            <span class="priority-badge">{rec.get('priority', 'medium').title()} Priority</span>
-                        </div>
-                        
-                        <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">{rec.get('description', 'Improve sustainability practices')}</p>
-                            
-                            <!-- File Information -->
-                            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>{file_display}</strong></div>
-                                <div style="color: #28a745; font-weight: 600;">{improvement_display}</div>
-                            </div>
-                            
-                            <!-- Impact Display -->
-                            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
-                                <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">{rec.get('impact', 'Moderate improvement expected')}</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Detailed Files (if available) -->"""
-        
-        # Show detailed file information if available
-        detailed_files = rec.get('detailed_files', [])
-        if detailed_files and len(detailed_files) <= 3:
-            html += f"""
-                        <div style="margin-top: 15px;">
-                            <details style="background: #f1f3f4; padding: 10px; border-radius: 6px;">
-                                <summary style="cursor: pointer; font-weight: 600; color: #495057;">
-                                    📋 View Affected Files ({len(detailed_files)} files)
-                                </summary>
-                                <div style="margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-            """
-            
-            for file_info in detailed_files[:5]:  # Show max 5 files
-                file_name = file_info.get('file', 'Unknown file')
-                if 'count' in file_info:
-                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name} ({file_info['count']} occurrences)</div>"
-                elif 'lines' in file_info and isinstance(file_info['lines'], list):
-                    lines_display = ', '.join(map(str, file_info['lines'][:3]))
-                    if len(file_info['lines']) > 3:
-                        lines_display += f" (+{len(file_info['lines'])-3} more)"
-                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name} (lines: {lines_display})</div>"
-                else:
-                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name}</div>"
-            
-            html += """
-                                </div>
-                            </details>
-                        </div>
-            """
-        
-        html += """
-                    </div>
-        """
-    
-    html += f"""
-                </div>
-            </div>
-            
-
-            
             <!-- Benchmarks Tab -->
             <div id="benchmarks" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
@@ -2634,10 +2440,162 @@ def generate_comprehensive_html_report(report_data):
                         </ul>
                     </div>
                 </div>
-
-            </div>
     """
     
+    # Recommendations summary and cards inside analysis tab
+    recommendations = report_data.get('recommendations', [])
+    if not recommendations:
+        recommendations = [
+            {
+                'title': '🚀 Optimize Performance Bottlenecks',
+                'priority': 'high',
+                'description': 'Address blocking operations and inefficient algorithms',
+                'improvement_percentage': '25-60%',
+                'affected_files': 'Multiple files',
+                'files_count': 5
+            },
+            {
+                'title': '🔄 Implement Caching Strategies',
+                'priority': 'medium',
+                'description': 'Add intelligent caching for frequently accessed data',
+                'improvement_percentage': '15-40%',
+                'affected_files': 'Backend files',
+                'files_count': 3
+            },
+            {
+                'title': '⚡ Optimize Data Structures',
+                'priority': 'medium',
+                'description': 'Leverage efficient data structures and algorithms',
+                'improvement_percentage': '10-30%',
+                'affected_files': 'Core logic files',
+                'files_count': 4
+            }
+        ]
+
+    total_recommendations = len(recommendations)
+    high_priority = len([r for r in recommendations if r.get('priority') == 'high'])
+    total_files_affected = sum(r.get('files_count', 1) for r in recommendations)
+    avg_improvement = sum(float(r.get('improvement_percentage', '15').split('-')[0]) for r in recommendations) / max(1, total_recommendations)
+
+    html += f"""
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 20px; padding: 25px; margin: 30px 0;">
+                    <h3 style="margin-bottom: 20px; text-align: center;">Recommended Optimization Overview</h3>
+                    <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); color: white;">
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{total_recommendations}</div>
+                            <div style="opacity: 0.9;">Total Recommendations</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{high_priority}</div>
+                            <div style="opacity: 0.9;">High Priority Issues</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{total_files_affected}</div>
+                            <div style="opacity: 0.9;">Files Affected</div>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">{avg_improvement:.0f}%</div>
+                            <div style="opacity: 0.9;">Avg. Improvement Potential</div>
+                        </div>
+                    </div>
+                </div>
+    """
+
+    energy_recommendations = [
+        r for r in recommendations
+        if 'energy' in f"{r.get('title', '')} {r.get('description', '')}".lower()
+    ]
+    if not energy_recommendations and recommendations:
+        energy_recommendations = recommendations[:min(2, len(recommendations))]
+
+    if energy_recommendations:
+        energy_cards_html = ""
+        for energy in energy_recommendations:
+            energy_improvement = energy.get('improvement_percentage', 'Variable')
+            energy_cards_html += f"""
+                <div style="background: white; border-radius: 12px; padding: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 700; color: #1a202c; margin-bottom: 8px;">{energy.get('title', 'Energy Optimization')}</div>
+                    <p style="margin: 0 0 10px 0; color: #4a5568; font-size: 0.92em;">{energy.get('description', 'Targeted improvement opportunity')}</p>
+                    <div style="font-size: 0.9em; color: #2f855a; font-weight: 600;">🎯 Potential Improvement: {energy_improvement}</div>
+                </div>
+            """
+        html += f"""
+                <div style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); border-radius: 20px; padding: 25px; margin-bottom: 30px; color: white;">
+                    <h3 style="margin: 0 0 15px 0; text-align: center;">🔋 Energy Optimization Highlights</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+                        {energy_cards_html}
+                    </div>
+                </div>
+        """
+
+    html += """
+                <div class="recommendations-grid">
+    """
+
+    for rec in recommendations[:8]:
+        priority_colors = {'high': 'priority-high', 'medium': 'priority-medium', 'low': 'priority-low'}
+        priority_class = priority_colors.get(rec.get('priority', 'medium'), 'priority-medium')
+        affected_files = rec.get('affected_files', 'Not specified')
+        files_count = rec.get('files_count', 0)
+        improvement_pct = rec.get('improvement_percentage', 'Variable')
+        if files_count > 0:
+            file_display = f"📁 {affected_files} ({files_count} file{'s' if files_count != 1 else ''})"
+        else:
+            file_display = f"📁 {affected_files}"
+        improvement_display = f"🎯 Potential Improvement: {improvement_pct}" if improvement_pct and improvement_pct != 'Variable' else "🎯 Improvement: Variable"
+        html += f"""
+                    <div class="recommendation-card {priority_class}">
+                        <div class="recommendation-header">
+                            <span class="recommendation-title">{rec.get('title', 'Optimization Opportunity')}</span>
+                            <span class="priority-badge">{rec.get('priority', 'medium').title()} Priority</span>
+                        </div>
+                        <div style="margin: 15px 0;">
+                            <p style="margin-bottom: 12px;">{rec.get('description', 'Improve sustainability practices')}</p>
+                            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
+                                <div style="margin-bottom: 6px; color: #495057;"><strong>{file_display}</strong></div>
+                                <div style="color: #28a745; font-weight: 600;">{improvement_display}</div>
+                            </div>
+                            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
+                                <strong style="color: #155724;">Expected Impact:</strong>
+                                <span style="color: #2e7d32;">{rec.get('impact', 'Moderate improvement expected')}</span>
+                            </div>
+                        </div>
+        """
+        detailed_files = rec.get('detailed_files', [])
+        if detailed_files and len(detailed_files) <= 3:
+            html += f"""
+                        <div style="margin-top: 15px;">
+                            <details style="background: #f1f3f4; padding: 10px; border-radius: 6px;">
+                                <summary style="cursor: pointer; font-weight: 600; color: #495057;">
+                                    📋 View Affected Files ({len(detailed_files)} files)
+                                </summary>
+                                <div style="margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.85em;">
+            """
+            for file_info in detailed_files[:5]:
+                file_name = file_info.get('file', 'Unknown file')
+                if 'count' in file_info:
+                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name} ({file_info['count']} occurrences)</div>"
+                elif 'lines' in file_info and isinstance(file_info['lines'], list):
+                    lines_display = ', '.join(map(str, file_info['lines'][:3]))
+                    if len(file_info['lines']) > 3:
+                        lines_display += f" (+{len(file_info['lines'])-3} more)"
+                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name} (lines: {lines_display})</div>"
+                else:
+                    html += f"<div style='margin: 4px 0; color: #dc3545;'>• {file_name}</div>"
+            html += """
+                                </div>
+                            </details>
+                        </div>
+            """
+        html += """
+                    </div>
+        """
+
+    html += """
+                </div>
+            </div>
+    """
+
     html += """
         <script>
             // Tab switching functionality
