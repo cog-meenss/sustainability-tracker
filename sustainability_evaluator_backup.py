@@ -1606,7 +1606,6 @@ def generate_comprehensive_html_report(report_data):
                 <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
                 <button class="nav-tab" onclick="showTab('metrics')"> Detailed Metrics</button>
                 <button class="nav-tab" onclick="showTab('analysis')"> Code Analysis & Recommendations</button>
-                # <button class="nav-tab" onclick="showTab('recommendations')">Recommendations</button>
                 <button class="nav-tab" onclick="showTab('benchmarks')">Benchmarks</button>
             </div>
     """
@@ -1615,61 +1614,6 @@ def generate_comprehensive_html_report(report_data):
     exec_summary = report_data['executive_summary']
     html += f"""
             <div id="overview" class="tab-content active">
-                # <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                #     Executive Summary
-                # </h2>
-                
-                # <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); 
-                #            border-radius: 20px; padding: 30px; margin-bottom: 40px; 
-                #            box-shadow: 0 10px 30px rgba(0,0,0,0.08);">
-                #     <h3 style="font-size: 1.8em; color: #2c3e50; margin-bottom: 20px;">
-                #         Project Health Status: {exec_summary['overall_health']}
-                #     </h3>
-                    
-                #     <div class="metric-grid">
-                #         <div class="metric-card">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">Overall Sustainability</span>
-
-                #             </div>
-                #             <div class="metric-value score-{'excellent' if report_data['sustainability_metrics']['overall_score'] >= 80 else 'good' if report_data['sustainability_metrics']['overall_score'] >= 60 else 'poor'}">
-                #                 {report_data['sustainability_metrics']['overall_score']:.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: {report_data['sustainability_metrics']['overall_score']}%;"></div>
-                #             </div>
-                #         </div>
-                        
-                #         <div class="metric-card">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">Energy Efficiency</span>
-
-                #             </div>
-                #             <div class="metric-value score-{'excellent' if report_data['sustainability_metrics']['energy_efficiency'] >= 80 else 'good' if report_data['sustainability_metrics']['energy_efficiency'] >= 60 else 'poor'}">
-                #                 {report_data['sustainability_metrics']['energy_efficiency']:.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: {report_data['sustainability_metrics']['energy_efficiency']}%;"></div>
-                #             </div>
-                #         </div>
-                        
-                #         <div class="metric-card">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">Code Quality</span>
-
-                #             </div>
-                #             <div class="metric-value score-{'excellent' if report_data['sustainability_metrics']['code_quality'] >= 80 else 'good' if report_data['sustainability_metrics']['code_quality'] >= 60 else 'poor'}">
-                #                 {report_data['sustainability_metrics']['code_quality']:.1f}<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: {report_data['sustainability_metrics']['code_quality']}%;"></div>
-                #             </div>
-                #         </div>
-                #     </div>
-                # </div>
-                
-
-                
                 <div class="chart-container">
                     <h3 class="chart-title">Sustainability Metrics Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
@@ -1716,6 +1660,7 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
             </div>
+           </div>
     """
     
     # Detailed Metrics Tab
@@ -1862,61 +1807,6 @@ def generate_comprehensive_html_report(report_data):
                         </div>
                     </div>
                 </div>
-                
-                # <!-- Database Performance Analysis -->
-                # <div style="background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px;">
-                #     <h3 style="color: #8b4513; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Database Performance Analysis</h3>
-                #     <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 25px;">
-                #         <div style="background: rgba(255,255,255,0.9); border-radius: 15px; padding: 20px;">
-                #             <h4 style="color: #d35400; margin-bottom: 15px;">Query Performance</h4>
-                #             <div style="margin-bottom: 10px;">
-                #                 <span style="font-size: 0.9em; color: #666;">Average Query Time</span>
-                #                 <div style="font-size: 1.6em; color: #d35400; font-weight: 700;">45.6ms</div>
-                #             </div>
-                #             <div style="margin-bottom: 10px;">
-                #                 <span style="font-size: 0.9em; color: #666;">Slow Queries (>100ms)</span>
-                #                 <div style="font-size: 1.3em; color: #e74c3c; font-weight: 600;">23 queries</div>
-                #             </div>
-                #             <div>
-                #                 <span style="font-size: 0.9em; color: #666;">Connection Pool Usage</span>
-                #                 <div style="font-size: 1.3em; color: #f39c12; font-weight: 600;">67%</div>
-                #             </div>
-                #         </div>
-                        
-                #         <div style="background: rgba(255,255,255,0.9); border-radius: 15px; padding: 20px;">
-                #             <h4 style="color: #d35400; margin-bottom: 15px;">Cache Performance</h4>
-                #             <div style="margin-bottom: 10px;">
-                #                 <span style="font-size: 0.9em; color: #666;">Cache Hit Rate</span>
-                #                 <div style="font-size: 1.6em; color: #27ae60; font-weight: 700;">84.2%</div>
-                #             </div>
-                #             <div style="margin-bottom: 10px;">
-                #                 <span style="font-size: 0.9em; color: #666;">Cache Size</span>
-                #                 <div style="font-size: 1.3em; color: #3498db; font-weight: 600;">256MB</div>
-                #             </div>
-                #             <div>
-                #                 <span style="font-size: 0.9em; color: #666;">Eviction Rate</span>
-                #                 <div style="font-size: 1.3em; color: #f39c12; font-weight: 600;">2.3%</div>
-                #             </div>
-                #         </div>
-                        
-                #         <div style="background: rgba(255,255,255,0.9); border-radius: 15px; padding: 20px;">
-                #             <h4 style="color: #d35400; margin-bottom: 15px;">Index Efficiency</h4>
-                #             <div style="margin-bottom: 10px;">
-                #                 <span style="font-size: 0.9em; color: #666;">Index Usage</span>
-                #                 <div style="font-size: 1.6em; color: #27ae60; font-weight: 700;">92.1%</div>
-                #             </div>
-                #             <div style="margin-bottom: 10px;">
-                #                 <span style="font-size: 0.9em; color: #666;">Missing Indexes</span>
-                #                 <div style="font-size: 1.3em; color: #e74c3c; font-weight: 600;">3 tables</div>
-                #             </div>
-                #             <div>
-                #                 <span style="font-size: 0.9em; color: #666;">Scan Ratio</span>
-                #                 <div style="font-size: 1.3em; color: #f39c12; font-weight: 600;">12%</div>
-                #             </div>
-                #         </div>
-                #     </div>
-                # </div>
-                
                 <!-- Performance Dashboard -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Performance Dashboard</h3>
@@ -1994,267 +1884,6 @@ def generate_comprehensive_html_report(report_data):
                     <canvas id="performanceChart" width="400" height="200"></canvas>
                 </div>
                 
-                # <!-- Real-time Performance Metrics -->
-                # <div style="margin-top: 30px;">
-                #     <h3 style="color: #2c3e50; font-size: 1.8em; margin-bottom: 20px; text-align: center;">Real-Time Performance Metrics</h3>
-                #     <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-                #         <div class="metric-card" style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-left: 4px solid #27ae60;">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">Response Time</span>
-                                
-                #             </div>
-                #             <div class="metric-value score-excellent">
-                #                 1.24<span style="font-size: 0.5em; opacity: 0.7;">s</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: 76%; background: linear-gradient(90deg, #27ae60, #2ecc71);"></div>
-                #             </div>
-                #             <div style="margin-top: 10px; font-size: 0.9em; color: #27ae60;">Target: <1.5s</div>
-                #         </div>
-                        
-                #         <div class="metric-card" style="background: linear-gradient(135deg, #fff3e0 0%, #fefefe 100%); border-left: 4px solid #ff9800;">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">Memory Usage</span>
-                                
-                #             </div>
-                #             <div class="metric-value score-good">
-                #                 89.2<span style="font-size: 0.5em; opacity: 0.7;">MB</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: 67%; background: linear-gradient(90deg, #ff9800, #ffb74d);"></div>
-                #             </div>
-                #             <div style="margin-top: 10px; font-size: 0.9em; color: #ef6c00;">Baseline: 95MB</div>
-                #         </div>
-                        
-                #         <div class="metric-card" style="background: linear-gradient(135deg, #e3f2fd 0%, #fefefe 100%); border-left: 4px solid #2196f3;">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">CPU Usage</span>
-
-                #             </div>
-                #             <div class="metric-value score-fair">
-                #                 67<span style="font-size: 0.5em; opacity: 0.7;">%</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: 67%; background: linear-gradient(90deg, #2196f3, #64b5f6);"></div>
-                #             </div>
-                #             <div style="margin-top: 10px; font-size: 0.9em; color: #1565c0;">Peak: 82%</div>
-                #         </div>
-                        
-                #         <div class="metric-card" style="background: linear-gradient(135deg, #f3e5f5 0%, #fefefe 100%); border-left: 4px solid #9c27b0;">
-                #             <div class="metric-header">
-                #                 <span class="metric-title">Load Score</span>
-                                
-                #             </div>
-                #             <div class="metric-value score-excellent">
-                #                 94<span style="font-size: 0.5em; opacity: 0.7;">/100</span>
-                #             </div>
-                #             <div class="progress-bar">
-                #                 <div class="progress-fill" style="width: 94%; background: linear-gradient(90deg, #9c27b0, #ba68c8);"></div>
-                #             </div>
-                #             <div style="margin-top: 10px; font-size: 0.9em; color: #7b1fa2;">Lighthouse Score</div>
-                #         </div>
-                #     </div>
-                # </div>
-                
-                # <!-- Performance Trend Analysis -->
-                # <div style="margin-top: 40px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; padding: 30px; border-left: 5px solid #17a2b8;">
-                #     <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.6em;">Performance Trend Analysis (7 Weeks)</h3>
-                #     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                #         <div>
-                #             <h4 style="color: #27ae60; margin-bottom: 15px;">Improvement Trends</h4>
-                #             <ul style="list-style: none; padding: 0;">
-                #                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                #                     <strong>Response Time:</strong> 2.1s → 1.24s <span style="color: #27ae60;">(↓40% improvement)</span>
-                #                 </li>
-                #                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                #                     <strong>Memory Efficiency:</strong> 45% → 78% <span style="color: #27ae60;">(↑33% improvement)</span>
-                #                 </li>
-                #                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                #                     <strong>Code Quality:</strong> 52 → 73 points <span style="color: #27ae60;">(↑21 point increase)</span>
-                #                 </li>
-                #                 <li style="padding: 8px 0;">
-                #                     <strong>Green Score:</strong> 41 → 68 points <span style="color: #27ae60;">(↑27 point increase)</span>
-                #                 </li>
-                #             </ul>
-                #         </div>
-                #         <div>
-                #             <h4 style="color: #e74c3c; margin-bottom: 15px;">⚠️ Areas Needing Attention</h4>
-                #             <ul style="list-style: none; padding: 0;">
-                #                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                #                     <strong>CPU Spikes:</strong> 3 incidents this week <span style="color: #e74c3c;">(↑2 from last week)</span>
-                #                 </li>
-                #                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                #                     <strong>Database Queries:</strong> 45% slow queries <span style="color: #f39c12;">(needs optimization)</span>
-                #                 </li>
-                #                 <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                #                     <strong>Bundle Size:</strong> 2.4MB → 2.7MB <span style="color: #e74c3c;">(↑12% increase)</span>
-                #                 </li>
-                #                 <li style="padding: 8px 0;">
-                #                     <strong>Cache Hit Rate:</strong> 68% <span style="color: #f39c12;">(target: 85%)</span>
-                #                 </li>
-                #             </ul>
-                #         </div>
-                #     </div>
-                # </div>
-                
-
-                
-                # <!-- Comprehensive Green Coding Breakdown -->
-                # <div style="margin-top: 30px;">
-                #     <h3 style="color: #1e3c72; font-size: 1.8em; text-align: center; margin-bottom: 30px; background: linear-gradient(135deg, #27ae60, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">
-                #         🌱 Comprehensive Green Coding Analysis
-                #     </h3>
-                    
-                #     <!-- Green Practices Distribution -->
-                #     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
-                #         <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #27ae60;">
-                #             <h4 style="color: #2e7d32; margin-bottom: 20px; font-size: 1.4em;">✅ Efficient Practices Found</h4>
-                #             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; font-size: 0.95em;">
-                #                 <div style="font-weight: 600;">Resource Cleanup (with statements)</div>
-                #                 <div style="background: #4caf50; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">38 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Efficient Data Structures (Set/Map)</div>
-                #                 <div style="background: #66bb6a; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">25 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Memory Optimization (generators)</div>
-                #                 <div style="background: #81c784; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">18 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Database Optimization (batching)</div>
-                #                 <div style="background: #a5d6a7; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">15 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Lazy Loading Implementation</div>
-                #                 <div style="background: #c8e6c9; color: #2e7d32; padding: 4px 8px; border-radius: 12px; text-align: center;">12 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Compression Usage (gzip/minify)</div>
-                #                 <div style="background: #dcedc8; color: #2e7d32; padding: 4px 8px; border-radius: 12px; text-align: center;">8 instances</div>
-                #             </div>
-                #             <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px; text-align: center;">
-                #                 <strong style="color: #27ae60; font-size: 1.2em;">Total Green Practices: 116 instances</strong>
-                #                 <br><span style="color: #2e7d32; font-size: 0.9em;">Energy Efficiency Score: 82/100</span>
-                #             </div>
-                #         </div>
-                        
-                #         <div style="background: linear-gradient(135deg, #fff3e0 0%, #fefefe 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #ff9800;">
-                #             <h4 style="color: #e65100; margin-bottom: 20px; font-size: 1.4em;">⚠️ Energy Wasteful Patterns</h4>
-                #             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 15px; font-size: 0.95em;">
-                #                 <div style="font-weight: 600;">Inefficient Loops (nested O(n²))</div>
-                #                 <div style="background: #f44336; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">7 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Memory Leaks (global vars)</div>
-                #                 <div style="background: #e57373; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">12 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Excessive Logging (debug/print)</div>
-                #                 <div style="background: #ffab40; color: white; padding: 4px 8px; border-radius: 12px; text-align: center;">23 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Blocking Operations (sync I/O)</div>
-                #                 <div style="background: #ffcc02; color: #333; padding: 4px 8px; border-radius: 12px; text-align: center;">9 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Redundant Computations</div>
-                #                 <div style="background: #ffd54f; color: #333; padding: 4px 8px; border-radius: 12px; text-align: center;">5 instances</div>
-                                
-                #                 <div style="font-weight: 600;">Large File Operations (readAll)</div>
-                #                 <div style="background: #ffe082; color: #333; padding: 4px 8px; border-radius: 12px; text-align: center;">3 instances</div>
-                #             </div>
-                #             <div style="margin-top: 20px; padding: 15px; background: white; border-radius: 10px; text-align: center;">
-                #                 <strong style="color: #f57c00; font-size: 1.2em;">Total Inefficiencies: 59 instances</strong>
-                #                 <br><span style="color: #e65100; font-size: 0.9em;">Optimization Potential: 34% improvement</span>
-                #             </div>
-                #         </div>
-                #     </div>
-                    
-                #     <!-- File-Level Green Coding Analysis -->
-                #     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); margin-bottom: 30px;">
-                #         <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4em;">File-Level Green Coding Assessment (Top 10)</h4>
-                #         <table class="data-table" style="font-size: 0.9em;">
-                #             <thead>
-                #                 <tr>
-                #                     <th style="width: 35%;">File Path</th>
-                #                     <th>Green Score</th>
-                #                     <th>Issues</th>
-                #                     <th>Practices</th>
-                #                     <th>Energy Impact</th>
-                #                     <th>Status</th>
-                #                 </tr>
-                #             </thead>
-                #             <tbody>
-                #                 <tr>
-                #                     <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/services/ideaEvaluationService.js</code></td>
-                #                     <td><strong style="color: #27ae60;">89/100</strong></td>
-                #                     <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">2 minor</span></td>
-                #                     <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">15 found</span></td>
-                #                     <td>High efficiency</td>
-                #                     <td><span class="status-badge status-pass">Excellent</span></td>
-                #                 </tr>
-                #                 <tr>
-                #                     <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/utils/exportCsv.js</code></td>
-                #                     <td><strong style="color: #27ae60;">84/100</strong></td>
-                #                     <td><span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px;">3 medium</span></td>
-                #                     <td><span style="background: #28a745; color: white; padding: 2px 8px; border-radius: 10px;">12 found</span></td>
-                #                     <td>Good efficiency</td>
-                #                     <td><span class="status-badge status-pass">Good</span></td>
-                #                 </tr>
-                #                 <tr>
-                #                     <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">server.js</code></td>
-                #                     <td><strong style="color: #f39c12;">71/100</strong></td>
-                #                     <td><span style="background: #fff3cd; color: #856404; padding: 2px 8px; border-radius: 10px;">5 medium</span></td>
-                #                     <td><span style="background: #ffc107; color: #333; padding: 2px 8px; border-radius: 10px;">8 found</span></td>
-                #                     <td>Moderate efficiency</td>
-                #                     <td><span class="status-badge status-conditional">Fair</span></td>
-                #                 </tr>
-                #                 <tr>
-                #                     <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/App.js</code></td>
-                #                     <td><strong style="color: #f39c12;">68/100</strong></td>
-                #                     <td><span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px;">4 high</span></td>
-                #                     <td><span style="background: #fd7e14; color: white; padding: 2px 8px; border-radius: 10px;">10 found</span></td>
-                #                     <td>Needs optimization</td>
-                #                     <td><span class="status-badge status-conditional">Needs Work</span></td>
-                #                 </tr>
-                #                 <tr>
-                #                     <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/ChatSection.js</code></td>
-                #                     <td><strong style="color: #e74c3c;">52/100</strong></td>
-                #                     <td><span style="background: #f8d7da; color: #721c24; padding: 2px 8px; border-radius: 10px;">8 high</span></td>
-                #                     <td><span style="background: #dc3545; color: white; padding: 2px 8px; border-radius: 10px;">5 found</span></td>
-                #                     <td>Poor efficiency</td>
-                #                     <td><span class="status-badge status-fail">Critical</span></td>
-                #                 </tr>
-                #             </tbody>
-                #         </table>
-                #     </div>
-                    
-                #     <!-- Energy Efficiency Recommendations -->
-                #     <div style="background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #1976d2;">
-                #         <h4 style="color: #1565c0; margin-bottom: 20px; font-size: 1.4em;">🔋 Energy Efficiency Recommendations</h4>
-                #         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                #             <div style="background: white; border-radius: 10px; padding: 20px;">
-                #                 <h5 style="color: #27ae60; margin-bottom: 10px;">Algorithm Optimization</h5>
-                #                 <p style="margin-bottom: 10px; font-size: 0.95em;">Replace O(n²) nested loops with efficient data structures</p>
-                #                 <div style="background: #e8f5e8; padding: 10px; border-radius: 6px; font-size: 0.9em;">
-                #                     <strong>Energy Savings:</strong> 25-40% CPU reduction<br>
-                #                     <strong>Files Affected:</strong> 7 files<br>
-                #                     <strong>Effort:</strong> Medium (2-3 days)
-                #                 </div>
-                #             </div>
-                #             <div style="background: white; border-radius: 10px; padding: 20px;">
-                #                 <h5 style="color: #2196f3; margin-bottom: 10px;">🧠 Memory Optimization</h5>
-                #                 <p style="margin-bottom: 10px; font-size: 0.95em;">Implement proper resource cleanup and garbage collection</p>
-                #                 <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; font-size: 0.9em;">
-                #                     <strong>Memory Savings:</strong> 15-30% reduction<br>
-                #                     <strong>Files Affected:</strong> 12 files<br>
-                #                     <strong>Effort:</strong> Low (1-2 days)
-                #                 </div>
-                #             </div>
-                #             <div style="background: white; border-radius: 10px; padding: 20px;">
-                #                 <h5 style="color: #ff9800; margin-bottom: 10px;">I/O Optimization</h5>
-                #                 <p style="margin-bottom: 10px; font-size: 0.95em;">Replace blocking operations with async patterns</p>
-                #                 <div style="background: #fff3e0; padding: 10px; border-radius: 6px; font-size: 0.9em;">
-                #                     <strong>Performance Gain:</strong> 40-60% responsiveness<br>
-                #                     <strong>Files Affected:</strong> 9 files<br>
-                #                     <strong>Effort:</strong> High (4-5 days)
-                #                 </div>
-                #             </div>
-                #         </div>
-                #     </div>
-                # </div>
             </div>
             
             <!-- Code Analysis Tab -->
@@ -2678,27 +2307,6 @@ def generate_comprehensive_html_report(report_data):
                     </table>
                 </div>
                 
-                # <!-- Performance Insights -->
-                # <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
-                #     <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #27ae60;">
-                #         <h4 style="color: #2e7d32; margin-bottom: 15px; font-size: 1.3em;">Strengths</h4>
-                #         <ul style="list-style: none; padding: 0;">
-                #             <li style="margin-bottom: 8px;">✅ Energy efficiency above industry average</li>
-                #             <li style="margin-bottom: 8px;">✅ Resource utilization optimized</li>
-                #             <li style="margin-bottom: 8px;">✅ Performance metrics strong</li>
-                #         </ul>
-                #     </div>
-                    
-                #     <div style="background: linear-gradient(135deg, #fff3e0 0%, #fef7f0 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #f39c12;">
-                #         <h4 style="color: #e67e22; margin-bottom: 15px; font-size: 1.3em;">Improvement Areas</h4>
-                #         <ul style="list-style: none; padding: 0;">
-                #             <li style="margin-bottom: 8px;">🔧 Code quality optimization needed</li>
-                #             <li style="margin-bottom: 8px;">🔧 Maintainability enhancements</li>
-                #             <li style="margin-bottom: 8px;">🔧 Performance fine-tuning opportunities</li>
-                #         </ul>
-                #     </div>
-                # </div>
-
             </div>
     """
     
@@ -3009,24 +2617,6 @@ def generate_comprehensive_html_report(report_data):
                 initializeRealTimeUpdates();
             }
             
-            // Real-time update functionality
-            # let updateInterval;
-            # let isUpdating = false;
-            
-            # function initializeRealTimeUpdates() {
-            #     // Add update controls to the header
-            #     addUpdateControls();
-                
-            #     // Check if auto-refresh is enabled (default: enabled every 30 seconds)
-            #     const autoRefresh = localStorage.getItem('autoRefresh') !== 'false';
-            #     if (autoRefresh) {
-            #         startAutoUpdate(30000); // 30 seconds
-            #     }
-                
-            #     // Update last refresh time
-            #     updateLastRefreshTime();
-            # }
-            
             function addUpdateControls() {
                 const header = document.querySelector('.header');
                 const controlsDiv = document.createElement('div');
@@ -3049,42 +2639,6 @@ def generate_comprehensive_html_report(report_data):
                 header.appendChild(controlsDiv);
             }
             
-            # function refreshData() {
-            #     if (isUpdating) return;
-                
-            #     isUpdating = true;
-            #     const refreshBtn = document.getElementById('refreshBtn');
-            #     refreshBtn.innerHTML = 'Updating...';
-            #     refreshBtn.disabled = true;
-                
-            #     // Show loading indicator
-            #     showLoadingIndicator();
-                
-            #     // Try to fetch real data from API first, fallback to simulation
-            #     fetch('http://127.0.0.1:5555/api/sustainability/refresh?path=.')
-            #         .then(response => response.json())
-            #         .then(data => {
-            #             if (data.success) {
-            #                 updateMetricsFromAPI(data.metrics);
-            #                 showNotification('Dashboard updated with fresh analysis!', 'success');
-            #             } else {
-            #                 throw new Error(data.error || 'API error');
-            #             }
-            #         })
-            #         .catch(error => {
-            #             console.log('API unavailable, using simulated updates:', error);
-            #             // Fallback to simulated updates
-            #             updateMetrics();
-            #         })
-            #         .finally(() => {
-            #             updateLastRefreshTime();
-            #             hideLoadingIndicator();
-                        
-            #             refreshBtn.innerHTML = '🔄 Refresh Now';
-            #             refreshBtn.disabled = false;
-            #             isUpdating = false;
-            #         });
-            # }
             
             function updateMetricsFromAPI(apiMetrics) {
                 // Update metric values from real API data

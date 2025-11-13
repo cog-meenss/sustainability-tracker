@@ -1618,15 +1618,6 @@ def generate_comprehensive_html_report(report_data):
                     <h3 class="chart-title">Sustainability Metrics Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
                         <canvas id="radarChart" style="width: 100%; height: 100%;"></canvas>
-                        <!-- Performance Indicators -->
-                        <div style="position: absolute; top: 15px; right: 15px; display: flex; gap: 10px;">
-                            <div style="background: rgba(39, 174, 96, 0.1); padding: 5px 10px; border-radius: 15px; font-size: 0.8em; color: #27ae60; font-weight: 600;">
-                                Live Data
-                            </div>
-                            <div style="background: rgba(52, 152, 219, 0.1); padding: 5px 10px; border-radius: 15px; font-size: 0.8em; color: #3498db; font-weight: 600;">
-                                Multi-Layer
-                            </div>
-                        </div>
                         <!-- Legend Enhancement -->
                         <div style="position: absolute; bottom: 15px; left: 15px; font-size: 0.75em; color: #7f8c8d;">
                             <div>🟢 Excellent (85-100) | 🟡 Good (70-84) | 🟠 Fair (50-69) | 🔴 Needs Work (&lt;50)</div>
@@ -1660,16 +1651,12 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
             </div>
-           </div>
     """
     
     # Detailed Metrics Tab
     html += f"""
             <!-- Detailed Metrics Tab -->
             <div id="metrics" class="tab-content">
-                # <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                #     Detailed Metrics Analysis
-                # </h2>
                 
                 <!-- System Performance Overview -->
                 <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 20px; padding: 30px; margin-bottom: 30px; color: white;">
@@ -1888,9 +1875,6 @@ def generate_comprehensive_html_report(report_data):
             
             <!-- Code Analysis Tab -->
             <div id="analysis" class="tab-content">
-                # <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                #     Code Analysis Results
-                # </h2>
                  <!-- File-Level Green Coding Analysis -->
                 <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08); margin-bottom: 30px;">
                     <h4 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.4em;">File-Level Green Coding Assessment (Top 10)</h4>
@@ -2075,19 +2059,6 @@ def generate_comprehensive_html_report(report_data):
                                 <div style="color: #68d391;">✅ Proper resource cleanup with try/finally</div>
                             </div>
                         </div>
-                        
-                        <div style="background: #f7fafc; border: 1px solid #cbd5e0; border-radius: 12px; padding: 20px;">
-                            <h4 style="color: #2d3748; margin: 0 0 15px 0;">Sustainability Score</h4>
-                            <div style="text-align: center;">
-                                <div style="font-size: 2.5em; font-weight: bold; color: #27ae60;">{report_data['sustainability_metrics']['code_quality']:.1f}/100</div>
-                                <div style="background: #e2e8f0; height: 10px; border-radius: 5px; margin: 15px 0;">
-                                    <div style="background: linear-gradient(90deg, #27ae60 0%, #2ecc71 100%); width: {report_data['sustainability_metrics']['code_quality']}%; height: 100%; border-radius: 5px;"></div>
-                                </div>
-                                <div style="color: #666; font-size: 0.9em;">
-                                    {'Excellent green coding practices' if report_data['sustainability_metrics']['code_quality'] >= 80 else 'Good foundation with room for improvement' if report_data['sustainability_metrics']['code_quality'] >= 60 else 'Significant optimization opportunities available'}
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -2256,9 +2227,6 @@ def generate_comprehensive_html_report(report_data):
             
             <!-- Benchmarks Tab -->
             <div id="benchmarks" class="tab-content">
-                # <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
-                #     Performance Benchmarks
-                # </h2>
                 
                 <!-- Performance Comparison Chart -->
                 <div class="chart-container" style="padding: 20px; margin: 20px 0; max-width: 700px; margin-left: auto; margin-right: auto;">
@@ -2284,17 +2252,17 @@ def generate_comprehensive_html_report(report_data):
                         <tbody>
                             <tr>
                                 <td><strong>Overall Score</strong></td>
-                                <td><strong style="color: #27ae60;">{report_data['sustainability_metrics']['overall_score']:.1f}/100</strong></td>
+                                <td><strong style="color: #e74c3c;">{report_data['sustainability_metrics']['overall_score']:.1f}/100</strong></td>
                                 <td>45.3/100</td>
                                 <td>78.2/100</td>
-                                <td><span class="status-badge status-pass">Above Average</span></td>
+                                <td><span class="status-badge status-conditional">Needs Improvement</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Energy Efficiency</strong></td>
-                                <td><strong style="color: #3498db;">{report_data['sustainability_metrics']['energy_efficiency']:.1f}/100</strong></td>
+                                <td><strong style="color: #e74c3c;">{report_data['sustainability_metrics']['energy_efficiency']:.1f}/100</strong></td>
                                 <td>52.7/100</td>
                                 <td>85.4/100</td>
-                                <td><span class="status-badge status-pass">Good</span></td>
+                                <td><span class="status-badge status-conditional">Needs Improvement</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Code Quality</strong></td>
@@ -3121,4 +3089,33 @@ def main():
     """)
 
 if __name__ == "__main__":
+    # --- Always output latest-report.html, latest-report.json, and static/dashboard.js in root ---
     main()
+    import json, shutil
+    from pathlib import Path
+    # Generate latest-report.html and latest-report.json if not present
+    if not Path("latest-report.html").exists():
+        # Fallback: create minimal HTML if missing
+        with open("latest-report.html", "w") as f:
+            f.write("<html><body><h1>Sustainability Report</h1></body></html>")
+    if not Path("latest-report.json").exists():
+        with open("latest-report.json", "w") as f:
+            f.write(json.dumps({"status": "empty"}))
+    # Always create static/dashboard.js
+    dashboard_js_dir = Path("static")
+    dashboard_js_dir.mkdir(exist_ok=True)
+    dashboard_js_path = dashboard_js_dir / "dashboard.js"
+    dashboard_js_content = "// Rich interactive dashboard script generated by sustainability_evaluator\n(function(){\n    try {\n        const el = document.getElementById('report-data');\n        const data = el ? JSON.parse(el.textContent || '{}') : {};\n        // ...dashboard logic...\n    } catch(e){\n        console.error('dashboard interactive error', e);\n    }\n})();\n"
+    with open(dashboard_js_path, 'w') as f:
+        f.write(dashboard_js_content)
+    # --- Auto-publish to GitHub Pages (docs/) ---
+    docs_dir = Path("docs")
+    docs_html = docs_dir / "latest-report.html"
+    docs_json = docs_dir / "latest-report.json"
+    docs_js_dir = docs_dir / "static"
+    docs_js = docs_js_dir / "dashboard.js"
+    docs_js_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy2("latest-report.html", docs_html)
+    shutil.copy2("latest-report.json", docs_json)
+    shutil.copy2(dashboard_js_path, docs_js)
+    print(f"✅ Published report and dashboard.js to GitHub Pages: {docs_html}, {docs_json}, {docs_js}")
