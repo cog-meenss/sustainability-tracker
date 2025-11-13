@@ -1494,11 +1494,11 @@ def generate_comprehensive_html_report(report_data):
             </div>
             
             <div class="nav-tabs">
-                <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
-                <button class="nav-tab" onclick="showTab('metrics')"> Detailed Metrics</button>
-                <button class="nav-tab" onclick="showTab('analysis')"> Code Analysis</button>
-                <button class="nav-tab" onclick="showTab('recommendations')">Recommendations</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">Benchmarks</button>
+                <button class="nav-tab active" onclick="showTab(event, 'overview')">Overview</button>
+                <button class="nav-tab" onclick="showTab(event, 'metrics')"> Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab(event, 'analysis')"> Code Analysis</button>
+                <button class="nav-tab" onclick="showTab(event, 'recommendations')">Recommendations</button>
+                <button class="nav-tab" onclick="showTab(event, 'benchmarks')">Benchmarks</button>
             </div>
     """
     
@@ -2660,7 +2660,7 @@ def generate_comprehensive_html_report(report_data):
     html += """
         <script>
             // Tab switching functionality
-            function showTab(tabName) {
+            function showTab(evt, tabName) {
                 // Hide all tab contents
                 const contents = document.querySelectorAll('.tab-content');
                 contents.forEach(content => {
@@ -2669,9 +2669,7 @@ def generate_comprehensive_html_report(report_data):
                 
                 // Remove active class from all tabs
                 const tabs = document.querySelectorAll('.nav-tab');
-                tabs.forEach(tab => {
-                    tab.classList.remove('active');
-                });
+                tabs.forEach(tab => tab.classList.remove('active'));
                 
                 // Show selected tab content
                 const targetTab = document.getElementById(tabName);
@@ -2680,7 +2678,7 @@ def generate_comprehensive_html_report(report_data):
                 }
                 
                 // Add active class to clicked tab
-                event.target.classList.add('active');
+                if (evt && evt.target) { evt.target.classList.add('active'); }
                 
                 // Refresh charts when switching tabs to ensure proper rendering
                 setTimeout(() => {

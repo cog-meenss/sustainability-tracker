@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sustainability Analysis Dashboard</title>
+    <title>Sustainability Dashboard</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -110,8 +110,10 @@
             <h2>📊 Latest Sustainability Report</h2>
             <p>
                 The most recent full report is available at:
-                <a href="latest-report.html">latest-report.html</a>
+                <a href="latest-report.html" id="fullLinkTop">latest-report.html</a>
             </p>
+            <div id="kpi-cards" class="metrics-grid"></div>
+            <p style="color:#6b7280; font-size: 12px; text-align:center">Last updated: <span id="updated">—</span></p>
         </div>
         
         <div class="actions">
@@ -121,14 +123,42 @@
             <a href="https://github.com/cog-meenss/sustainability-tracker" class="btn">
                 📂 View Repository
             </a>
-            <a href="./GITHUB_SUSTAINABILITY_REPORT.html" class="btn">
-                📊 Detailed Report
+            <a href="latest-report.html" class="btn">
+                📊 Open Full Report
             </a>
         </div>
     </div>
     
     <script>
-        // Keep index simple and link to the auto-updated full report
+        // Render KPI cards from latest-report.json if available
+        function cls(n){return n>=80?'good':n>=60?'fair':'poor'}
+        function card(label, val){
+            const pct = Math.max(0, Math.min(100, Number(val)||0));
+            return `
+                <div class="metric-card">
+                    <div class="metric-score ${cls(pct)}">${pct.toFixed(1)}/100</div>
+                    <div>${label}</div>
+                    <div class="progress-bar"><div class="progress-fill" style="width: ${pct}%"></div></div>
+                </div>`;
+        }
+        (async () => {
+            try{
+                const r = await fetch('latest-report.json', {cache:'no-store'});
+                if(!r.ok) return;
+                const data = await r.json();
+                const m = data.sustainability_metrics || {};
+                const grid = document.getElementById('kpi-cards');
+                grid.innerHTML = [
+                    card('Overall', m.overall_score||0),
+                    card('Energy', m.energy_efficiency||0),
+                    card('Resources', m.resource_utilization||0),
+                    card('Performance', m.performance_optimization||0),
+                    card('Code Quality', m.code_quality||0)
+                ].join('');
+                const updated = (data.report_metadata && data.report_metadata.generated_at) ? new Date(data.report_metadata.generated_at).toLocaleString() : '—';
+                document.getElementById('updated').textContent = updated;
+            }catch(e){/* keep simple view */}
+        })();
     </script>
 </body>
 </html>
