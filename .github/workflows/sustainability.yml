@@ -210,9 +210,10 @@ jobs:
         echo "Direct Report: ${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html"
         echo "Artifacts uploaded for commit: ${{ github.sha }}"
         
-        # Find the actual dashboard HTML file deployed
+        # Find the actual dashboard HTML file deployed and use it for the Latest Report link
         DASHBOARD_FILE=$(ls -t sustainability_dashboard_Tracker_*.html 2>/dev/null | head -n 1)
-        DASHBOARD_URL="${{ steps.deployment.outputs.page_url }}$DASHBOARD_FILE"
+        LATEST_REPORT_URL="${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html"
+        DYNAMIC_REPORT_URL="${{ steps.deployment.outputs.page_url }}sustainability-reports/$DASHBOARD_FILE"
         
         # Add to GitHub Job Summary
         echo "## Sustainability Dashboard Deployed" >> $GITHUB_STEP_SUMMARY
@@ -221,9 +222,7 @@ jobs:
         echo "" >> $GITHUB_STEP_SUMMARY
         echo " **Main Dashboard:** [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
-        echo " **Latest Report:** [${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html](${{ steps.deployment.outputs.page_url }}sustainability-reports/latest-report.html)" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo " **Dynamic Dashboard HTML:** [$DASHBOARD_FILE]($DASHBOARD_URL)" >> $GITHUB_STEP_SUMMARY
+        echo " **Latest Report:** [$DASHBOARD_FILE]($DYNAMIC_REPORT_URL)" >> $GITHUB_STEP_SUMMARY
         echo "" >> $GITHUB_STEP_SUMMARY
         echo " **Generated:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> $GITHUB_STEP_SUMMARY
         
