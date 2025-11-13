@@ -1640,7 +1640,7 @@ def generate_comprehensive_html_report(report_data):
                 <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
                 <button class="nav-tab" onclick="showTab('metrics')"> Detailed Metrics</button>
                 <button class="nav-tab" onclick="showTab('analysis')"> Code Analysis & Recommendations</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">Benchmarks</button>
+                <button class="nav-tab" onclick="showTab('benchmarks')">Industry Benchmarks</button>
             </div>
     """
     
@@ -2223,10 +2223,10 @@ def generate_comprehensive_html_report(report_data):
                     """ + str(report_data['sustainability_metrics']['resource_utilization']) + """,
                     """ + str(report_data['sustainability_metrics']['performance_optimization']) + """,
                     """ + str(report_data['sustainability_metrics']['code_quality']) + """,
-                    """ + str(report_data['sustainability_metrics']['maintainability']) + """,
-                    """ + str(report_data['sustainability_metrics'].get('cpu_efficiency', 75)) + """,
-                    """ + str(report_data['sustainability_metrics'].get('memory_efficiency', 68)) + """,
-                    """ + str(report_data['sustainability_metrics'].get('green_coding_score', 72)) + """
+                    """ + str(report_data['sustainability_metrics'].get('maintainability', 0)) + """,
+                    """ + str(report_data['sustainability_metrics'].get('cpu_efficiency', 0)) + """,
+                    """ + str(report_data['sustainability_metrics'].get('memory_efficiency', 0)) + """,
+                    """ + str(report_data['sustainability_metrics'].get('green_coding_score', 0)) + """
                 ];
                 
                 // Industry benchmark data for comparison
