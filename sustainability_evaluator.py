@@ -1,4 +1,13 @@
 import json
+import sys
+import os
+import shutil
+import subprocess
+from datetime import datetime
+from pathlib import Path
+import time
+import re
+from collections import defaultdict, Counter
 
 def generate_latest_html_report():
     """
@@ -9,6 +18,8 @@ def generate_latest_html_report():
     with open(json_path, "r", encoding="utf-8") as f:
         report_data = json.load(f)
     write_latest_report(report_data, html_path)
+    # Copy to docs for GitHub Pages
+    shutil.copy(html_path, 'docs/latest-report.html')
 def write_latest_report(report_data, output_path="sustainability-reports/latest-report.html"):
     """
     Automate the creation of latest-report.html using the report_data and the HTML generator.
@@ -24,15 +35,7 @@ Comprehensive Sustainable Code Evaluation Report Generator
 Advanced analysis with graphs, charts, tables, and detailed recommendations
 """
 
-import os
-import sys
-import json
-import subprocess
-from datetime import datetime
-from pathlib import Path
-import time
-import re
-from collections import defaultdict, Counter
+    # ...existing code...
 
 class ComprehensiveSustainabilityEvaluator:
     """Advanced sustainability evaluator with comprehensive reporting"""
