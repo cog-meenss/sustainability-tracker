@@ -2854,11 +2854,22 @@ def main():
     print(f"📁 Analyzing project: {project_name}")
     print(f"🎯 Target path: {os.path.abspath(args.path)}")
 
-    evaluator = ComprehensiveSustainabilityEvaluator(args.path)
-    report = evaluator.analyze_project_comprehensively()
+
+    try:
+        evaluator = ComprehensiveSustainabilityEvaluator(args.path)
+        report = evaluator.analyze_project_comprehensively()
+    except Exception as e:
+        print(f"❌ Exception during analysis: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(2)
+
+    if not isinstance(report, dict):
+        print(f"❌ Analysis did not return a dictionary. Got: {type(report)}")
+        sys.exit(3)
 
     if 'error' in report:
-        print(f"❌ {report['error']}")
+        print(f"❌ Analysis error: {report['error']}")
         sys.exit(1)
 
     # Auto-generate comprehensive runtime dashboard
