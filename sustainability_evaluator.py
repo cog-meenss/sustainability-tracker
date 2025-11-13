@@ -61,48 +61,32 @@ class ComprehensiveSustainabilityEvaluator:
             }
         
     def _filter_project_files(self, file_patterns):
-        """Filter project files excluding node_modules, build artifacts, evaluator files, and workflows"""
+        """Filter project files, including more file types and subdirectories, with logging"""
+        import fnmatch
         exclude_dirs = {
             'node_modules', '.git', '.github', '.vscode', '__pycache__', '.pytest_cache',
             'build', 'dist', '.next', '.nuxt', 'coverage', '.nyc_output',
             'target', 'bin', 'obj', '.gradle', '.idea', '.DS_Store',
             'sustainability-reports', 'reports', 'logs', 'temp', 'tmp', 'workflows'
         }
-        
         exclude_files = {
             'sustainability_evaluator.py', 'enhanced_sustainability_analyzer.py',
             'comprehensive_sustainability_evaluator.py', 'runtime_sustainability_reporter.py',
             '.gitignore', '.env', '.env.local', '.env.production', 
             'package-lock.json', 'yarn.lock', '.eslintrc', '.prettierrc'
         }
-        
         all_files = []
-        
-        for pattern in file_patterns:
-            files = self.project_path.rglob(pattern)
-            filtered_files = []
-            
+        for root, dirs, files in os.walk(self.project_path):
+            dirs[:] = [d for d in dirs if d not in exclude_dirs]
             for file in files:
-                # Skip if file is in excluded directories
-                if any(excluded_dir in file.parts for excluded_dir in exclude_dirs):
+                if file in exclude_files:
                     continue
-                    
-                # Skip if filename is in excluded files
-                if file.name in exclude_files:
-                    continue
-                    
-                # Skip sustainability analysis files specifically (avoid self-analysis)
-                relative_path_str = str(file.relative_to(self.project_path))
-                if ('sustainability-analyzer' in relative_path_str or 
-                    'sustainability-reports' in relative_path_str or
-                    '.github' in relative_path_str or
-                    'workflow' in relative_path_str):
-                    continue
-                    
-                filtered_files.append(file)
-            
-            all_files.extend(filtered_files)
-        
+                # Match any of the patterns
+                if any(fnmatch.fnmatch(file, pat) for pat in file_patterns):
+                    all_files.append(Path(root) / file)
+        print(f"🔎 Files selected for analysis ({len(all_files)}):")
+        for f in all_files:
+            print(f"   • {f}")
         return all_files
         
     def analyze_project_comprehensively(self):
@@ -201,11 +185,13 @@ class ComprehensiveSustainabilityEvaluator:
             try:
                 with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                     content = f.read()
-                    
+                print(f"🔍 Analyzing file: {file_path}")
                 for pattern_name, pattern in patterns.items():
                     matches = len(re.findall(pattern, content, re.IGNORECASE))
                     self.code_patterns[pattern_name] += matches
-            except Exception:
+                    print(f"   Pattern '{pattern_name}': {matches} matches")
+            except Exception as e:
+                print(f"   ⚠️ Error reading {file_path}: {e}")
                 continue
 
     def _analyze_green_coding_metrics(self):
@@ -1645,8 +1631,17 @@ def generate_comprehensive_html_report(report_data, timestamp=None):
     """
     
     # Executive Summary Tab
-    exec_summary = report_data['executive_summary']
-    metrics = report_data['sustainability_metrics']
+    exec_summary = report_data.get('executive_summary', {})
+    metrics = report_data.get('sustainability_metrics', {})
+    def metric_display(val, default='N/A'):
+        if val is None:
+            return default
+        try:
+            if isinstance(val, (int, float)) and val == 0:
+                return default
+            return val
+        except Exception:
+            return default
     html += f"""
             <div id="overview" class="tab-content active">
                 <div class="chart-container">
@@ -1664,10 +1659,10 @@ def generate_comprehensive_html_report(report_data, timestamp=None):
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
                         <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">Key Findings</h4>
                         <ul style="list-style: none; padding: 0;">
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Overall sustainability score: {metrics['overall_score']:.1f}/100</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Energy efficiency: {metrics['energy_efficiency']:.1f}/100</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Code quality: {metrics['code_quality']:.1f}/100</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Total files analyzed: {len(report_data.get('detailed_analysis', {}).get('file_complexity', []))}</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Overall sustainability score: {metric_display(metrics.get('overall_score'))}/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Energy efficiency: {metric_display(metrics.get('energy_efficiency'))}/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Code quality: {metric_display(metrics.get('code_quality'))}/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Total files analyzed: {metric_display(len(report_data.get('detailed_analysis', {}).get('file_complexity', [])))} </li>
                             <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Performance issues detected: {sum(report_data.get('detailed_analysis', {}).get('performance_analysis', {}).values())}</li>
                         </ul>
                     </div>
