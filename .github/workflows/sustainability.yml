@@ -88,12 +88,11 @@ jobs:
     - name: Create Dashboard
       if: github.ref == 'refs/heads/main'
       run: |
-        mkdir -p pages
-        cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
-        
-        # Copy the existing index.html from root if it exists, or create a simple landing page
-        if [ -f "index.html" ]; then
-          cp index.html pages/
+        # Find the latest timestamped dashboard file
+        DASHBOARD=$(ls sustainability_dashboard_Tracker_*.html 2>/dev/null | sort | tail -n 1)
+        if [ -n "$DASHBOARD" ]; then
+          cp "$DASHBOARD" pages/
+          echo "Copied $DASHBOARD to pages/ for GitHub Pages deployment."
         else
           echo '<!DOCTYPE html>
           <html lang="en">
