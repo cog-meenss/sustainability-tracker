@@ -1139,7 +1139,7 @@ def find_duplicates_fast(items):
         
         return gates
 
-def generate_comprehensive_html_report(report_data):
+def generate_comprehensive_html_report(report_data, timestamp=None):
     """Generate comprehensive HTML report with advanced visualizations"""
     
     html = f"""
@@ -1631,8 +1631,8 @@ def generate_comprehensive_html_report(report_data):
                 <h1>Sustainable Code Evaluation</h1>
                 <p class="subtitle">Advanced Analysis with Visualisations & Actionable Recommendations</p>
                 <p style="margin-top: 15px; opacity: 0.8;">
-                    # Generated: {report_data['report_metadata']['generated_at'][:19]} 
-                    Analysis Time: {report_data['report_metadata']['analysis_time']:.3f}s
+                    Generated: {timestamp}
+                    {' | Analysis Time: {:.3f}s'.format(report_data.get('report_metadata', {}).get('analysis_time', 0)) if report_data.get('report_metadata', {}).get('analysis_time') else ''}
                 </p>
             </div>
             
@@ -1698,44 +1698,44 @@ def generate_comprehensive_html_report(report_data):
                             <div class="metric-header">
                                 <span class="metric-title">CPU Utilization</span>
                             </div>
-                            <div class="metric-value">{report_data['system_performance']['cpu_utilization']:.1f}<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
+                            <div class="metric-value">{report_data.get('system_performance', {}).get('cpu_utilization', 0):.1f}<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
-                                <div style="background: #ff6b6b; height: 100%; width: {report_data['system_performance']['cpu_utilization']:.0f}%; border-radius: 4px;"></div>
+                                <div style="background: #ff6b6b; height: 100%; width: {report_data.get('system_performance', {}).get('cpu_utilization', 0):.0f}%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Available: {report_data['system_performance']['memory_total_gb']:.1f}GB | Used: {report_data['system_performance']['memory_percent']:.0f}%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Available: {report_data.get('system_performance', {}).get('memory_total_gb', 0):.1f}GB | Used: {report_data.get('system_performance', {}).get('memory_percent', 0):.0f}%</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Memory Usage</span>
                             </div>
-                            <div class="metric-value">{report_data['system_performance']['memory_usage_gb']:.1f}<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
+                            <div class="metric-value">{report_data.get('system_performance', {}).get('memory_usage_gb', 0):.1f}<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
-                                <div style="background: #4ecdc4; height: 100%; width: {report_data['system_performance']['memory_percent']:.0f}%; border-radius: 4px;"></div>
+                                <div style="background: #4ecdc4; height: 100%; width: {report_data.get('system_performance', {}).get('memory_percent', 0):.0f}%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Available: {report_data['system_performance']['memory_total_gb']:.1f}GB | Used: {report_data['system_performance']['memory_percent']:.0f}%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Available: {report_data.get('system_performance', {}).get('memory_total_gb', 0):.1f}GB | Used: {report_data.get('system_performance', {}).get('memory_percent', 0):.0f}%</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Disk I/O</span>
                             </div>
-                            <div class="metric-value">{report_data['system_performance']['disk_io_mb_s']:.0f}<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
+                            <div class="metric-value">{report_data.get('system_performance', {}).get('disk_io_mb_s', 0):.0f}<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
                                 <div style="background: #45b7d1; height: 100%; width: 78%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Read: {report_data['system_performance']['disk_read_mb_s']:.0f}MB/s | Write: {report_data['system_performance']['disk_write_mb_s']:.0f}MB/s</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Read: {report_data.get('system_performance', {}).get('disk_read_mb_s', 0):.0f}MB/s | Write: {report_data.get('system_performance', {}).get('disk_write_mb_s', 0):.0f}MB/s</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Network Latency</span>
                             </div>
-                            <div class="metric-value">{report_data['system_performance']['network_latency_ms']:.0f}<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
+                            <div class="metric-value">{report_data.get('system_performance', {}).get('network_latency_ms', 0):.0f}<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
                                 <div style="background: #96ceb4; height: 100%; width: 85%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Sent: {report_data['system_performance']['network_sent_mb']:.1f}MB | Recv: {report_data['system_performance']['network_recv_mb']:.1f}MB</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Sent: {report_data.get('system_performance', {}).get('network_sent_mb', 0):.1f}MB | Recv: {report_data.get('system_performance', {}).get('network_recv_mb', 0):.1f}MB</p>
                         </div>
                     </div>
                 </div>
