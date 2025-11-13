@@ -2090,47 +2090,6 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
-                <!-- Performance Trend Analysis -->
-                <div style="margin-top: 40px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; padding: 30px; border-left: 5px solid #17a2b8;">
-                    <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.6em;">Performance Trend Analysis (7 Weeks)</h3>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                        <div>
-                            <h4 style="color: #27ae60; margin-bottom: 15px;">Improvement Trends</h4>
-                            <ul style="list-style: none; padding: 0;">
-                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                    <strong>Response Time:</strong> 2.1s → 1.24s <span style="color: #27ae60;">(↓40% improvement)</span>
-                                </li>
-                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                    <strong>Memory Efficiency:</strong> 45% → 78% <span style="color: #27ae60;">(↑33% improvement)</span>
-                                </li>
-                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                    <strong>Code Quality:</strong> 52 → 73 points <span style="color: #27ae60;">(↑21 point increase)</span>
-                                </li>
-                                <li style="padding: 8px 0;">
-                                    <strong>Green Score:</strong> 41 → 68 points <span style="color: #27ae60;">(↑27 point increase)</span>
-                                </li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4 style="color: #e74c3c; margin-bottom: 15px;">⚠️ Areas Needing Attention</h4>
-                            <ul style="list-style: none; padding: 0;">
-                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                    <strong>CPU Spikes:</strong> 3 incidents this week <span style="color: #e74c3c;">(↑2 from last week)</span>
-                                </li>
-                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                    <strong>Database Queries:</strong> 45% slow queries <span style="color: #f39c12;">(needs optimization)</span>
-                                </li>
-                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">
-                                    <strong>Bundle Size:</strong> 2.4MB → 2.7MB <span style="color: #e74c3c;">(↑12% increase)</span>
-                                </li>
-                                <li style="padding: 8px 0;">
-                                    <strong>Cache Hit Rate:</strong> 68% <span style="color: #f39c12;">(target: 85%)</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                
 
                 
                 <!-- Comprehensive Green Coding Breakdown -->
@@ -2231,40 +2190,6 @@ def generate_comprehensive_html_report(report_data):
 {file_table_rows}
                             </tbody>
                         </table>
-                    </div>
-                    
-                    <!-- Energy Efficiency Recommendations -->
-                    <div style="background: linear-gradient(135deg, #e3f2fd 0%, #f1f8e9 100%); border-radius: 15px; padding: 25px; border-left: 4px solid #1976d2;">
-                        <h4 style="color: #1565c0; margin-bottom: 20px; font-size: 1.4em;">🔋 Energy Efficiency Recommendations</h4>
-                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
-                            <div style="background: white; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #27ae60; margin-bottom: 10px;">Algorithm Optimization</h5>
-                                <p style="margin-bottom: 10px; font-size: 0.95em;">Replace O(n²) nested loops with efficient data structures</p>
-                                <div style="background: #e8f5e8; padding: 10px; border-radius: 6px; font-size: 0.9em;">
-                                    <strong>Energy Savings:</strong> 25-40% CPU reduction<br>
-                                    <strong>Files Affected:</strong> 7 files<br>
-                                    <strong>Effort:</strong> Medium (2-3 days)
-                                </div>
-                            </div>
-                            <div style="background: white; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #2196f3; margin-bottom: 10px;">🧠 Memory Optimization</h5>
-                                <p style="margin-bottom: 10px; font-size: 0.95em;">Implement proper resource cleanup and garbage collection</p>
-                                <div style="background: #e3f2fd; padding: 10px; border-radius: 6px; font-size: 0.9em;">
-                                    <strong>Memory Savings:</strong> 15-30% reduction<br>
-                                    <strong>Files Affected:</strong> 12 files<br>
-                                    <strong>Effort:</strong> Low (1-2 days)
-                                </div>
-                            </div>
-                            <div style="background: white; border-radius: 10px; padding: 20px;">
-                                <h5 style="color: #ff9800; margin-bottom: 10px;">I/O Optimization</h5>
-                                <p style="margin-bottom: 10px; font-size: 0.95em;">Replace blocking operations with async patterns</p>
-                                <div style="background: #fff3e0; padding: 10px; border-radius: 6px; font-size: 0.9em;">
-                                    <strong>Performance Gain:</strong> 40-60% responsiveness<br>
-                                    <strong>Files Affected:</strong> 9 files<br>
-                                    <strong>Effort:</strong> High (4-5 days)
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -2487,6 +2412,37 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
                 
+    """
+    
+    # Highlight energy-focused recommendations (top matches or fallback)
+    energy_recommendations = [
+        r for r in recommendations
+        if 'energy' in f"{r.get('title', '')} {r.get('description', '')}".lower()
+    ]
+    if not energy_recommendations and recommendations:
+        energy_recommendations = recommendations[:min(2, len(recommendations))]
+    
+    if energy_recommendations:
+        energy_cards_html = ""
+        for energy in energy_recommendations:
+            energy_improvement = energy.get('improvement_percentage', 'Variable')
+            energy_cards_html += f"""
+                <div style="background: white; border-radius: 12px; padding: 18px; box-shadow: 0 6px 18px rgba(0,0,0,0.08);">
+                    <div style="font-weight: 700; color: #1a202c; margin-bottom: 8px;">{energy.get('title', 'Energy Optimization')}</div>
+                    <p style="margin: 0 0 10px 0; color: #4a5568; font-size: 0.92em;">{energy.get('description', 'Targeted improvement opportunity')}</p>
+                    <div style="font-size: 0.9em; color: #2f855a; font-weight: 600;">🎯 Potential Improvement: {energy_improvement}</div>
+                </div>
+            """
+        html += f"""
+            <div style="background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%); border-radius: 20px; padding: 25px; margin-bottom: 30px; color: white;">
+                <h3 style="margin: 0 0 15px 0; text-align: center;">🔋 Energy Optimization Highlights</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 15px;">
+                    {energy_cards_html}
+                </div>
+            </div>
+        """
+    
+    html += """
                 <div class="recommendations-grid">
     """
     
@@ -2585,6 +2541,31 @@ def generate_comprehensive_html_report(report_data):
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
                     Performance Benchmarks
                 </h2>
+                
+                <!-- Performance Trend Analysis -->
+                <div style="margin-top: 10px; background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%); border-radius: 20px; padding: 30px; border-left: 5px solid #17a2b8;">
+                    <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 1.6em;">Performance Trend Analysis (7 Weeks)</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h4 style="color: #27ae60; margin-bottom: 15px;">Improvement Trends</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;"><strong>Response Time:</strong> 2.1s → 1.24s <span style="color: #27ae60;">(↓40% improvement)</span></li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;"><strong>Memory Efficiency:</strong> 45% → 78% <span style="color: #27ae60;">(↑33% improvement)</span></li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;"><strong>Code Quality:</strong> 52 → 73 points <span style="color: #27ae60;">(↑21 point increase)</span></li>
+                                <li style="padding: 8px 0;"><strong>Green Score:</strong> 41 → 68 points <span style="color: #27ae60;">(↑27 point increase)</span></li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h4 style="color: #e74c3c; margin-bottom: 15px;">⚠️ Areas Needing Attention</h4>
+                            <ul style="list-style: none; padding: 0;">
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;"><strong>CPU Spikes:</strong> 3 incidents this week <span style="color: #e74c3c;">(↑2 from last week)</span></li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;"><strong>Database Queries:</strong> 45% slow queries <span style="color: #f39c12;">(needs optimization)</span></li>
+                                <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;"><strong>Bundle Size:</strong> 2.4MB → 2.7MB <span style="color: #e74c3c;">(↑12% increase)</span></li>
+                                <li style="padding: 8px 0;"><strong>Cache Hit Rate:</strong> 68% <span style="color: #f39c12;">(target: 85%)</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
                 
                 <!-- Performance Comparison Chart -->
                 <div class="chart-container" style="padding: 20px; margin: 20px 0; max-width: 700px; margin-left: auto; margin-right: auto;">
