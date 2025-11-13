@@ -73,7 +73,6 @@ class ComprehensiveSustainabilityEvaluator:
         """Perform comprehensive project analysis"""
         print("🔍 Starting comprehensive sustainable code evaluation...")
         start_time = time.time()
-        
         try:
             # Run core sustainability analysis
             result = subprocess.run([
