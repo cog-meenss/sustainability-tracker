@@ -1613,7 +1613,7 @@ def generate_comprehensive_html_report(report_data):
     # Executive Summary Tab
     exec_summary = report_data['executive_summary']
     html += f"""
-                
+            <div id="overview" class="tab-content active">
                 <div class="chart-container">
                     <h3 class="chart-title">Sustainability Metrics Radar</h3>
                     <div style="position: relative; height: 450px; width: 100%; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 15px; padding: 20px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);">
@@ -1660,6 +1660,7 @@ def generate_comprehensive_html_report(report_data):
                     </div>
                 </div>
             </div>
+           </div>
     """
     
     # Detailed Metrics Tab
