@@ -1117,38 +1117,334 @@ def generate_comprehensive_html_report(report_data):
         <title>Comprehensive Sustainable Code Evaluation Report</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
-        <style>
-            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-            
-            body {{
-                font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
-                background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #16a085 50%, #27ae60 75%, #2ecc71 100%);
-                min-height: 100vh;
-                color: #2c3e50;
-                line-height: 1.6;
-            }}
-            
-            .container {{
-                max-width: 1600px;
-                margin: 0 auto;
-                background: #fefefe;
-                min-height: 100vh;
-                box-shadow: 0 0 80px rgba(0,0,0,0.15);
-                border-radius: 0;
-            }}
-            
-            .header {{
-                background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-                color: white;
-                padding: 50px 40px;
-                text-align: center;
-                position: relative;
-                overflow: hidden;
-                box-shadow: 0 4px 16px rgba(0,0,0,0.1);
-                border-bottom: 1px solid #ecf0f1;
-            }}
-            
-
+        html = f"""
+        <!DOCTYPE html>
+        <html lang=\"en\">
+        <head>
+            <meta charset=\"UTF-8\">
+            <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+            <title>Comprehensive Sustainable Code Evaluation Report</title>
+            <script src=\"https://cdn.jsdelivr.net/npm/chart.js\"></script>
+            <script src=\"https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js\"></script>
+            <style>
+                * { margin: 0; padding: 0; box-sizing: border-box; }
+                body {
+                    font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+                    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #16a085 50%, #27ae60 75%, #2ecc71 100%);
+                    min-height: 100vh;
+                    color: #2c3e50;
+                    line-height: 1.6;
+                }
+                .container {
+                    max-width: 1600px;
+                    margin: 0 auto;
+                    background: #fefefe;
+                    min-height: 100vh;
+                    box-shadow: 0 0 80px rgba(0,0,0,0.15);
+                    border-radius: 0;
+                }
+                .header {
+                    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                    color: white;
+                    padding: 50px 40px;
+                    text-align: center;
+                    position: relative;
+                    overflow: hidden;
+                    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+                    border-bottom: 1px solid #ecf0f1;
+                }
+                .header::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(135deg, rgba(255,255,255,0.02) 0%, rgba(255,255,255,0.05) 100%);
+                    opacity: 1;
+                }
+                .header h1 {
+                    font-size: 2.8em;
+                    margin-bottom: 12px;
+                    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+                    position: relative;
+                    z-index: 1;
+                    font-weight: 600;
+                    letter-spacing: -0.5px;
+                    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+                    color: #ffffff;
+                }
+                .header .subtitle {
+                    font-size: 1.1em;
+                    opacity: 0.85;
+                    position: relative;
+                    z-index: 1;
+                    font-weight: 400;
+                    color: #ecf0f1;
+                    font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+                }
+                .nav-tabs {
+                    display: flex;
+                    background: #f8f9fa;
+                    border-bottom: 3px solid #dee2e6;
+                    position: sticky;
+                    top: 0;
+                    z-index: 100;
+                }
+                .nav-tab {
+                    flex: 1;
+                    padding: 15px 20px;
+                    background: #e9ecef;
+                    border: none;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    border-right: 1px solid #dee2e6;
+                }
+                .nav-tab:last-child { border-right: none; }
+                .score-fair { color: #e67e22; text-shadow: 0 2px 8px rgba(230, 126, 34, 0.3); }
+                .score-poor { color: #e74c3c; text-shadow: 0 2px 8px rgba(231, 76, 60, 0.3); }
+                .progress-bar {
+                    width: 100%;
+                    height: 14px;
+                    background: linear-gradient(90deg, rgba(39, 174, 96, 0.1), rgba(46, 204, 113, 0.1));
+                    border-radius: 12px;
+                    overflow: hidden;
+                    margin: 18px 0;
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+                    position: relative;
+                }
+                .progress-bar::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.2) 50%, transparent 100%);
+                    animation: shimmer 2s infinite;
+                }
+                @keyframes shimmer {
+                    0% { transform: translateX(-100%); }
+                    100% { transform: translateX(100%); }
+                }
+                .progress-fill {
+                    height: 100%;
+                    border-radius: 12px;
+                    transition: width 2s cubic-bezier(0.4, 0, 0.2, 1);
+                    background: linear-gradient(90deg, #27ae60 0%, #2ecc71 30%, #16a085 70%, #1abc9c 100%);
+                    background-size: 200% 100%;
+                    animation: progressGlow 3s ease-in-out infinite alternate;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .progress-fill::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
+                    animation: progressShine 2s infinite;
+                }
+                @keyframes progressGlow {
+                    0% { background-position: 0% 50%; box-shadow: 0 0 10px rgba(39, 174, 96, 0.4); }
+                    100% { background-position: 100% 50%; box-shadow: 0 0 20px rgba(39, 174, 96, 0.6); }
+                }
+                @keyframes progressShine {
+                    0% { transform: translateX(-100%); }
+                    50% { transform: translateX(100%); }
+                    100% { transform: translateX(100%); }
+                }
+                .chart-container {
+                    background: white;
+                    border-radius: 20px;
+                    padding: 30px;
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+                    margin: 30px 0;
+                    border: 1px solid #e9ecef;
+                }
+                .chart-title {
+                    font-size: 1.8em;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    margin-bottom: 20px;
+                    text-align: center;
+                }
+                .recommendations-grid {
+                    display: grid;
+                    gap: 25px;
+                }
+                .recommendation-card {
+                    background: white;
+                    border-radius: 15px;
+                    padding: 25px;
+                    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+                    border-left: 5px solid #17a2b8;
+                    transition: all 0.3s ease;
+                }
+                .recommendation-card:hover {
+                    transform: translateX(5px);
+                    box-shadow: 0 12px 35px rgba(0,0,0,0.12);
+                }
+                .priority-high { border-left-color: #dc3545; }
+                .priority-medium { border-left-color: #ffc107; }
+                .priority-low { border-left-color: #28a745; }
+                .recommendation-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 15px;
+                }
+                .recommendation-title {
+                    font-size: 1.3em;
+                    font-weight: 600;
+                    color: #2c3e50;
+                }
+                .priority-badge {
+                    padding: 5px 12px;
+                    border-radius: 20px;
+                    font-size: 0.85em;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+                .priority-high .priority-badge {
+                    background: #f8d7da;
+                    color: #721c24;
+                }
+                .priority-medium .priority-badge {
+                    background: #fff3cd;
+                    color: #856404;
+                }
+                .priority-low .priority-badge {
+                    background: #d4edda;
+                    color: #155724;
+                }
+                .code-example {
+                    background: #f8f9fa;
+                    border: 1px solid #e9ecef;
+                    border-radius: 8px;
+                    padding: 20px;
+                    margin: 15px 0;
+                    font-family: 'Monaco', 'Consolas', monospace;
+                    font-size: 0.9em;
+                    overflow-x: auto;
+                }
+                .implementation-list {
+                    list-style: none;
+                    padding: 0;
+                }
+                .implementation-list li {
+                    padding: 8px 0;
+                    padding-left: 25px;
+                    position: relative;
+                }
+                .implementation-list li::before {
+                    content: '✓';
+                    position: absolute;
+                    left: 0;
+                    color: #28a745;
+                    font-weight: bold;
+                }
+                .data-table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin: 20px 0;
+                    background: white;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+                }
+                .data-table th {
+                    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+                    color: white;
+                    padding: 15px;
+                    text-align: left;
+                    font-weight: 600;
+                }
+                .data-table td {
+                    padding: 12px 15px;
+                    border-bottom: 1px solid #e9ecef;
+                }
+                .data-table tr:hover {
+                    background: #f8f9fa;
+                }
+                .status-badge {
+                    padding: 4px 10px;
+                    border-radius: 12px;
+                    font-size: 0.85em;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                }
+                .status-pass {
+                    background: #d4edda;
+                    color: #155724;
+                }
+                .status-fail {
+                    background: #f8d7da;
+                    color: #721c24;
+                }
+                .status-conditional {
+                    background: #fff3cd;
+                    color: #856404;
+                }
+                .phase-title {
+                    font-size: 1.4em;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    margin-bottom: 15px;
+                }
+                .footer {
+                    background: #2c3e50;
+                    color: white;
+                    padding: 30px;
+                    text-align: center;
+                    margin-top: 50px;
+                }
+                @media (max-width: 768px) {
+                    .container { margin: 0; }
+                    .header { padding: 20px; }
+                    .header h1 { font-size: 2em; }
+                .tab-content { padding: 20px; display: none; }
+                .tab-content.active { display: block; }
+                    .metric-grid { grid-template-columns: 1fr; }
+                    .nav-tabs { flex-direction: column; }
+                    .nav-tab { border-right: none; border-bottom: 1px solid #dee2e6; }
+                }
+                .loading {
+                    display: inline-block;
+                    width: 20px;
+                    height: 20px;
+                    border: 2px solid #f3f3f3;
+                    border-top: 2px solid #3498db;
+                    border-radius: 50%;
+                    animation: spin 1s linear infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+            </style>
+        </head>
+        <body>
+            <div class=\"container\">
+                <div class=\"header\">
+                    <h1>Comprehensive Sustainable Code Evaluation</h1>
+                    <p class=\"subtitle\">Advanced Analysis with Visualisations & Actionable Recommendations</p>
+                    <p style=\"margin-top: 15px; opacity: 0.8;\">
+                        Generated: {report_data['report_metadata']['generated_at'][:19]} • 
+                        Analysis Time: {report_data['report_metadata']['analysis_time']:.3f}s
+                    </p>
+                </div>
+                <div class=\"nav-tabs\">
+                    <button class=\"nav-tab active\" onclick=\"showTab(event, 'overview')\">Overview</button>
+                    <button class=\"nav-tab\" onclick=\"showTab(event, 'metrics')\">Detailed Metrics</button>
+                    <button class=\"nav-tab\" onclick=\"showTab(event, 'analysis')\">Analysis &amp; Recommendations</button>
+                    <button class=\"nav-tab\" onclick=\"showTab(event, 'benchmarks')\">Performance Benchmarks</button>
+                </div>
+        """
             
             .header::before {{
                 content: '';
@@ -1497,14 +1793,14 @@ def generate_comprehensive_html_report(report_data):
                 <button class="nav-tab active" onclick="showTab(event, 'overview')">Overview</button>
                 <button class="nav-tab" onclick="showTab(event, 'metrics')">Detailed Metrics</button>
                 <button class="nav-tab" onclick="showTab(event, 'analysis')">Analysis &amp; Recommendations</button>
-                <button class="nav-tab" onclick="showTab(event, 'benchmarks')">Benchmarks</button>
+                <button class="nav-tab" onclick="showTab(event, 'benchmarks')">Performance Benchmarks</button>
             </div>
     """
     
     # Executive Summary Tab
     exec_summary = report_data['executive_summary']
     html += f"""
-            <div id="overview" class="tab-content active">
+            <div id="overview" class="tab-content">
                 <h2 style="font-size: 2.5em; color: #2c3e50; margin-bottom: 30px; text-align: center;">
                     Executive Summary
                 </h2>
@@ -2605,20 +2901,16 @@ def generate_comprehensive_html_report(report_data):
                 contents.forEach(content => {
                     content.classList.remove('active');
                 });
-                
                 // Remove active class from all tabs
                 const tabs = document.querySelectorAll('.nav-tab');
                 tabs.forEach(tab => tab.classList.remove('active'));
-                
                 // Show selected tab content
                 const targetTab = document.getElementById(tabName);
                 if (targetTab) {
                     targetTab.classList.add('active');
                 }
-                
                 // Add active class to clicked tab
                 if (evt && evt.target) { evt.target.classList.add('active'); }
-                
                 // Refresh charts when switching tabs to ensure proper rendering
                 setTimeout(() => {
                     if (window.performanceChart && tabName === 'metrics') {
@@ -2632,16 +2924,13 @@ def generate_comprehensive_html_report(report_data):
                     }
                 }, 100);
             }
-            
             // Initialize charts when page loads
             window.addEventListener('load', function() {
                 initializeCharts();
             });
-            
             function initializeCharts() {
                 // Advanced Spider Web Radar Chart
                 const radarCtx = document.getElementById('radarChart').getContext('2d');
-                
                 // Dynamic sustainability metrics data
                 const currentProjectData = [
                     """ + str(report_data['sustainability_metrics']['overall_score']) + """,
@@ -2654,11 +2943,9 @@ def generate_comprehensive_html_report(report_data):
                     """ + str(report_data['sustainability_metrics'].get('memory_efficiency', 68)) + """,
                     """ + str(report_data['sustainability_metrics'].get('green_coding_score', 72)) + """
                 ];
-                
                 // Industry benchmark data for comparison
                 const industryBenchmark = [85, 78, 82, 80, 88, 85, 83, 79, 81];
                 const targetGoals = [95, 90, 92, 88, 95, 90, 90, 85, 88];
-                
                 window.radarChart = new Chart(radarCtx, {
                     type: 'radar',
                     data: {
