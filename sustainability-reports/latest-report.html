@@ -488,15 +488,14 @@
                 <p class="subtitle">Advanced Analysis with Visualisations & Actionable Recommendations</p>
                 <p style="margin-top: 15px; opacity: 0.8;">
                     Generated: None
-                     | Analysis Time: 39.391s
+                    
                 </p>
             </div>
             
             <div class="nav-tabs">
                 <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
-                <button class="nav-tab" onclick="showTab('metrics')"> Detailed Metrics</button>
+                <button class="nav-tab" onclick="showTab('metrics')"> Performance Metrics</button>
                 <button class="nav-tab" onclick="showTab('analysis')"> Code Analysis & Recommendations</button>
-                <button class="nav-tab" onclick="showTab('benchmarks')">Industry Benchmarks</button>
             </div>
     
             <div id="overview" class="tab-content active">
@@ -515,18 +514,18 @@
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
                         <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;">Key Findings</h4>
                         <ul style="list-style: none; padding: 0;">
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Overall sustainability score: 20.0/100</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Energy efficiency: 42.0/100</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Code quality: 34.8/100</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Total files analyzed: 30</li>
-                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Performance issues detected: 1507</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Overall sustainability score: N/A/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Energy efficiency: N/A/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Code quality: N/A/100</li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Total files analyzed: 30 </li>
+                            <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">📍 Performance issues detected: 0</li>
                         </ul>
                     </div>
                     
                     <div style="background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);">
                         <h4 style="color: #2c3e50; font-size: 1.4em; margin-bottom: 15px;"> Critical Areas</h4>
                         <ul style="list-style: none; padding: 0;">
-    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 Lack of asynchronous patterns affecting performance</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 Excessive console logging in production code</li>
+    <li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 Energy efficiency requires immediate attention</li><li style="padding: 8px 0; border-bottom: 1px solid #f0f0f0;">🚨 Too many dependencies affecting bundle size</li>
                         </ul>
                     </div>
                 </div>
@@ -543,49 +542,49 @@
                             <div class="metric-header">
                                 <span class="metric-title">CPU Utilization</span>
                             </div>
-                            <div class="metric-value">0.0<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
+                            <div class="metric-value">18.6<span style="font-size: 0.5em; opacity: 0.8;">%</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
-                                <div style="background: #ff6b6b; height: 100%; width: 0%; border-radius: 4px;"></div>
+                                <div style="background: #ff6b6b; height: 100%; width: 19%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Available: 0.0GB | Used: 0%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Available: 16.0GB | Used: 76%</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Memory Usage</span>
                             </div>
-                            <div class="metric-value">0.0<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
+                            <div class="metric-value">5.7<span style="font-size: 0.5em; opacity: 0.8;">GB</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
-                                <div style="background: #4ecdc4; height: 100%; width: 0%; border-radius: 4px;"></div>
+                                <div style="background: #4ecdc4; height: 100%; width: 76%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Available: 0.0GB | Used: 0%</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Available: 16.0GB | Used: 76%</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Disk I/O</span>
                             </div>
-                            <div class="metric-value">0<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
+                            <div class="metric-value">381929<span style="font-size: 0.5em; opacity: 0.8;">MB/s</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
                                 <div style="background: #45b7d1; height: 100%; width: 78%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Read: 0MB/s | Write: 0MB/s</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Read: 247451MB/s | Write: 134479MB/s</p>
                         </div>
                         
                         <div style="background: rgba(255,255,255,0.15); border-radius: 15px; padding: 20px; backdrop-filter: blur(10px);">
                             <div class="metric-header">
                                 <span class="metric-title">Network Latency</span>
                             </div>
-                            <div class="metric-value">0<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
+                            <div class="metric-value">20<span style="font-size: 0.5em; opacity: 0.8;">ms</span></div>
                             <div style="background: rgba(255,255,255,0.2); height: 8px; border-radius: 4px; margin: 10px 0;">
                                 <div style="background: #96ceb4; height: 100%; width: 85%; border-radius: 4px;"></div>
                             </div>
-                            <p style="font-size: 0.9em; opacity: 0.9;">Sent: 0.0MB | Recv: 0.0MB</p>
+                            <p style="font-size: 0.9em; opacity: 0.9;">Sent: 3838.1MB | Recv: 9932.8MB</p>
                         </div>
                     </div>
                 </div>
                 
-                <!-- Application Performance Metrics -->
+                <!-- Application Performance Metrics 
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Application Performance Metrics</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
@@ -610,11 +609,43 @@
                             <h4 style="color: #3498db; margin-bottom: 20px;">Throughput Metrics</h4>
                             <div style="display: grid; gap: 15px;">
     
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600;">Requests/sec</span>
+                    <span style="color: #3498db; font-size: 1.4em; font-weight: 700;">1800</span>
+                </div>
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">None</div>
+            </div>
+        
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600;">Data Processed</span>
+                    <span style="color: #3498db; font-size: 1.4em; font-weight: 700;">2.5</span>
+                </div>
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">None</div>
+            </div>
+        
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600;">Peak Load</span>
+                    <span style="color: #3498db; font-size: 1.4em; font-weight: 700;">3200</span>
+                </div>
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">None</div>
+            </div>
+        
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; border-left: 4px solid #3498db;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-weight: 600;">Background Jobs</span>
+                    <span style="color: #3498db; font-size: 1.4em; font-weight: 700;">45</span>
+                </div>
+                <div style="font-size: 0.9em; color: #666; margin-top: 5px;">None</div>
+            </div>
+        
                             </div>
                         </div>
                     </div>
-                </div>
-                <!-- Performance Dashboard -->
+                </div> -->
+                <!-- Performance Dashboard 
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #2c3e50; margin-bottom: 25px; font-size: 1.8em; text-align: center;">Performance Dashboard</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
@@ -622,6 +653,26 @@
                             <h4 style="margin-bottom: 20px;">Core Web Vitals</h4>
                             <div style="display: grid; gap: 12px;">
     
+            <div style="display: flex; justify-content: space-between;">
+                <span>Largest Contentful Paint</span>
+                <strong>2.3</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>First Input Delay</span>
+                <strong>45</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>Cumulative Layout Shift</span>
+                <strong>0.09</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>Time to Interactive</span>
+                <strong>3.1</strong>
+            </div>
+        
                             </div>
                         </div>
                         
@@ -629,6 +680,21 @@
                             <h4 style="margin-bottom: 20px;">📦 Bundle Analysis</h4>
                             <div style="display: grid; gap: 12px;">
     
+            <div style="display: flex; justify-content: space-between;">
+                <span>Main Bundle Size</span>
+                <strong>1.2</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>Vendor Bundle Size</span>
+                <strong>0.8</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>Unused JS</span>
+                <strong>0.15</strong>
+            </div>
+        
                             </div>
                         </div>
                         
@@ -636,10 +702,25 @@
                             <h4 style="margin-bottom: 20px;">Performance Scores</h4>
                             <div style="display: grid; gap: 12px;">
     
+            <div style="display: flex; justify-content: space-between;">
+                <span>Frontend Score</span>
+                <strong>78</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>Backend Score</span>
+                <strong>82</strong>
+            </div>
+        
+            <div style="display: flex; justify-content: space-between;">
+                <span>API Score</span>
+                <strong>65</strong>
+            </div>
+        
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 
                 <div class="chart-container">
                     <h3 class="chart-title">Performance Trends - 7 Week Analysis</h3>
@@ -665,7 +746,77 @@
                             </tr>
                         </thead>
                         <tbody>
-    
+    <tr style="background: rgba(192,57,43,0.12);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">job_summary_script.py</code></td>
+            <td><strong style="color: #c0392b;">11/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">10 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-fail">Critical</span></td>
+        </tr><tr style="background: rgba(231,76,60,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">sustainability_evaluator_working.py</code></td>
+            <td><strong style="color: #e74c3c;">34/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">28 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">182 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-fail">Critical</span></td>
+        </tr><tr style="background: rgba(231,76,60,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">sustainability_evaluator_backup.py</code></td>
+            <td><strong style="color: #e74c3c;">52/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">28 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">184 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-fail">Critical</span></td>
+        </tr><tr style="background: rgba(243,156,18,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">sustainability_evaluator copy.py</code></td>
+            <td><strong style="color: #f39c12;">79/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">29 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">207 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-conditional">Fair</span></td>
+        </tr><tr style="background: rgba(39,174,96,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/IdeasTab.js</code></td>
+            <td><strong style="color: #27ae60;">97/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">38 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-pass">Excellent</span></td>
+        </tr><tr style="background: rgba(192,57,43,0.12);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/store.js</code></td>
+            <td><strong style="color: #c0392b;">11/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">1 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-fail">Critical</span></td>
+        </tr><tr style="background: rgba(231,76,60,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/LeaveSummaryTab.js</code></td>
+            <td><strong style="color: #e74c3c;">49/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">2 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-fail">Critical</span></td>
+        </tr><tr style="background: rgba(231,76,60,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/TrainingTab.js</code></td>
+            <td><strong style="color: #e74c3c;">52/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">15 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-fail">Critical</span></td>
+        </tr><tr style="background: rgba(243,156,18,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/RevenueFteTab.js</code></td>
+            <td><strong style="color: #f39c12;">71/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">13 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-conditional">Fair</span></td>
+        </tr><tr style="background: rgba(39,174,96,0.08);">
+            <td><code style="background: #f8f9fa; padding: 4px 8px; border-radius: 4px;">frontend/src/App.js</code></td>
+            <td><strong style="color: #27ae60;">94/100</strong></td>
+            <td><span style="background: #d4edda; color: #155724; padding: 2px 8px; border-radius: 10px;">0 issues</span></td>
+            <td><span style="background: #27ae60; color: white; padding: 2px 8px; border-radius: 10px;">5 found</span></td>
+            <td>N/A</td>
+            <td><span class="status-badge status-pass">Excellent</span></td>
+        </tr>
                         </tbody>
                     </table>
                 </div>
@@ -673,12 +824,474 @@
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #e74c3c; margin-bottom: 20px; font-size: 1.5em;">High Priority Issues</h3>
     
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in sustainability_evaluator_working.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 sustainability_evaluator_working.py</div>
+                <div style="color: #fbd38d;">Lines: 1-3092</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'inefficient_algorithms', 'line': 195, 'content': "'inefficient_algorithms': r'(nested for|O\\(n\\^2\\)|bubble sort|recursive without memo)',", 'severity': 'high', 'suggestion': {'message': 'Replace with optimized algorithm (O(n log n) or O(n))', 'example': 'Use dict/set for lookups instead of nested loops'}, 'estimated_impact': 'High (20-50% CPU reduction possible)'}
+{'type': 'inefficient_algorithms', 'line': 195, 'content': "'inefficient_algorithms': r'(nested for|O\\(n\\^2\\)|bubble sort|recursive without memo)',", 'severity': 'high', 'suggestion': {'message': 'Replace with optimized algorithm (O(n log n) or O(n))', 'example': 'Use dict/set for lookups instead of nested loops'}, 'estimated_impact': 'High (20-50% CPU reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 30, 'content': "'node_modules', '.git', '.github', '.vscode', '__pycache__', '.pytest_cache',", 'severity': 'good'}
+{'type': 'cpu_efficient_algorithms', 'line': 30, 'content': "'node_modules', '.git', '.github', '.vscode', '__pycache__', '.pytest_cache',", 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in frontend/src/utils/exportCsv.js</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/utils/exportCsv.js</div>
+                <div style="color: #fbd38d;">Lines: 1-20</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'blocking_operations', 'line': 16, 'content': 'setTimeout(() => {', 'severity': 'medium', 'suggestion': {'message': 'Replace with non-blocking async operations', 'example': 'Use async/await, Promise.all(), or background tasks'}, 'estimated_impact': 'High (25-60% responsiveness improvement)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;"></div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in .venv/lib/python3.9/site-packages/pip/_internal/configuration.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/configuration.py</div>
+                <div style="color: #fbd38d;">Lines: 1-396</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 241, 'content': 'logger.debug("Will be working with %s variant only", self.load_only)', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}
+{'type': 'excessive_logging', 'line': 259, 'content': 'logger.debug(', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'memory_optimization', 'line': 210, 'content': 'del self._config[self.load_only][fname][key]', 'severity': 'good'}
+{'type': 'memory_optimization', 'line': 212, 'content': 'del self._config[self.load_only][key]', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in .venv/lib/python3.9/site-packages/pip/_internal/network/xmlrpc.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/network/xmlrpc.py</div>
+                <div style="color: #fbd38d;">Lines: 1-61</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 38, 'content': 'verbose: bool = False,', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}
+{'type': 'excessive_logging', 'line': 52, 'content': 'self.verbose = verbose', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'database_optimization', 'line': 26, 'content': 'self, index_url: str, session: PipSession, use_datetime: bool = False', 'severity': 'good'}
+{'type': 'database_optimization', 'line': 29, 'content': 'index_parts = urllib.parse.urlparse(index_url)', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in .venv/lib/python3.9/site-packages/pip/_internal/network/download.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/network/download.py</div>
+                <div style="color: #fbd38d;">Lines: 1-342</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 277, 'content': 'logger.debug(', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}
+{'type': 'excessive_logging', 'line': 313, 'content': 'logger.debug(', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 24, 'content': 'from pip._internal.network.cache import SafeFileCache, is_from_cache', 'severity': 'good'}
+{'type': 'cpu_efficient_algorithms', 'line': 24, 'content': 'from pip._internal.network.cache import SafeFileCache, is_from_cache', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in .venv/lib/python3.9/site-packages/pip/_internal/utils/logging.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/logging.py</div>
+                <div style="color: #fbd38d;">Lines: 1-364</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'memory_waste', 'line': 290, 'content': 'global _stdout_console, stderr_console', 'severity': 'high', 'suggestion': {'message': 'Implement memory-efficient patterns', 'example': 'Use specific imports, avoid global variables, add proper cleanup'}, 'estimated_impact': 'High (15-40% memory reduction possible)'}
+{'type': 'excessive_logging', 'line': 29, 'content': 'from pip._internal.utils._log import VERBOSE, getLogger', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'memory_optimization', 'line': 10, 'content': 'from collections.abc import Generator', 'severity': 'good'}
+{'type': 'memory_optimization', 'line': 60, 'content': 'def indent_log(num: int = 2) -> Generator[None, None, None]:', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in .venv/lib/python3.9/site-packages/pip/_internal/utils/deprecation.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/deprecation.py</div>
+                <div style="color: #fbd38d;">Lines: 1-126</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'memory_waste', 'line': 50, 'content': 'global _original_showwarning', 'severity': 'high', 'suggestion': {'message': 'Implement memory-efficient patterns', 'example': 'Use specific imports, avoid global variables, add proper cleanup'}, 'estimated_impact': 'High (15-40% memory reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'minimal_dependencies', 'line': 5, 'content': 'from __future__ import annotations', 'severity': 'good'}
+{'type': 'minimal_dependencies', 'line': 9, 'content': 'from typing import Any, TextIO', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fef5f5; border: 1px solid #fc8181; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #e53e3e; margin: 0;">Critical Issue in .venv/lib/python3.9/site-packages/pip/_internal/utils/subprocess.py</h4>
+                <span style="background: #e53e3e; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Critical</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/subprocess.py</div>
+                <div style="color: #fbd38d;">Lines: 1-248</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 14, 'content': 'from pip._internal.utils.logging import VERBOSE, subprocess_logger', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}
+{'type': 'excessive_logging', 'line': 95, 'content': "# - If DEBUG logging isn't enabled (e.g. if --verbose logging wasn't", 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="margin-bottom: 15px;">
+                <strong style="color: #2d3748;">Issue:</strong> Green score is critically low. Immediate action required.
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'resource_cleanup', 'line': 98, 'content': '# - If the subprocess exits with an error, we log the output to stderr', 'severity': 'good'}
+{'type': 'resource_cleanup', 'line': 103, 'content': '# If show_stdout=True, then the above is still done, but with DEBUG', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
                 </div>
 
                 <!-- Medium Priority Issues -->
                 <div style="background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); margin-bottom: 30px;">
                     <h3 style="color: #f39c12; margin-bottom: 20px; font-size: 1.5em;">Optimization Opportunities</h3>
     
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in sustainability_evaluator_backup.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 sustainability_evaluator_backup.py</div>
+                <div style="color: #fbd38d;">Lines: 1-3124</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'inefficient_algorithms', 'line': 195, 'content': "'inefficient_algorithms': r'(nested for|O\\(n\\^2\\)|bubble sort|recursive without memo)',", 'severity': 'high', 'suggestion': {'message': 'Replace with optimized algorithm (O(n log n) or O(n))', 'example': 'Use dict/set for lookups instead of nested loops'}, 'estimated_impact': 'High (20-50% CPU reduction possible)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 30, 'content': "'node_modules', '.git', '.github', '.vscode', '__pycache__', '.pytest_cache',", 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in sustainability_evaluator copy.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 sustainability_evaluator copy.py</div>
+                <div style="color: #fbd38d;">Lines: 1-3570</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'inefficient_algorithms', 'line': 195, 'content': "'inefficient_algorithms': r'(nested for|O\\(n\\^2\\)|bubble sort|recursive without memo)',", 'severity': 'high', 'suggestion': {'message': 'Replace with optimized algorithm (O(n log n) or O(n))', 'example': 'Use dict/set for lookups instead of nested loops'}, 'estimated_impact': 'High (20-50% CPU reduction possible)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 30, 'content': "'node_modules', '.git', '.github', '.vscode', '__pycache__', '.pytest_cache',", 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in frontend/src/TrainingTab.js</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/TrainingTab.js</div>
+                <div style="color: #fbd38d;">Lines: 1-908</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'memory_optimization', 'line': 602, 'content': 'const newViews = { ...views, [name]: { columns: visibleCols.map(i => columns[i]), filters: filterModel } };', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in frontend/src/RevenueFteTab.js</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/RevenueFteTab.js</div>
+                <div style="color: #fbd38d;">Lines: 1-977</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'efficient_data_structures', 'line': 201, 'content': 'setShowReset(false); // Hide RESET button on tab entry', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in frontend/src/services/openaiService.js</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/services/openaiService.js</div>
+                <div style="color: #fbd38d;">Lines: 1-170</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'database_optimization', 'line': 94, 'content': "errorMessage += 'Rate limit exceeded.';", 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in frontend/src/services/ideaEvaluationService.js</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 frontend/src/services/ideaEvaluationService.js</div>
+                <div style="color: #fbd38d;">Lines: 1-293</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'blocking_operations', 'line': 237, 'content': 'await new Promise(resolve => setTimeout(resolve, 1000));', 'severity': 'medium', 'suggestion': {'message': 'Replace with non-blocking async operations', 'example': 'Use async/await, Promise.all(), or background tasks'}, 'estimated_impact': 'High (25-60% responsiveness improvement)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'database_optimization', 'line': 83, 'content': "'cost', 'expense', 'minor', 'small', 'limited', 'niche'", 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/__init__.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/__init__.py</div>
+                <div style="color: #fbd38d;">Lines: 1-13</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'minimal_dependencies', 'line': 1, 'content': 'from __future__ import annotations', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/__pip-runner__.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/__pip-runner__.py</div>
+                <div style="color: #fbd38d;">Lines: 1-50</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'efficient_loops', 'line': 16, 'content': 'return ".".join(str(v) for v in version)', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/cache.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/cache.py</div>
+                <div style="color: #fbd38d;">Lines: 1-291</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 147, 'content': 'logger.debug(', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 1, 'content': '"""Cache Management"""', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/__init__.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/__init__.py</div>
+                <div style="color: #fbd38d;">Lines: 1-18</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'efficient_loops', 'line': 5, 'content': '# init_logging() must be called before any call to logging.getLogger()', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/self_outdated_check.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/self_outdated_check.py</div>
+                <div style="color: #fbd38d;">Lines: 1-262</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 215, 'content': 'logger.debug("No remote pip version found")', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 5, 'content': 'import hashlib', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/build_env.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/build_env.py</div>
+                <div style="color: #fbd38d;">Lines: 1-417</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'excessive_logging', 'line': 23, 'content': 'from pip._internal.utils.logging import VERBOSE', 'severity': 'medium', 'suggestion': {'message': 'Remove debug logs from production code', 'example': 'Replace console.log/print with proper logging levels'}, 'estimated_impact': 'Medium (5-15% I/O reduction possible)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'efficient_data_structures', 'line': 284, 'content': 'known_paths = set()', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/network/session.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/network/session.py</div>
+                <div style="color: #fbd38d;">Lines: 1-528</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 30, 'content': 'from pip._vendor.cachecontrol import CacheControlAdapter as _BaseCacheControlAdapter', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/network/cache.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/network/cache.py</div>
+                <div style="color: #fbd38d;">Lines: 1-128</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 1, 'content': '"""HTTP cache implementation."""', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/utils/misc.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/misc.py</div>
+                <div style="color: #fbd38d;">Lines: 1-765</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'cpu_efficient_algorithms', 'line': 5, 'content': 'import hashlib', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/utils/egg_link.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/egg_link.py</div>
+                <div style="color: #fbd38d;">Lines: 1-81</div>
+                <div style="margin-left: 20px; color: #f7fafc;">{'type': 'memory_waste', 'line': 54, 'content': '2) in a no-global virtualenv', 'severity': 'high', 'suggestion': {'message': 'Implement memory-efficient patterns', 'example': 'Use specific imports, avoid global variables, add proper cleanup'}, 'estimated_impact': 'High (15-40% memory reduction possible)'}</div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'minimal_dependencies', 'line': 1, 'content': 'from __future__ import annotations', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
+        <div style="background: #fffaf0; border: 1px solid #f6ad55; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h4 style="color: #c05621; margin: 0;">Optimization in .venv/lib/python3.9/site-packages/pip/_internal/utils/filesystem.py</h4>
+                <span style="background: #f6ad55; color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.8em;">Medium</span>
+            </div>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 15px; border-radius: 8px; font-family: 'Courier New', monospace; font-size: 0.9em; margin-bottom: 15px;">
+                <div style="color: #68d391; margin-bottom: 5px;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/filesystem.py</div>
+                <div style="color: #fbd38d;">Lines: 1-164</div>
+                <div style="margin-left: 20px; color: #f7fafc;"></div>
+            </div>
+            <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 8px; padding: 15px;">
+                <strong style="color: #2f855a;">Green Suggestion:</strong>
+                <div style="color: #2d3748; margin-top: 8px;">Review issues and apply recommended green coding practices to improve score.</div>
+                <div style="background: #2d3748; color: #e2e8f0; padding: 10px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-top: 10px;">{'type': 'memory_optimization', 'line': 8, 'content': 'from collections.abc import Generator', 'severity': 'good'}</div>
+            </div>
+        </div>
+        
                 </div>
 
                 <!-- Code Quality Summary -->
@@ -686,6 +1299,70 @@
                     <h3 style="color: #27ae60; margin-bottom: 20px; font-size: 1.5em;">Green Coding Practices Found</h3>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
     
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 frontend/src/IdeasTab.js</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 frontend/src/App.js</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 sustainability-analyzer/analyzer/sustainability-analyzer.py</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 .venv/lib/python3.9/site-packages/pip/__main__.py</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 .venv/lib/python3.9/site-packages/pip/_internal/exceptions.py</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 .venv/lib/python3.9/site-packages/pip/_internal/network/auth.py</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 .venv/lib/python3.9/site-packages/pip/_internal/network/utils.py</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
+        <div style="background: #f0fff4; border: 1px solid #68d391; border-radius: 12px; padding: 20px;">
+            <h4 style="color: #2f855a; margin: 0 0 15px 0;">None</h4>
+            <div style="background: #2d3748; color: #e2e8f0; padding: 12px; border-radius: 6px; font-family: 'Courier New', monospace; font-size: 0.85em; margin-bottom: 10px;">
+                <div style="color: #68d391;">📁 .venv/lib/python3.9/site-packages/pip/_internal/utils/compat.py</div>
+                <div style="color: #68d391;">✅ None</div>
+            </div>
+        </div>
+        
                     </div>
                 </div>
             </div>
@@ -702,19 +1379,19 @@
                     <div class="metric-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); color: white;">
     
                         <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">6</div>
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">3</div>
                             <div style="opacity: 0.9;">Total Recommendations</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">1</div>
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">0</div>
                             <div style="opacity: 0.9;">High Priority Issues</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">23</div>
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">1185</div>
                             <div style="opacity: 0.9;">Files Affected</div>
                         </div>
                         <div style="background: rgba(255,255,255,0.15); padding: 20px; border-radius: 15px; text-align: center;">
-                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">14%</div>
+                            <div style="font-size: 1.8em; font-weight: bold; margin-bottom: 8px;">10%</div>
                             <div style="opacity: 0.9;">Avg. Improvement Potential</div>
                         </div>
                     </div>
@@ -722,122 +1399,25 @@
                 
                 <div class="recommendations-grid">
     
-                    <div class="recommendation-card priority-high">
-                        <div class="recommendation-header">
-                            <span class="recommendation-title">🚀 Implement Asynchronous Patterns</span>
-                            <span class="priority-badge">High Priority</span>
-                        </div>
-                        
-                        <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">Found 0 synchronous operations and 6 API calls that could benefit from async patterns</p>
-                            
-                            <!-- File Information -->
-                            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 sustainability_evaluator_working.py, sustainability_evaluator_backup.py, sustainability_evaluator copy.py (3 files)</strong></div>
-                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 30-50%</div>
-                            </div>
-                            
-                            <!-- Impact Display -->
-                            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
-                                <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">Performance improvement, reduced blocking operations</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Detailed Files (if available) -->
-                        <div style="margin-top: 15px;">
-                            <details style="background: #f1f3f4; padding: 10px; border-radius: 6px;">
-                                <summary style="cursor: pointer; font-weight: 600; color: #495057;">
-                                    📋 View Affected Files (3 files)
-                                </summary>
-                                <div style="margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-            <div style='margin: 4px 0; color: #dc3545;'>• sustainability_evaluator_working.py (2 occurrences)</div><div style='margin: 4px 0; color: #dc3545;'>• sustainability_evaluator_backup.py (2 occurrences)</div><div style='margin: 4px 0; color: #dc3545;'>• sustainability_evaluator copy.py (2 occurrences)</div>
-                                </div>
-                            </details>
-                        </div>
-            
-                    </div>
-        
                     <div class="recommendation-card priority-medium">
                         <div class="recommendation-header">
-                            <span class="recommendation-title">⚠️ Add Error Handling</span>
+                            <span class="recommendation-title">⚡ General Performance Optimization</span>
                             <span class="priority-badge">Medium Priority</span>
                         </div>
                         
                         <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">Found 2 files with API/file operations lacking proper error handling</p>
+                            <p style="margin-bottom: 12px;">Implement general performance best practices for better energy efficiency</p>
                             
                             <!-- File Information -->
                             <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 job_summary_script.py, .venv/lib/python3.9/site-packages/pip/_internal/build_env.py (2 files)</strong></div>
-                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 15-25%</div>
-                            </div>
-                            
-                            <!-- Impact Display -->
-                            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
-                                <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">Improved reliability and production stability</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Detailed Files (if available) -->
-                        <div style="margin-top: 15px;">
-                            <details style="background: #f1f3f4; padding: 10px; border-radius: 6px;">
-                                <summary style="cursor: pointer; font-weight: 600; color: #495057;">
-                                    📋 View Affected Files (2 files)
-                                </summary>
-                                <div style="margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-            <div style='margin: 4px 0; color: #dc3545;'>• job_summary_script.py</div><div style='margin: 4px 0; color: #dc3545;'>• .venv/lib/python3.9/site-packages/pip/_internal/build_env.py</div>
-                                </div>
-                            </details>
-                        </div>
-            
-                    </div>
-        
-                    <div class="recommendation-card priority-low">
-                        <div class="recommendation-header">
-                            <span class="recommendation-title">🧹 Remove Debug Logs</span>
-                            <span class="priority-badge">Low Priority</span>
-                        </div>
-                        
-                        <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">Found 118 console.log/print statements that should be removed for production</p>
-                            
-                            <!-- File Information -->
-                            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 job_summary_script.py, sustainability_evaluator_working.py, sustainability_evaluator_backup.py (+1 more) (4 files)</strong></div>
-                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 5-10%</div>
-                            </div>
-                            
-                            <!-- Impact Display -->
-                            <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
-                                <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">Cleaner code and slight performance improvement</span>
-                            </div>
-                        </div>
-                        
-                        <!-- Detailed Files (if available) -->
-                    </div>
-        
-                    <div class="recommendation-card priority-medium">
-                        <div class="recommendation-header">
-                            <span class="recommendation-title">📂 Refactor Large Files</span>
-                            <span class="priority-badge">Medium Priority</span>
-                        </div>
-                        
-                        <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">Found 6 large files that could be split into smaller, more maintainable modules</p>
-                            
-                            <!-- File Information -->
-                            <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 sustainability_evaluator_working.py, sustainability_evaluator_backup.py, sustainability_evaluator copy.py (+3 more) (6 files)</strong></div>
+                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 All project files (592 files)</strong></div>
                                 <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 10-20%</div>
                             </div>
                             
                             <!-- Impact Display -->
                             <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
                                 <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">Better maintainability and potential performance gains</span>
+                                <span style="color: #2e7d32;">Overall performance improvement</span>
                             </div>
                         </div>
                         
@@ -846,59 +1426,48 @@
         
                     <div class="recommendation-card priority-medium">
                         <div class="recommendation-header">
-                            <span class="recommendation-title">🔄 Optimize Loops</span>
+                            <span class="recommendation-title">🌱 Adopt Green Coding Practices</span>
                             <span class="priority-badge">Medium Priority</span>
                         </div>
                         
                         <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">Found 6 loops that could be optimized with better algorithms or data structures</p>
+                            <p style="margin-bottom: 12px;">Follow sustainable development practices to reduce environmental impact</p>
                             
                             <!-- File Information -->
                             <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 sustainability_evaluator_working.py, sustainability_evaluator_backup.py, sustainability_evaluator copy.py (3 files)</strong></div>
-                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 10-25%</div>
+                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 All project files (592 files)</strong></div>
+                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 15-30%</div>
                             </div>
                             
                             <!-- Impact Display -->
                             <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
                                 <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">Performance improvement in data processing</span>
+                                <span style="color: #2e7d32;">Reduced carbon footprint and energy consumption</span>
                             </div>
                         </div>
                         
                         <!-- Detailed Files (if available) -->
-                        <div style="margin-top: 15px;">
-                            <details style="background: #f1f3f4; padding: 10px; border-radius: 6px;">
-                                <summary style="cursor: pointer; font-weight: 600; color: #495057;">
-                                    📋 View Affected Files (3 files)
-                                </summary>
-                                <div style="margin-top: 10px; font-family: 'Courier New', monospace; font-size: 0.85em;">
-            <div style='margin: 4px 0; color: #dc3545;'>• sustainability_evaluator_working.py (2 occurrences)</div><div style='margin: 4px 0; color: #dc3545;'>• sustainability_evaluator_backup.py (2 occurrences)</div><div style='margin: 4px 0; color: #dc3545;'>• sustainability_evaluator copy.py (2 occurrences)</div>
-                                </div>
-                            </details>
-                        </div>
-            
                     </div>
         
-                    <div class="recommendation-card priority-medium">
+                    <div class="recommendation-card priority-low">
                         <div class="recommendation-header">
-                            <span class="recommendation-title">🐍 Python Performance Optimization</span>
-                            <span class="priority-badge">Medium Priority</span>
+                            <span class="recommendation-title">📊 Add Performance Monitoring</span>
+                            <span class="priority-badge">Low Priority</span>
                         </div>
                         
                         <div style="margin: 15px 0;">
-                            <p style="margin-bottom: 12px;">Implement list comprehensions, use built-in functions, and consider using numpy for data processing</p>
+                            <p style="margin-bottom: 12px;">Implement monitoring to track and optimize resource usage over time</p>
                             
                             <!-- File Information -->
                             <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin: 10px 0; font-size: 0.9em;">
-                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 job_summary_script.py, sustainability_evaluator_working.py, sustainability_evaluator_backup.py (5 files)</strong></div>
-                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 15-40%</div>
+                                <div style="margin-bottom: 6px; color: #495057;"><strong>📁 New monitoring files (1 file)</strong></div>
+                                <div style="color: #28a745; font-weight: 600;">🎯 Potential Improvement: 5-15%</div>
                             </div>
                             
                             <!-- Impact Display -->
                             <div style="background: linear-gradient(135deg, #e8f5e8 0%, #f0fff4 100%); padding: 10px; border-radius: 6px; border-left: 4px solid #28a745; margin-top: 10px;">
                                 <strong style="color: #155724;">Expected Impact:</strong> 
-                                <span style="color: #2e7d32;">Python code performance improvement</span>
+                                <span style="color: #2e7d32;">Better visibility into sustainability improvements</span>
                             </div>
                         </div>
                         
@@ -937,21 +1506,21 @@
                         <tbody>
                             <tr>
                                 <td><strong>Overall Score</strong></td>
-                                <td><strong style="color: #e74c3c;">20.0/100</strong></td>
+                                <td><strong style="color: #e74c3c;">0.0/100</strong></td>
                                 <td>45.3/100</td>
                                 <td>78.2/100</td>
                                 <td><span class="status-badge status-conditional">Needs Improvement</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Energy Efficiency</strong></td>
-                                <td><strong style="color: #e74c3c;">42.0/100</strong></td>
+                                <td><strong style="color: #e74c3c;">0.0/100</strong></td>
                                 <td>52.7/100</td>
                                 <td>85.4/100</td>
                                 <td><span class="status-badge status-conditional">Needs Improvement</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Code Quality</strong></td>
-                                <td><strong style="color: #e74c3c;">34.8/100</strong></td>
+                                <td><strong style="color: #e74c3c;">0.0/100</strong></td>
                                 <td>58.3/100</td>
                                 <td>89.7/100</td>
                                 <td><span class="status-badge status-conditional">Needs Improvement</span></td>
@@ -1011,15 +1580,15 @@
                 
                 // Dynamic sustainability metrics data
                 const currentProjectData = [
-                    20,
-                    42.0,
-                    40.0,
-                    44.766666666666666,
-                    34.766666666666666,
-                    100,
-                    100,
-                    100,
-                    100.0
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0,
+                    0
                 ];
                 
                 // Industry benchmark data for comparison
@@ -1183,7 +1752,7 @@
                             labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
                             datasets: [{
                                 label: 'Performance Score',
-                                data: [35, 42, 38, 44.766666666666666],
+                                data: [35, 42, 38, 40],
                                 borderColor: 'rgba(52, 152, 219, 1)',
                                 backgroundColor: 'rgba(52, 152, 219, 0.1)',
                                 borderWidth: 3,
@@ -1191,7 +1760,7 @@
                                 tension: 0.4
                             }, {
                                 label: 'Energy Efficiency',
-                                data: [28, 35, 41, 42.0],
+                                data: [28, 35, 41, 0],
                                 borderColor: 'rgba(46, 204, 113, 1)',
                                 backgroundColor: 'rgba(46, 204, 113, 0.1)',
                                 borderWidth: 3,
@@ -1229,7 +1798,7 @@
                             labels: ['Overall Score', 'Energy Efficiency', 'Code Quality'],
                             datasets: [{
                                 label: 'Current Project',
-                                data: [20, 42.0, 34.766666666666666],
+                                data: [0, 0, 0],
                                 backgroundColor: 'rgba(52, 152, 219, 0.8)',
                                 borderColor: 'rgba(52, 152, 219, 1)',
                                 borderWidth: 2
