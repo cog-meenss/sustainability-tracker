@@ -76,8 +76,10 @@ jobs:
     - name: Create Dashboard
       if: github.ref == 'refs/heads/main'
       run: |
-        mkdir -p pages
-        cp -r ${{ env.REPORT_PATH }}/* pages/ 2>/dev/null || true
+        mkdir -p pages/sustainability-reports
+        # Copy all reports to the correct subfolder for GitHub Pages
+        cp -r ${{ env.REPORT_PATH }}/* pages/sustainability-reports/ 2>/dev/null || true
+        # Copy index.html to root of pages
         if [ -f "index.html" ]; then
           cp index.html pages/
         else
@@ -104,7 +106,7 @@ jobs:
               <div class="container">
                   <h1>Green Coding Academy</h1>
                   <p class="subtitle">Sustainability Analysis & Environmental Impact Dashboard</p>
-                  <a href="latest-report.html" class="dashboard-btn">View Sustainability Dashboard</a>
+                  <a href="sustainability-reports/latest-report.html" class="dashboard-btn">View Sustainability Dashboard</a>
                   <div class="features">
                       <div class="feature"><h3>Carbon Analysis</h3><p>Track CO₂ emissions and environmental impact</p></div>
                       <div class="feature"><h3>⚡ Performance Metrics</h3><p>Monitor efficiency with spider web charts</p></div>
