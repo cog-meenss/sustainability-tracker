@@ -1,0 +1,33 @@
+name: Generate Sustainability Report
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt || true
+      - name: Run sustainability evaluator
+        run: |
+          python3 sustainability_evaluator.py
+      - name: Commit and push report files
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git add latest-report.html docs/latest-report.html static/dashboard.js docs/static/dashboard.js latest-report.json docs/latest-report.json
+          git commit -m "Auto-update sustainability report and dashboard" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
