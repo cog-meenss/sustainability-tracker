@@ -1858,7 +1858,7 @@ def generate_comprehensive_html_report(report_data, timestamp=None):
                 <h1>Sustainable Code Evaluation</h1>
                 <p class="subtitle">Advanced Analysis with Visualisations & Actionable Recommendations</p>
                 <p style="margin-top: 15px; opacity: 0.8;">
-                    Generated: {timestamp}
+                    Generated: {(timestamp.strftime('%d/%m/%Y %H:%M:%S') if hasattr(timestamp, 'strftime') else timestamp) if timestamp else datetime.now().strftime('%d/%m/%Y %H:%M:%S')}
                     {' | Analysis Time: {:.3f}s'.format(report_data.get('report_metadata', {}).get('analysis_time', 0)) if report_data.get('report_metadata', {}).get('analysis_time') else ''}
                 </p>
             </div>
