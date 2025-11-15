@@ -3137,7 +3137,9 @@ def main():
 
     args = parser.parse_args()
 
-    # Generate timestamp for automatic naming
+
+    # Generate timestamp for display (DD/MM/YYYY HH:MM:SS)
+    display_timestamp = datetime.now().strftime('%d/%m/%Y %H:%M:%S')
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     project_name = os.path.basename(os.path.abspath(args.path))
     report_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "sustainability-reports")
@@ -3146,7 +3148,6 @@ def main():
     print("🌱 Starting Comprehensive Sustainable Code Evaluation...")
     print(f"📁 Analyzing project: {project_name}")
     print(f"🎯 Target path: {os.path.abspath(args.path)}")
-
 
     try:
         evaluator = ComprehensiveSustainabilityEvaluator(args.path)
@@ -3182,9 +3183,8 @@ def main():
             html_output = os.path.join(report_dir, f"sustainability_dashboard_{project_name}_{timestamp}.html")
             json_output = os.path.join(report_dir, f"sustainability_report_{project_name}_{timestamp}.json")
 
-
         # Generate HTML dashboard (always created for visual analysis)
-        html_content = generate_comprehensive_html_report(report)
+        html_content = generate_comprehensive_html_report(report, display_timestamp)
         # Write timestamped dashboard file
         with open(html_output, 'w') as f:
             f.write(html_content)
@@ -3195,6 +3195,14 @@ def main():
         with open(latest_html_path, 'w') as f:
             f.write(html_content)
         print(f"✅ Updated: {latest_html_path}")
+
+        # Also update docs/latest-report.html for GitHub Pages
+        docs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "docs")
+        docs_html_path = os.path.join(docs_dir, "latest-report.html")
+        os.makedirs(docs_dir, exist_ok=True)
+        with open(docs_html_path, 'w') as f:
+            f.write(html_content)
+        print(f"✅ Updated GitHub Pages: {docs_html_path}")
 
         # Generate JSON report if requested or format is 'both'
         if args.format in ['json', 'both']:
@@ -3215,7 +3223,7 @@ def main():
     else:
         # Manual output handling (legacy mode)
         if args.format == 'html':
-            content = generate_comprehensive_html_report(report)
+            content = generate_comprehensive_html_report(report, display_timestamp)
         else:
             content = json.dumps(report, indent=2)
 
