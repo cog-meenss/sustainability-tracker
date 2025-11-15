@@ -274,15 +274,6 @@ class ComprehensiveSustainabilityEvaluator:
         recommendations = self._generate_detailed_recommendations()
         
         # Compile comprehensive report structure
-        # Inject synthetic demo values for radar chart and findings
-        demo_metrics = {
-            'overall_score': 82,
-            'energy_efficiency': 76,
-            'resource_utilization': 68,
-            'performance_optimization': 74,
-            'code_quality': 88,
-            'maintainability': 91
-        }
         report = {
             'report_metadata': {
                 'title': 'Comprehensive Sustainable Code Evaluation',
@@ -291,23 +282,8 @@ class ComprehensiveSustainabilityEvaluator:
                 'project_path': str(self.project_path),
                 'report_version': '2.0.0'
             },
-            'executive_summary': {
-                'overall_health': "🟢 Excellent",
-                'key_findings': [
-                    "Overall sustainability score: 52.505/100",
-                    "Energy efficiency: 48.00/100",
-                    "Resource utilization: 55.8/100",
-                    "Performance optimization: 60.45/100",
-                    "Code quality: 45.50/100",
-                    "Maintainability: 80.00/100",
-                    "Total files analyzed: 30",
-                    "Performance issues detected: 3",
-                    "No critical security vulnerabilities detected"
-                ],
-                'critical_areas': ["Resource utilization could be improved", "Performance optimization below target"],
-                'improvement_potential': "18 points available"
-            },
-            'sustainability_metrics': demo_metrics,
+            'executive_summary': self._generate_executive_summary(),
+            'sustainability_metrics': self.enhanced_metrics,
             'detailed_analysis': {
                 'code_patterns': dict(self.code_patterns),
                 'file_complexity': self.file_metrics,
