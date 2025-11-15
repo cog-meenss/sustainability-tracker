@@ -1,1 +1,81 @@
-<html><body><h1>Sustainability Report</h1></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Sustainability Report Demo</title>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+	<style>
+		body { font-family: Arial, sans-serif; background: #f7f7f7; margin: 0; padding: 0; }
+		.container { max-width: 900px; margin: 40px auto; background: #fff; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.08); padding: 32px; }
+		h1 { text-align: center; color: #3a3a3a; }
+		.section { margin-bottom: 32px; }
+		.chart-container { width: 500px; margin: 0 auto; }
+		.findings { background: #e8f5e9; border-radius: 8px; padding: 20px; }
+		.findings h2 { color: #388e3c; }
+		.findings ul { margin: 0; padding-left: 20px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Sustainability Report (Demo)</h1>
+		<div class="section">
+			<h2>Sustainability Metrics Radar</h2>
+			<div class="chart-container">
+				<canvas id="radarChart"></canvas>
+			</div>
+		</div>
+		<div class="section findings">
+			<h2>Key Findings</h2>
+			<ul>
+				<li>Energy Efficiency is above industry average (82/100).</li>
+				<li>Resource Utilization is optimal (90/100).</li>
+				<li>Code Quality needs improvement (65/100).</li>
+				<li>Performance Optimization is strong (88/100).</li>
+				<li>Carbon Impact is moderate: 1.2 kg CO₂/day, 430 kg CO₂/year.</li>
+				<li>3 actionable recommendations identified.</li>
+			</ul>
+		</div>
+	</div>
+	<script>
+		const demoData = {
+			labels: [
+				'Energy Efficiency',
+				'Resource Utilization',
+				'Code Quality',
+				'Performance Optimization'
+			],
+			datasets: [{
+				label: 'Sustainability Metrics',
+				data: [82, 90, 65, 88],
+				backgroundColor: 'rgba(56, 142, 60, 0.2)',
+				borderColor: 'rgba(56, 142, 60, 1)',
+				pointBackgroundColor: 'rgba(56, 142, 60, 1)',
+				pointBorderColor: '#fff',
+				pointHoverBackgroundColor: '#fff',
+				pointHoverBorderColor: 'rgba(56, 142, 60, 1)'
+			}]
+		};
+		const config = {
+			type: 'radar',
+			data: demoData,
+			options: {
+				scales: {
+					r: {
+						min: 0,
+						max: 100,
+						ticks: { stepSize: 20 }
+					}
+				},
+				plugins: {
+					legend: { display: false },
+					title: {
+						display: true,
+						text: 'Sustainability Metrics Radar (Demo)'
+					}
+				}
+			}
+		};
+		new Chart(document.getElementById('radarChart'), config);
+	</script>
+</body>
+</html>
