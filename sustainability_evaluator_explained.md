@@ -1,4 +1,4 @@
-# Sustainability Evaluator: How It Works
+# Sustainability Evaluator: How It Works 
 
 This document explains the workflow of the `sustainability_evaluator.py` script and its role in the sustainability analysis process.
 
