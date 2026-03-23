@@ -1,4 +1,4 @@
-# 🌱 Sustainability Tracker
+# Sustainability Tracker
 
 A comprehensive code sustainability analysis tool with automated CI/CD integration for business applications.
 
